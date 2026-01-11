@@ -3,7 +3,7 @@
 > Local-First Economic Infrastructure for Resilient Communication
 
 STATUS: Feasibility Prototype
-LICENSE: MIT / Research Open Source
+LICENSE: Apache License 2.0
 FOCUS: Offline-First Architecture, Peer-to-Peer Relay, Sovereign Identity
 
 ---
@@ -105,4 +105,10 @@ GRANT GOAL: To expand prototype depth, validate architectural assumptions, and m
 Disclaimer: Nexus Protocol is an experimental research project. Claims are limited to prototype behavior and documented observations.
 
 ---
-(c) 2026 Nexus Protocol
+
+## 7. LICENSE
+
+This project is licensed under the **Apache License 2.0**. This license was chosen to provide users and contributors with explicit patent grants, ensuring that the protocol remains an open, accessible, and legally protected foundation for decentralized communication.
+
+---
+© 2026 Nexus Protocol
