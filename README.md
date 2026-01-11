@@ -2,113 +2,65 @@
 
 > Local-First Economic Infrastructure for Resilient Communication
 
-STATUS: Feasibility Prototype
-LICENSE: Apache License 2.0
-FOCUS: Offline-First Architecture, Peer-to-Peer Relay, Sovereign Identity
+**STATUS:** Phase 1.1 Feasibility Prototype (Live)  
+**LICENSE:** Apache License 2.0  
+**FOCUS:** Offline-First Architecture, Deterministic Value Allocation, Local Identity Foundations
 
 ---
 
 ## 1. OVERVIEW
+Nexus Protocol is a research-driven infrastructure project exploring how user devices can operate as sovereign economic nodes. It focuses on **Resilience, Ownership, and Graceful Degradation**, enabling value coordination to continue even during network instability or partial connectivity loss.
 
-Nexus Protocol is a research-driven infrastructure project exploring how user devices can operate as sovereign economic nodes without permanent reliance on centralized servers.
-
-The project focuses on RESILIENCE, OWNERSHIP, and GRACEFUL DEGRADATION, enabling limited communication and value coordination to continue during network instability or partial connectivity loss.
-
-### THE PROBLEM: FRAGILITY
-Most modern applications assume continuous internet, centralized servers, and custodial identity. These assumptions break down during:
-- Infrastructure outages (Natural disasters, conflict)
-- Regional connectivity failures (Censorship, ISP blackouts)
-- High-latency or low-bandwidth environments
-
-### THE SOLUTION: SOVEREIGNTY
-Nexus explores whether local-first execution combined with peer-to-peer relay can reduce these dependencies while remaining compatible with blockchain-based global state (TON) when connectivity is restored.
+### The Problem: Infrastructure Fragility
+Modern applications break down during outages or censorship because they rely on centralized custodians. Nexus explores whether local-first execution can reduce these dependencies while remaining compatible with global state anchors like the **TON Blockchain**.
 
 ---
 
-## 2. THE REFERENCE USE CASE (SOCIAL MEDIA)
+## 2. SYSTEM ARCHITECTURE
+Nexus is structured as a layered protocol stack designed for opportunistic synchronization.
 
-To validate this infrastructure, Nexus is building a **"Sovereign Social" Reference Implementation**—a decentralized content-sharing and discovery system.
-
-In this model, the "Value" being split is **simulated** and represents:
-1. **Advertising-like value flows:** Test credits representing paid reach.
-2. **Tips/Boosts:** Test credits representing voluntary user support.
-
-Unlike many centralized platforms, Nexus defines allocation rules at the protocol level rather than at the application or company level.
+* **LAYER 1: THE BRAIN (Execution Engine)**
+    * *Tech:* FastAPI (Python) + SQLAlchemy.
+    * *Function:* A local server enforcing the **60-30-10 Logic** with surgical validation and SQLite-backed persistence.
+* **LAYER 2: THE BODY (Interface)**
+    * *Tech:* Flutter (Dart).
+    * *Function:* A cross-platform dashboard providing a real-time reflection of the local ledger.
+* **LAYER 3: THE VAULT (Planned)**
+    * *Tech:* TON Blockchain.
+    * *Function:* Global anchor for final settlement and identity recovery.
 
 ---
 
 ## 3. ECONOMIC MODEL (THE "60-30-10" RULE)
+Nexus implements a hardened, deterministic split logic. For every simulated unit entering the system, the protocol enforces:
 
-Nexus implements a deterministic revenue split logic that runs on the user's device. For every unit of simulated value entering the system (e.g., test credits representing ad spend or user boosts), the protocol enforces:
+* **60% : CREATOR ALLOCATION** (Primary content producer)
+* **30% : USER POOL** (Ecosystem incentives)
+* **10% : NETWORK FEE** (Protocol sustainability)
 
-- 60% : CREATOR (The person who made the video/post)
-- 30% : USER POOL (Divided among the viewers/boosters)
-- 10% : NETWORK (Protocol sustainability and relay costs)
-
-*Note: The current prototype simulates this logic using integer credits to prove the mathematical feasibility of the split engine.*
-
----
-
-## 4. SYSTEM ARCHITECTURE
-
-Nexus is structured as a layered protocol stack, where each layer can operate independently and synchronize opportunistically.
-
-LAYER 0: THE MESH (Resilience)
-- Status: Research
-- Tech: Bluetooth LE / Wi-Fi Direct
-- Function: Device-to-device communication for short-range peer relaying.
-
-LAYER 1: THE BRAIN (Execution)
-- Status: Prototype Live
-- Tech: Python (FastAPI) + Planned SQLite persistence
-- Function: A local server on the user's device that executes the 60-30-10 logic and manages local state, with persistent storage planned via SQLite.
-
-LAYER 2: THE BODY (Interface)
-- Status: Prototype Live
-- Tech: Flutter (Dart)
-- Function: A cross-platform social interface that uses biometric authentication to unlock local keys.
-
-LAYER 3: THE VAULT (Consensus)
-- Status: Planned
-- Tech: TON Blockchain
-- Function: The global anchor for identity recovery and final settlement.
+> **Note:** This prototype validates the mathematical feasibility and auditability of the split engine using persistent local storage.
 
 ---
 
-## 5. HOW TO RUN THE PROTOTYPE
+## 4. PHASE 1.1 ACHIEVEMENTS (FEASIBILITY)
+- [x] **Persistent Ledger:** Migrated from ephemeral memory to a restart-proof SQLite Vault.
+- [x] **Singleton Source-of-Truth:** Ensured global ledger integrity via ID-locked records.
+- [x] **Transactional Auditing:** Real-time history tracking with ISO 8601 timestamps.
+- [x] **Surgical Validation:** Prevention of invalid/negative amounts at the API layer.
 
-To run the full system, you need to launch the Brain (Backend) and the Body (Client) simultaneously.
+---
 
-### STEP 1: START THE BRAIN (BACKEND)
-Open your first terminal window and run:
-
-cd backend
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn main:app --reload
-
-### STEP 2: START THE BODY (CLIENT)
-Open a second terminal window and run:
-
-cd client
-flutter run
+## 5. 🚀 HOW TO RUN
+1. Ensure Python 3.10+ and Flutter are installed.
+2. **Automated Launch (Windows):** Double-click `start_nexus.bat` in the root folder.
+3. **Manual Launch:**
+    * **Backend:** `cd backend && uvicorn main:app --reload`
+    * **Client:** `cd client && flutter run -d windows`
 
 ---
 
 ## 6. PROJECT STATUS & GRANT INTENT
-
-PHASE: Feasibility & Infrastructure Research
-DEVELOPER: Solo Founder
-GRANT GOAL: To expand prototype depth, validate architectural assumptions, and move from "Ephemeral Memory" to "Persistent SQLite Storage."
-
-Disclaimer: Nexus Protocol is an experimental research project. Claims are limited to prototype behavior and documented observations.
+Nexus is currently in the **Feasibility & Infrastructure Research** phase. This prototype successfully demonstrates **"Local-first execution with client reflection,"** a critical milestone for moving toward a decentralized TON-integrated mainnet.
 
 ---
-
-## 7. LICENSE
-
-This project is licensed under the **Apache License 2.0**. This license was chosen to provide users and contributors with explicit patent grants, ensuring that the protocol remains an open, accessible, and legally protected foundation for decentralized communication.
-
----
-© 2026 Nexus Protocol
+© 2026 Nexus Protocol. Licensed under Apache 2.0.
