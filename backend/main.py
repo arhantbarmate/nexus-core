@@ -1,114 +1,89 @@
+import os
+import sqlite3
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import datetime
 
-# 1. DATABASE CONFIGURATION
-DATABASE_URL = "sqlite:///./nexus_vault.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+app = FastAPI(title="Nexus Protocol Execution Engine")
 
-# 2. DATA MODELS (Persistence Schema)
-class Creator(Base):
-    __tablename__ = "creators"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True)
-    balance = Column(Float, default=0.0)
+# Get the directory where main.py is located to ensure DB is saved in the same folder
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "nexus_vault.db")
 
-class GlobalLedger(Base):
-    __tablename__ = "global_ledger"
-    id = Column(Integer, primary_key=True)
-    user_pool = Column(Float, default=0.0)
-    network_fee = Column(Float, default=0.0)
+def get_db_connection():
+    """Safety wrapper for database connection."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-class Transaction(Base):
-    __tablename__ = "transactions"
-    id = Column(Integer, primary_key=True)
-    amount = Column(Float)
-    timestamp = Column(DateTime, default=datetime.datetime.utcnow)
+def init_db():
+    """Initializes the deterministic 60-30-10 ledger."""
+    conn = get_db_connection()
+    try:
+        curr = conn.cursor()
+        curr.execute('''
+            CREATE TABLE IF NOT EXISTS transactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                amount REAL NOT NULL,
+                creator_share REAL NOT NULL,
+                user_pool_share REAL NOT NULL,
+                network_fee REAL NOT NULL,
+                timestamp TEXT NOT NULL
+            )
+        ''')
+        conn.commit()
+    finally:
+        conn.close()
 
-# 3. INITIALIZE DATABASE
-Base.metadata.create_all(bind=engine)
+# Initialize on startup
+init_db()
 
-app = FastAPI()
+@app.get("/ledger")
+async def get_ledger():
+    conn = get_db_connection()
+    try:
+        curr = conn.cursor()
+        curr.execute("SELECT SUM(creator_share), SUM(user_pool_share), SUM(network_fee) FROM transactions")
+        creator, user_pool, network = curr.fetchone()
+        return {
+            "total_earned": creator or 0.0,
+            "global_user_pool": user_pool or 0.0,
+            "protocol_fees": network or 0.0
+        }
+    finally:
+        conn.close()
 
-# 4. SECURITY (CORS)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.get("/transactions")
+async def get_transactions():
+    conn = get_db_connection()
+    try:
+        curr = conn.cursor()
+        curr.execute("SELECT amount, timestamp FROM transactions ORDER BY id DESC")
+        rows = [dict(row) for row in curr.fetchall()]
+        return rows
+    finally:
+        conn.close()
 
-# 5. THE CORE LOGIC (60-30-10)
 @app.post("/execute_split/{amount}")
-def execute_split(amount: float):
-    # FIX 1: Prevent invalid or negative amounts
+async def execute_split(amount: float):
     if amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
 
-    # FIX 2: Use context-managed DB session for safety
-    with SessionLocal() as db:
-        try:
-            # NOTE: Float used for feasibility testing only.
-            # Future versions will migrate to fixed-point integers.
-            creator_cut = amount * 0.60
-            user_pool_cut = amount * 0.30
-            network_cut = amount * 0.10
+    # Authoritative 60-30-10 Logic
+    creator = round(amount * 0.60, 2)
+    user_pool = round(amount * 0.30, 2)
+    network = round(amount * 0.10, 2)
 
-            # Phase 1: Single hardcoded creator for feasibility testing
-            creator = db.query(Creator).filter(Creator.name == "arhan").first()
-            if not creator:
-                creator = Creator(name="arhan", balance=0.0)
-                db.add(creator)
-            
-            creator.balance += creator_cut
-
-            # FIX 3: Singleton-safe ledger query using a constant ID
-            ledger = db.query(GlobalLedger).filter(GlobalLedger.id == 1).first()
-            if not ledger:
-                ledger = GlobalLedger(id=1, user_pool=0.0, network_fee=0.0)
-                db.add(ledger)
-            
-            ledger.user_pool += user_pool_cut
-            ledger.network_fee += network_cut
-
-            db.add(Transaction(amount=amount))
-            db.commit()
-            
-            return {"status": "success", "creator_balance": creator.balance}
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/ledger")
-def get_ledger():
-    with SessionLocal() as db:
-        creator = db.query(Creator).filter(Creator.name == "arhan").first()
-        ledger = db.query(GlobalLedger).filter(GlobalLedger.id == 1).first()
-        return {
-            "user_profile": "arhan",
-            "total_earned": creator.balance if creator else 0,
-            "global_user_pool": ledger.user_pool if ledger else 0,
-            "protocol_fees": ledger.network_fee if ledger else 0
-        }
-
-@app.get("/transactions")
-def get_transactions():
-    with SessionLocal() as db:
-        # Fetch the last 10 transactions, newest first
-        txs = db.query(Transaction).order_by(Transaction.timestamp.desc()).limit(10).all()
-        
-        # ISO 8601 format is standard for economic audits
-        return [
-            {
-                "id": t.id, 
-                "amount": t.amount, 
-                "timestamp": t.timestamp.isoformat()
-            } 
-            for t in txs
-        ]
+    conn = get_db_connection()
+    try:
+        curr = conn.cursor()
+        curr.execute(
+            "INSERT INTO transactions (amount, creator_share, user_pool_share, network_fee, timestamp) VALUES (?, ?, ?, ?, ?)",
+            (amount, creator, user_pool, network, datetime.now().isoformat())
+        )
+        conn.commit()
+        return {"status": "success", "split": {"creator": creator, "user_pool": user_pool, "network": network}}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
