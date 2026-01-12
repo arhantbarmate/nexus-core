@@ -1,6 +1,7 @@
 {
   "url": "https://arhantbarmate.github.io/nexus-core/",
   "name": "Nexus Protocol",
+  "description": "Local-first economic execution engine with TON-anchored verification",
   "iconUrl": "https://arhantbarmate.github.io/nexus-core/nexus-logo.png",
   "termsOfUseUrl": "https://arhantbarmate.github.io/nexus-core/terms.html",
   "privacyPolicyUrl": "https://arhantbarmate.github.io/nexus-core/privacy.html"
