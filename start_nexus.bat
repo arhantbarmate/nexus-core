@@ -1,13 +1,34 @@
 @echo off
+:: Windows-only orchestration script for Phase 1.1 feasibility
+TITLE Nexus Protocol - Infrastructure Node
+COLOR 0B
 
-:: 1. Launch the Brain (Backend) - Green
-start cmd /k "title NEXUS BRAIN && color 0A && cd backend && venv\Scripts\activate && python -m uvicorn main:app --reload"
+echo ==========================================
+echo    NEXUS PROTOCOL: PHASE 1.1 BOOT
+echo ==========================================
+echo.
 
-:: Wait 3 seconds for the server to wake up
-timeout /t 3 /nobreak
+:: Sanity check: Python availability
+echo [CHECK] Verifying Python installation...
+python --version
+echo.
 
-:: 2. Launch the Body (Frontend) - Blue
-start cmd /k "title NEXUS BODY && color 0B && cd client && flutter run -d windows"
+:: 1. Launch the Brain (Backend) - Green Terminal
+echo [1/2] Initializing Brain (FastAPI Execution Engine)...
+start "NEXUS BRAIN" cmd /k "color 0A && cd backend && venv\Scripts\activate && python -m uvicorn main:app --reload"
 
-:: 3. Launch the Git Control (Version History) - Yellow/Gold
-start cmd /k "title NEXUS GIT && color 06 && cd . && echo --- NEXUS GIT CONTROL ACTIVE --- && git status"
+:: Wait briefly to avoid race conditions
+timeout /t 3 /nobreak >nul
+
+:: 2. Launch the Body (Frontend) - Blue Terminal
+echo [2/2] Initializing Body (Flutter Dashboard)...
+start "NEXUS BODY" cmd /k "color 0B && cd client && flutter run -d windows"
+
+echo.
+echo ------------------------------------------
+echo Status: Systems Online
+echo Backend API: http://127.0.0.1:8000
+echo ------------------------------------------
+echo.
+echo Press any key to exit this launcher.
+pause >nul
