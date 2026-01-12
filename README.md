@@ -20,7 +20,7 @@ Modern applications break down during outages or censorship because they rely on
 Nexus is structured as a layered protocol stack designed for opportunistic synchronization.
 
 * **LAYER 1: THE BRAIN (Execution Engine)**
-    * *Tech:* FastAPI (Python) + SQLAlchemy.
+    * *Tech:* FastAPI (Python) + SQLite (via sqlite3).
     * *Function:* A local server enforcing the **60-30-10 Logic** with surgical validation and SQLite-backed persistence.
 * **LAYER 2: THE BODY (Interface)**
     * *Tech:* Flutter (Dart).
@@ -28,6 +28,8 @@ Nexus is structured as a layered protocol stack designed for opportunistic synch
 * **LAYER 3: THE VAULT (Planned)**
     * *Tech:* TON Blockchain.
     * *Function:* Global anchor for final settlement and identity recovery.
+* **ORCHESTRATION:** Custom `.bat` orchestration script managing service dependencies and environment synchronization.
+* **COMMUNICATION:** RESTful API layer with strict type-validation to prevent ledger corruption.
 
 ---
 
@@ -38,12 +40,10 @@ Nexus implements a hardened, deterministic split logic. For every simulated unit
 * **30% : USER POOL** (Ecosystem incentives)
 * **10% : NETWORK FEE** (Protocol sustainability)
 
-> **Note:** This prototype validates the mathematical feasibility and auditability of the split engine using persistent local storage.
-
 ---
 
 ## 4. PHASE 1.1 ACHIEVEMENTS (FEASIBILITY)
-- [x] **Persistent Ledger:** Migrated from ephemeral memory to a restart-proof SQLite Vault.
+- [x] **Persistent Ledger:** Migrated from ephemeral memory to a restart-proof **SQLite-backed local vault**.
 - [x] **Singleton Source-of-Truth:** Ensured global ledger integrity via ID-locked records.
 - [x] **Transactional Auditing:** Real-time history tracking with ISO 8601 timestamps.
 - [x] **Surgical Validation:** Prevention of invalid/negative amounts at the API layer.
@@ -61,6 +61,8 @@ Nexus implements a hardened, deterministic split logic. For every simulated unit
 
 ## 6. PROJECT STATUS & GRANT INTENT
 Nexus is currently in the **Feasibility & Infrastructure Research** phase. This prototype successfully demonstrates **"Local-first execution with client reflection,"** a critical milestone for moving toward a decentralized TON-integrated mainnet.
+
+**Roadmap Note:** Phase 1.2 will focus on TON anchoring, Merkle-tree state verification, and asynchronous settlement.
 
 ---
 © 2026 Nexus Protocol. Licensed under Apache 2.0.
