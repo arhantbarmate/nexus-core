@@ -87,3 +87,4 @@ async def execute_split(amount: float):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+                                                                                                                                       
