@@ -27,12 +27,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
+  - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          # 💎 OPTIONAL: Pinning version for stability
+          # Use 3.22.0 or higher to satisfy your pubspec requirement
           flutter-version: '3.22.0'
           channel: 'stable'
+          # Force it to refresh if there's a version mismatch
+          cache: false
 
       - name: Install dependencies
         run: flutter pub get
