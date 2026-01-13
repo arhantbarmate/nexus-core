@@ -26,6 +26,6 @@ flutter:
   uses-material-design: true
 
   # 📋 Assets configuration
-  # Ensure the logo is placed in client/assets/nexus-logo.png
+  # Path is relative to the 'client' folder where this file lives
   assets:
     - assets/nexus-logo.png
