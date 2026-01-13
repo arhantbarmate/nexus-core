@@ -5,7 +5,7 @@
 If you discover a security vulnerability in Nexus Protocol, please report it responsibly.
 
 ### Preferred Disclosure
-- Send a private report to: **security@nexusprotocol.dev**
+- Send a private report to: **arhant6armate@outlook.com**
 
 ### Alternative
 - If private email is not possible, open an issue and clearly mark it as **security-related**.
