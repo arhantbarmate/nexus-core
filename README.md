@@ -1,130 +1,133 @@
 # NEXUS PROTOCOL
 
-> Local-First Economic Infrastructure for Resilient Communication
+> **Local-First Economic Execution Engine for Sovereign Nodes**
 
-**STATUS:** Phase 1.1 Feasibility Prototype (Live)  
+**STATUS:** Phase 1.1 — Feasibility Prototype (Live)  
 **LICENSE:** Apache License 2.0  
-**FOCUS:** Offline-First Architecture, Deterministic Value Allocation, Local Identity Foundations
+**FOCUS:** Local-First Execution · Deterministic Economics · Cryptographic Anchoring Readiness  
 
 ---
 
-## 📖 DOCUMENTATION
-- [Installation Guide](INSTALL.md) — Get up and running in 5 minutes.
-- [Architecture Overview](docs/architecture.md) — Local-first execution and vault design.
-- [Economic Model](docs/economic-model.md) — Rationale behind the 60-30-10 split.
-- [FAQ](FAQ.md) — Common questions about local-first design.
+## 📖 Documentation
+- **[Installation Guide](INSTALL.md)** — Run a local Nexus node in minutes.
+- **[Architecture Overview](docs/architecture.md)** — Brain / Body / Vault design.
+- **[Economic Model](docs/economic-model.md)** — Deterministic 60-30-10 split rationale.
+- **[Research Roadmap](docs/ROADMAP.md)** — *Non-binding* future research directions.
+- **[FAQ](FAQ.md)** — Design decisions and scope clarifications.
 
 ---
 
-## 1. OVERVIEW
-Nexus Protocol is a research-driven infrastructure project exploring how user devices can operate as sovereign economic nodes. It focuses on **Resilience, Ownership, and Graceful Degradation**, enabling value coordination to continue even during network instability or partial connectivity loss.
+## 1. Overview
 
-### The Problem: Infrastructure Fragility
-Modern applications break down during outages or censorship because they rely on centralized custodians. Nexus explores whether local-first execution can reduce these dependencies while remaining compatible with global state anchors like the **TON Blockchain**.
+**Nexus Protocol** is a research-driven infrastructure project exploring how **economic logic can execute locally on user devices**, persist independently of centralized servers, and later synchronize with a global blockchain via **cryptographic proofs rather than raw data replication**.
+
+Nexus is **not a social media application** and **not a blockchain**.  
+It is a **local-first economic execution engine** designed to remain functional during outages, censorship, or partial connectivity loss.
+
+The core question Nexus investigates:
+
+> Can user devices operate as *sovereign economic nodes* while remaining verifiable at a global level?
 
 ---
 
-## 2. SYSTEM ARCHITECTURE
-Nexus is structured as a layered protocol stack designed for opportunistic synchronization.
+## 2. Core Principle — Sovereignty → Sync
+
+Most modern applications are **cloud-first**:
+- Execution happens on remote servers
+- Users rent identity and data
+- Outages or bans result in total loss of access
+
+Nexus is **local-first**:
+- Execution happens on the user’s machine
+- State is stored in a local vault
+- The system remains fully functional offline
+
+When connectivity is available, Nexus is designed to **synchronize outward** by anchoring cryptographic commitments (Merkle roots) to a blockchain—without uploading private data.
+
+---
+
+## 3. System Architecture (Phase 1.1)
+
+Nexus follows a strict layered architecture separating execution, visualization, and persistence.
 
 ```text
-NEXUS PROTOCOL — PHASE 1.1 SYSTEM TOPOLOGY
+NEXUS PROTOCOL — PHASE 1.1 TOPOLOGY
 
-    [ BODY ] <---------- (REST API) ----------> [ BRAIN ]
- (Flutter UI)                                (FastAPI Engine)
-      |                                            |
-      |                                            |
-      V                                            V
- [ Dashboard ]                               [ 60-30-10 Logic ]
- [ Real-time ]                               [ State Hashing  ]
- [ Visualization ]                                 |
-                                                   |
-                                                   V
-                                              [  VAULT  ]
-                                            (SQLite DB File)
-                                            (Local Persistence)
-Layer Breakdown
-Layer 1: The Brain (Execution Engine)
+    [ BODY ]  <-------- REST API -------->  [ BRAIN ]
+ (Flutter UI)                             (FastAPI Engine)
+      |                                        |
+      |                                        |
+      v                                        v
+ [ Dashboard ]                          [ 60-30-10 Logic ]
+ [ Visualization ]                      [ Validation Layer ]
+                                               |
+                                               v
+                                         [  VAULT  ]
+                                       (SQLite DB File)
+                                      (Local Persistence)
+```
 
-Tech: FastAPI (Python) + SQLite (sqlite3)
+### Layer 1 — The Brain (Execution Engine)
+- **Tech:** FastAPI (Python)
+- **Role:** Sole authority for economic execution
+- **Responsibilities:**
+  - Enforces deterministic 60-30-10 logic
+  - Validates inputs
+  - Writes append-only ledger entries
+  - Guarantees restart-safe persistence
 
-Function: Enforces deterministic 60-30-10 logic with strict validation and persistence.
+### Layer 2 — The Body (Reference Client)
+- **Tech:** Flutter (Desktop)
+- **Role:** Visualization and control surface
+- **Responsibilities:**
+  - Displays ledger state in real time
+  - Submits user intents to the Brain
+- **Important:** Holds no economic authority
 
-Layer 2: The Body (Interface)
+### Layer 3 — The Vault (Persistence)
+- **Tech:** SQLite (local file)
+- **Role:** Sovereign storage layer
+- **Properties:**
+  - Append-only transaction history
+  - Survives restarts and crashes
+  - Fully user-owned
 
-Tech: Flutter (Dart)
+---
 
-Function: Cross-platform dashboard reflecting the local ledger in real time.
+## 4. Economic Primitive — The 60-30-10 Rule
 
-Layer 3: The Vault (Planned)
+At the core of Nexus is a **hard-coded, deterministic economic rule**.
 
-Tech: TON Blockchain
+Every transaction processed by the engine is split as follows:
 
-Function: Global anchor for settlement and identity recovery.
+- **60% — Creator Allocation**
+- **30% — User / Network Pool**
+- **10% — Protocol Fee**
 
-System Components
-Orchestration: Custom .bat script managing service startup and environment synchronization.
+This is **not** a policy layer.  
+It is an **invariant of the execution engine**.
 
-Communication: RESTful API layer with strict type validation to prevent ledger corruption.
+---
 
-3. ECONOMIC MODEL (THE "60-30-10" RULE)
-Nexus implements a hardened, deterministic split logic. For every simulated unit entering the system, the protocol enforces:
+## 5. Cryptographic Anchoring Feasibility
 
-60% — Creator Allocation (Primary content producer)
+Phase 1.1 includes a standalone feasibility script:
 
-30% — User Pool (Ecosystem incentives)
+```
+merkle_anchor.py
+```
 
-10% — Network Fee (Protocol sustainability)
+This validates that Nexus can anchor local economic state to TON **without exposing raw data**, enabling future on-chain verification without redesigning the core system.
 
-4. PHASE 1.1 ACHIEVEMENTS (FEASIBILITY)
-✅ Persistent Ledger: Restart-proof SQLite-backed local vault.
+---
 
-✅ Singleton Source-of-Truth: Global ledger integrity via ID-locked records.
+## 6. Project Status
 
-✅ Transactional Auditing: Real-time history with ISO 8601 timestamps.
+Nexus is currently in the **Feasibility & Infrastructure Research** phase.
 
-✅ Surgical Validation: Prevention of invalid or negative inputs.
+This repository represents the **canonical Phase 1.1 reference implementation**.
 
-🧪 TECHNICAL FEASIBILITY
-Phase 1.1 validates the technical foundations required for blockchain anchoring:
+---
 
-Deterministic Execution: All 60-30-10 splits enforced server-side.
-
-Persistent State: Ledger survives full process restarts.
-
-Cryptographic Anchoring (Validated): Standalone feasibility script (merkle_anchor.py) generates a deterministic Merkle Root directly from live SQLite data.
-
-Identity Readiness: TON Connect manifest published and ready for wallet-based node ownership verification.
-
-These results confirm Nexus can transition from local execution to TON-anchored global verification without redesigning the core system.
-
-5. 🚀 HOW TO RUN
-Ensure Python 3.10+ and Flutter (Stable) are installed.
-
-Automated Launch (Windows)
-Double-click start_nexus.bat
-
-Manual Launch
-Backend:
-
-Bash
-
-cd backend && uvicorn main:app --reload
-Client:
-
-Bash
-
-cd client && flutter run -d windows
-6. 🔮 ROADMAP
-Phase 1.2: TON Anchoring via Merkle Roots & TON Connect Identity
-
-Phase 1.3: Performance Benchmarking & External Audit (10k+ node simulation)
-
-Phase 2.0: Opportunistic Mesh Synchronization & Decentralized Settlement
-
-7. PROJECT STATUS & GRANT INTENT
-Nexus is currently in the Feasibility & Infrastructure Research phase.
-
-This prototype demonstrates local-first execution with client reflection, forming the foundation for TON-anchored global verification.
-
-© 2026 Nexus Protocol. Licensed under Apache 2.0.
+© 2026 Nexus Protocol  
+Licensed under the Apache License, Version 2.0
