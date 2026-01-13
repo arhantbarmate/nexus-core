@@ -130,9 +130,10 @@ This repository represents the **canonical Phase 1.1 reference implementation**.
 
 ---
 
-## 🔮 Phase 1.2: TON Connect Integration (Roadmap)
+## 🔮 Phase 1.2: TON Connect Integration (Roadmap — Non-Binding)
 
-The primary goal of Phase 1.2 is to upgrade Nexus from a local-only tool to a verifiable network node using **TON Connect**.
+> **Note:** The following section describes exploratory, non-binding research goals.
+> It is not part of the Phase 1.1 deliverable scope and is subject to change based on feasibility and review.
 
 **Planned Architecture:**
 1.  **Client-Side Signing:** The Flutter client will integrate the TON Connect SDK to request transaction signatures directly from the user's non-custodial wallet (e.g., Tonkeeper).
