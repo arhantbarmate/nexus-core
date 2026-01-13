@@ -1,11 +1,13 @@
-# NEXUS PROTOCOL
+<div align="center">
+  <img src="client/assets/nexus-logo.png" width="120" height="120" alt="Nexus Protocol Logo">
+  <h1>NEXUS PROTOCOL</h1>
+  <p><b>Local-First Economic Execution Engine for Sovereign Nodes</b></p>
 
-> **Local-First Economic Execution Engine for Sovereign Nodes**
-
-**STATUS:** Phase 1.1 — Feasibility Prototype (Live)
-![Nexus CI](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg)  
-**LICENSE:** Apache License 2.0  
-**FOCUS:** Local-First Execution · Deterministic Economics · Cryptographic Anchoring Readiness  
+  [![Nexus CI](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg)](https://github.com/arhantbarmate/nexus-core/actions)
+  ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+  
+  <p><i>Local-First Execution · Deterministic Economics · Cryptographic Anchoring Readiness</i></p>
+</div>
 
 ---
 
