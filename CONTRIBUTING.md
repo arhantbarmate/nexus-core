@@ -1,28 +1,28 @@
-"# Contributing" 
-"" 
-"Thank you for your interest in **Nexus Protocol**." 
-"" 
-"This repository currently represents a **Phase 1.1 feasibility prototype** focused on validating local-first economic execution and reproducibility." 
-"" 
-"## How to Contribute" 
-"" 
-"- Please open an **Issue** for:" 
-"  - Bug reports" 
-"  - Documentation improvements" 
-"  - Questions about architecture or design decisions" 
-"" 
-"- Pull requests should be:" 
-"  - Small and focused" 
-"  - Clearly described" 
-"  - Related to an existing issue when possible" 
-"" 
-"## Scope Notice" 
-"" 
-"At this stage, the project prioritizes:" 
-"- Reproducibility" 
-"- Deterministic behavior" 
-"- Documentation clarity" 
-"" 
-"Feature expansion and architectural changes may be deferred until later phases." 
-"" 
-"Thank you for helping improve Nexus Protocol." 
+# Contributing
+
+Thank you for your interest in **Nexus Protocol**.
+
+This repository currently represents a **Phase 1.1 feasibility prototype** focused on validating local-first economic execution and reproducibility.
+
+## How to Contribute
+
+- Please open an **Issue** for:
+  - Bug reports
+  - Documentation improvements
+  - Questions about architecture or design decisions
+
+- Pull requests should be:
+  - Small and focused
+  - Clearly described
+  - Related to an existing issue when possible
+
+## Scope Notice
+
+At this stage, the project prioritizes:
+- Reproducibility
+- Deterministic behavior
+- Documentation clarity
+
+Feature expansion and architectural changes may be deferred until later phases.
+
+Thank you for helping improve Nexus Protocol.

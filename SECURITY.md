@@ -1,19 +1,19 @@
-"# Security Policy" 
-"" 
-"## Reporting a Vulnerability" 
-"" 
-"If you discover a security vulnerability in Nexus Protocol, please report it responsibly." 
-"" 
-"### Preferred Disclosure" 
-"- Send a private report to: **security@nexusprotocol.dev**" 
-"" 
-"### Alternative" 
-"- If private email is not possible, open an issue and clearly mark it as **security-related**." 
-"- Please **do not include exploit code or sensitive details** in public issues." 
-"" 
-"## Scope" 
-"" 
-"This repository is a **research and feasibility prototype**." 
-"Security reports are welcome and will be reviewed on a best-effort basis." 
-"" 
-"Thank you for helping keep the project secure." 
+# Security Policy
+
+## Reporting a Vulnerability
+
+If you discover a security vulnerability in Nexus Protocol, please report it responsibly.
+
+### Preferred Disclosure
+- Send a private report to: **security@nexusprotocol.dev**
+
+### Alternative
+- If private email is not possible, open an issue and clearly mark it as **security-related**.
+- Please **do not include exploit code or sensitive details** in public issues.
+
+## Scope
+
+This repository is a **research and feasibility prototype**.
+Security reports are welcome and will be reviewed on a best-effort basis.
+
+Thank you for helping keep the project secure.
