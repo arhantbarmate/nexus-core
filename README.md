@@ -2,7 +2,8 @@
 
 > **Local-First Economic Execution Engine for Sovereign Nodes**
 
-**STATUS:** Phase 1.1 — Feasibility Prototype (Live)  
+**STATUS:** Phase 1.1 — Feasibility Prototype (Live)
+![Nexus CI](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg)  
 **LICENSE:** Apache License 2.0  
 **FOCUS:** Local-First Execution · Deterministic Economics · Cryptographic Anchoring Readiness  
 
