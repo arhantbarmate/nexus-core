@@ -130,5 +130,21 @@ This repository represents the **canonical Phase 1.1 reference implementation**.
 
 ---
 
+## 🔮 Phase 1.2: TON Connect Integration (Roadmap)
+
+The primary goal of Phase 1.2 is to upgrade Nexus from a local-only tool to a verifiable network node using **TON Connect**.
+
+**Planned Architecture:**
+1.  **Client-Side Signing:** The Flutter client will integrate the TON Connect SDK to request transaction signatures directly from the user's non-custodial wallet (e.g., Tonkeeper).
+2.  **Merkle Anchoring:** The "Brain" (FastAPI) will batch local transaction splits and generate a Merkle Root.
+3.  **On-Chain Verification:** The signed Merkle Root is published to the TON Blockchain as a "Check-In" transaction, proving the state of the local ledger without revealing private data.
+
+**Integration Scope:**
+- Integration of TON Connect 2.0 manifest and authentication flow.
+- Development of the `merkle-anchor` smart contract interface.
+- Security auditing of the client-side signing process.
+
+---
+
 © 2026 Nexus Protocol  
 Licensed under the Apache License, Version 2.0
