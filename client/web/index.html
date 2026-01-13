@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 <html>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script async src="https://tganalytics.xyz/index.js" onload="initAnalytics()"></script>
+  <script>
+    function initAnalytics() {
+      window.telegramAnalytics.init({
+        token: 'YOUR_TOKEN_HERE', 
+        appName: 'Nexus Protocol'
+      });
+    }
+  </script>
+  </head>
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the

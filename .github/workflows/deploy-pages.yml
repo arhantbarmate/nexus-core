@@ -1,0 +1,50 @@
+name: Build and deploy Flutter web to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+# 🛡️ FIX: This block automatically cancels old stuck builds 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # 💎 OPTIONAL: Explicit environment for GitHub UI
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          # 💎 OPTIONAL: Pinning version for stability
+          flutter-version: '3.22.0'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: client
+
+      - name: Build Flutter web
+        # 🚀 CRITICAL: Fixes 404 by setting correct sub-path
+        run: flutter build web --release --base-href /nexus-core/
+        working-directory: client
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./client/build/web
