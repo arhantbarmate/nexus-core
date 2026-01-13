@@ -1,30 +1,26 @@
-"# Code of Conduct" 
-"" 
-"## Our Pledge" 
-"" 
-"We pledge to make participation in Nexus Protocol a respectful and harassment-free experience for everyone." 
-"" 
-"## Our Standards" 
-"" 
-"Examples of behavior that contributes to a positive environment include:" 
-"- Being respectful and considerate" 
-"- Giving constructive feedback" 
-"- Focusing on what is best for the project" 
-"" 
-"Examples of unacceptable behavior include:" 
-"- Harassment or discrimination" 
-"- Trolling or personal attacks" 
-"- Publishing private information without consent" 
-"" 
-"## Enforcement" 
-"" 
-"Project maintainers are responsible for clarifying and enforcing standards." 
-"They may remove or edit contributions that violate this Code of Conduct." 
-"" 
-"## Scope" 
-"" 
-"This Code of Conduct applies within project spaces and in public interactions related to the project." 
-"" 
-"---" 
-"" 
-"This Code of Conduct is adapted from the Contributor Covenant, version 2.1." 
+# Code of Conduct
+
+## Our Pledge
+We pledge to make participation in Nexus Protocol a respectful and harassment-free experience for everyone.
+
+## Our Standards
+Examples of behavior that contributes to a positive environment include:
+- Being respectful and considerate
+- Giving constructive feedback
+- Focusing on what is best for the project
+
+Examples of unacceptable behavior include:
+- Harassment or discrimination
+- Trolling or personal attacks
+- Publishing private information without consent
+
+## Enforcement
+Project maintainers are responsible for clarifying and enforcing standards.
+They may remove or edit contributions that violate this Code of Conduct.
+
+## Scope
+This Code of Conduct applies within project spaces and in public interactions related to the project.
+
+---
+
+This Code of Conduct is adapted from the Contributor Covenant, version 2.1.
