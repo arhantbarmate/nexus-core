@@ -36,4 +36,5 @@ jobs:
 
       - name: Run smoke tests
         run: |
-          pytest -v
+          # 🛠️ FIX: Run pytest as a Python module to avoid "command not found"
+          python -m pytest -v
