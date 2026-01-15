@@ -15,12 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Markdownlint CLI
+        # Using npm is faster and more reliable on GitHub runners
+        run: npm install -g markdownlint-cli
+
       - name: Markdown syntax & link sanity check
         run: |
-          sudo apt-get update
-          sudo apt-get install -y node-markdownlint-cli
-          # Lint all markdown files but allow CI to pass with warnings to prevent workflow blocks
-          markdownlint "**/*.md" || echo "Markdown lint completed with warnings."
+          # Ignore node_modules to speed up the scan
+          markdownlint "**/*.md" --ignore node_modules || echo "Markdown lint completed with warnings."
 
   # --------------------------------------------------
   # 2. Backend Engine (The Brain)
@@ -29,23 +31,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install Backend Dependencies
         run: |
           cd backend
           pip install -r requirements.txt
-
       - name: Dependency Security Audit (Safety)
         run: |
           cd backend
           pip install safety
-          # Audit current environment; non-blocking for Phase 1.1
           safety check || echo "Security audit completed (non-blocking)."
-
       - name: Run Backend Tests
         run: |
           cd backend
@@ -58,15 +55,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-
       - name: Flutter Analyze & Test
         run: |
           cd client
           flutter pub get
           flutter analyze
-          # Only execute tests if the directory exists
           if [ -d "test" ]; then flutter test; fi
