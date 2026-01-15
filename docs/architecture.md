@@ -1,25 +1,22 @@
 # Nexus Protocol — Technical Architecture (Phase 1.1)
 
-This document describes the technical architecture of Nexus Protocol Phase 1.1, with a focus on its **local-first execution model**.
+This document describes the hardened technical architecture of Nexus Protocol Phase 1.1, with a focus on its **local-first execution model** and **sovereign observability**.
 
 ---
 
 ## 1. Architectural Philosophy
-
-Nexus Protocol is designed around **sovereign local nodes**.
-
-Rather than assuming continuous connectivity or centralized services, Nexus prioritizes:
-- **Local Execution:** Logic runs on the user's machine, not a cloud server.
+Nexus Protocol is designed around **sovereign local nodes**. Rather than assuming continuous connectivity, Nexus prioritizes:
+- **Local Execution:** Economic logic runs on the user's machine.
 - **Persistent Local State:** Data lives in a local vault, not a remote database.
 - **Graceful Degradation:** The system functions fully even during network instability.
+- **Observability Isolation:** Analytics are non-blocking and decoupled from the execution engine.
 
 Global blockchains (like TON) are used as **anchors of truth**, not as real-time execution engines.
 
 ---
 
 ## 2. High-Level Architecture
-
-The system follows a strict separation of concerns between the Interface (Body), Logic (Brain), and Storage (Vault).
+The system follows a strict separation of concerns between the Interface (**Body**), Logic (**Brain**), and Storage (**Vault**).
 
 ```text
        [ BODY ]                         [ BRAIN ]
@@ -31,79 +28,47 @@ The system follows a strict separation of concerns between the Interface (Body),
            |                                |
            |                                v
      [ Visualization ]               [ 60-30-10 Logic ]
-    (Real-time State)              (Surgical Validation)
-                                            |
-                                            | (SQL)
-                                            v
-                                       [  VAULT  ]
-                                    (SQLite DB File)
-                                  (Immutable History)
-3. Component Breakdown
-3.1 The Brain — Execution Engine
-Technology: FastAPI (Python)
+    (Real-time State)              (Deterministic Rounding)
+           ^                                |
+           |                                | (SQL / WAL Mode)
+           |                                v
+    [ HEARTBEAT ]                    [   VAULT   ]
+    (Silent Post)                    (SQLite DB File)
+```
 
-Role: The authoritative source of economic truth.
+---
 
-Responsibilities:
+## 3. Component Breakdown
 
-Enforces the 60-30-10 economic logic deterministically.
+### 3.1 The Brain — Execution Engine (FastAPI)
+**Role:** The authoritative source of economic truth.
+- **Deterministic 60-30-10 Split:** Enforces economic logic with **2-decimal precision rounding** (`round(amount, 2)`) to prevent floating-point drift in the ledger.
+- **Background Observability:** Uses `fastapi.BackgroundTasks` to signal external telemetry (TON Builders). This ensures that external API failures **never** block local transaction commits.
+- **Input Validation:** Strictly enforces 2-decimal precision and rejects **invalid or non-conforming inputs** (e.g., negative values) at the API gateway.
 
-Validates inputs (e.g., preventing negative values or double-spends).
+### 3.2 The Vault — Persistent Ledger (SQLite)
+**Role:** The sovereign storage layer.
+- **Database Schema:** Phase 1.1 utilizes a **single append-only `transactions` table**. Aggregated ledger values are computed deterministically at query time using SQL aggregation functions, eliminating redundant state tables and ensuring restart-safe correctness.
+- **WAL Mode Persistence:** Implements **Write-Ahead Logging** to support high-concurrency read/write operations between the Brain and Body.
 
-Manages connections to the local Vault.
+### 3.3 The Body — Client Interface (Flutter)
+**Role:** The visualization and control layer.
+- **Cross-Platform Sovereignty:** Uses platform-aware JS stubs to ensure the app runs natively on Desktop while remaining compatible with the Telegram Mini App (TMA) ecosystem.
+- **Real-time Liveness:** Polls local `/health` and `/ledger` endpoints to provide a visual "Heartbeat" of the Brain's status.
 
-Exposes a strictly typed REST API.
+---
 
-3.2 The Vault — Persistent Ledger
-Technology: SQLite (Local File)
+## 4. Local-First Features
+- **Sovereign Data Ownership:** The user holds the physical `.db` file, ensuring total data ownership.
+- **Zero-Gas Execution:** High-frequency micro-transactions happen locally without network fees.
 
-Role: The sovereign storage layer.
+---
 
-Responsibilities:
+## 5. Future Anchoring (Phase 1.2 Research)
+> **Note:** The following mechanisms are not present in Phase 1.1 and are described here strictly as forward-looking design.
 
-Stores every economic event as an immutable record.
+In Phase 1.2, the local ledger state will be hashed into Merkle Trees and anchored to the TON Blockchain. This preserves privacy (raw data stays local) while providing global cryptographic proof of state.
 
-Preserves state across application restarts and system crashes.
-
-Enables local auditability and transaction replay.
-
-Why SQLite? It eliminates external infrastructure dependencies, reduces operational complexity, and ensures the user physically owns their data file.
-
-3.3 The Body — Client Interface
-Technology: Flutter (Desktop)
-
-Role: The visualization and control layer.
-
-Responsibilities:
-
-Visualizes the ledger state (wallet balances, transaction history).
-
-Sends user intents (actions) to the Brain.
-
-Polling mechanism reflects backend truth in real-time.
-
-Note: The Body does not execute economic logic. It only displays what the Brain has validated.
-
-4. Local-First as a Feature
-Local-first architecture provides:
-
-Sovereign Data Ownership: The user holds the database file.
-
-Zero-Gas Execution: High-frequency micro-transactions (like 60-30-10 splits) happen locally without network fees.
-
-Offline Operation: The node functions perfectly without internet access; synchronization can happen opportunistically later.
-
-Reduced Congestion: Only finalized "anchors" need to be sent to the blockchain, not every micro-event.
-
-5. Future Anchoring (Phase 1.2)
-In the upcoming Phase 1.2, the local ledger state will be:
-
-Hashed into Merkle Trees.
-
-Anchored to the TON Blockchain.
-
-Verifiable via TON Connect 2.0 identity.
-
-This preserves privacy (users don't publish raw data) while enabling global trust (users publish cryptographic proofs of their state).
+---
 
 © 2026 Nexus Protocol

@@ -1,7 +1,8 @@
-"{" 
-"  \"url\": \"https://arhantbarmate.github.io/nexus-core\"," 
-"  \"name\": \"Nexus Protocol\"," 
-"  \"iconUrl\": \"https://placehold.co/400\"," 
-"  \"termsOfUseUrl\": \"https://github.com/arhantbarmate/nexus-core/blob/main/README.md\"," 
-"  \"privacyPolicyUrl\": \"https://github.com/arhantbarmate/nexus-core/blob/main/SECURITY.md\"" 
-"}" 
+{
+  "url": "[https://arhantbarmate.github.io/nexus-core/](https://arhantbarmate.github.io/nexus-core/)",
+  "name": "Nexus Protocol",
+  "description": "Local-first economic execution engine with TON-anchored verification",
+  "iconUrl": "[https://arhantbarmate.github.io/nexus-core/nexus-logo.png](https://arhantbarmate.github.io/nexus-core/nexus-logo.png)",
+  "termsOfUseUrl": "[https://arhantbarmate.github.io/nexus-core/docs/terms.html](https://arhantbarmate.github.io/nexus-core/docs/terms.html)",
+  "privacyPolicyUrl": "[https://arhantbarmate.github.io/nexus-core/docs/privacy.html](https://arhantbarmate.github.io/nexus-core/docs/privacy.html)"
+}

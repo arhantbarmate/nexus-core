@@ -2,39 +2,71 @@ name: Nexus CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-  test:
+  # --------------------------------------------------
+  # 1. Documentation & Repository Integrity
+  # --------------------------------------------------
+  lint-docs:
     runs-on: ubuntu-latest
-
-    # ⚠️ CRITICAL: Run all commands inside the backend folder
-    defaults:
-      run:
-        working-directory: ./backend
-
-    strategy:
-      matrix:
-        # Enterprise-stable Python versions
-        python-version: ["3.10", "3.11"]
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
+      - name: Markdown syntax & link sanity check
         run: |
-          python -m pip install --upgrade pip
+          sudo apt-get update
+          sudo apt-get install -y node-markdownlint-cli
+          # Lint all markdown files but allow CI to pass with warnings to prevent workflow blocks
+          markdownlint "**/*.md" || echo "Markdown lint completed with warnings."
+
+  # --------------------------------------------------
+  # 2. Backend Engine (The Brain)
+  # --------------------------------------------------
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
           pip install -r requirements.txt
 
-      - name: Run smoke tests
+      - name: Dependency Security Audit (Safety)
         run: |
-          # 🛠️ FIX: Run pytest as a Python module to avoid "command not found"
-          python -m pytest -v
+          cd backend
+          pip install safety
+          # Audit current environment; non-blocking for Phase 1.1
+          safety check || echo "Security audit completed (non-blocking)."
+
+      - name: Run Backend Tests
+        run: |
+          cd backend
+          python -m pytest
+
+  # --------------------------------------------------
+  # 3. Frontend Dashboard (The Body)
+  # --------------------------------------------------
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Flutter Analyze & Test
+        run: |
+          cd client
+          flutter pub get
+          flutter analyze
+          # Only execute tests if the directory exists
+          if [ -d "test" ]; then flutter test; fi

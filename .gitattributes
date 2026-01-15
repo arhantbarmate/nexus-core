@@ -1,0 +1,48 @@
+# ==============================================================================
+# Nexus Protocol — Line Ending & Binary Policy (Hardened Phase 1.1)
+# ==============================================================================
+
+# 1. Default: normalize text files to LF in repo for cross-platform consistency
+* text=auto
+
+# 2. Python (The Brain)
+*.py text eol=lf
+requirements.txt text eol=lf
+
+# 3. Dart / Flutter (The Body)
+*.dart text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.lock text eol=lf
+
+# 4. Shell & Automation
+*.sh text eol=lf
+# Mandatory CRLF for Windows Batch execution
+*.bat text eol=crlf
+
+# 5. Markdown / Documentation
+*.md text eol=lf
+*.html text eol=lf
+LICENSE text eol=lf
+
+# 6. Database & Binary (CRITICAL)
+# Treat SQLite vaults and images as binary to prevent corruption
+*.db binary
+*.db-wal binary
+*.db-shm binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+
+# 7. C / C++ (Flutter desktop components)
+*.c text eol=lf
+*.cc text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.cmake text eol=lf
+
+# 8. Generated Artifacts
+# Allow Git to handle these automatically without forcing EOL
+client/**/generated_* -text

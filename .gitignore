@@ -1,34 +1,83 @@
-# --- SENSITIVE DATA (CRITICAL) ---
+# ==============================================================================
+# NEXUS PROTOCOL - MASTER GITIGNORE (PHASE 1.1 LOCKED)
+# ==============================================================================
+
+# --- 🔐 SENSITIVE DATA (CRITICAL) ---
+# Never commit credentials, environment keys, or keystores
 .env
 .env.*
 *.properties
 local.properties
 *.jks
 *.keystore
+secrets.json
 
-# --- PYTHON / FASTAPI ---
+# --- 🛰️ NEXUS SOVEREIGN VAULT ---
+# Ensure local economic state/ledger never leaks to version control
+nexus_vault.db
+nexus_vault.db-journal
+nexus_vault.db-wal
+nexus_vault.db-shm
+
+# --- 🧠 PYTHON / FASTAPI (BRAIN) ---
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+
+# --- 📦 VIRTUAL ENVIRONMENTS ---
 venv/
 env/
+ENV/
 .venv/
-nexus_vault.db
 
-# --- FLUTTER / DART ---
+# --- 📱 FLUTTER / DART (BODY) ---
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-build/
-*.png
-*.jpg
-*.jpeg
 
-# --- IDE / SYSTEM ---
+# Scoped build ignore to prevent hiding root-level docs/tooling
+client/build/
+
+# Flutter ephemeral artifacts
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+
+# Native build artifacts
+.cxx/
+
+# --- 💻 IDE / SYSTEM ---
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 *.swp
+*.swo
+*.tmp
+*.bak
+desktop.ini
