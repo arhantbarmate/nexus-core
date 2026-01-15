@@ -1,89 +1,112 @@
-# Nexus Client (Body) 📱
+Nexus Client (Body) 📱
 
-The Nexus Client is the Flutter-based user interface (“Body”) for the Nexus Protocol.
-It provides real-time visualization and interaction with the local Nexus execution engine (“Brain”).
+The Nexus Client is a high-performance Flutter-based user interface (“Body”) for the Nexus Protocol.
 
-This client is **intentionally local-first** and communicates with a locally running FastAPI backend.
+It provides real-time visualization and interaction with the local sovereign execution engine (“Brain”) while remaining strictly local-first in Phase 1.1.
 
-## 🚀 Getting Started
+The client is environment-aware, allowing it to run seamlessly as a standalone desktop or web application while remaining ready for future Telegram Mini App (TMA) integration.
 
-These instructions allow you to run the Nexus Client locally for development, testing, and demonstration.
+🚀 Architectural Innovation: Platform Guarding
 
-### Prerequisites
+To resolve the constraints of running a blockchain-integrated application across multiple environments, the Nexus Client uses a Custom Stubbing Pattern.
 
-* **Flutter SDK** (Stable, 3.x or higher)
-* **Dart SDK** (bundled with Flutter)
-* **Desktop Target Enabled** (Windows / macOS / Linux)
-* **A running Nexus Backend** (e.g., `uvicorn main:app --reload`)
+Universal Compatibility
 
-### 🛠️ Installation
+Compiles for Web and Desktop without requiring the Telegram WebApp SDK at runtime
 
-1.  **Navigate to the Client Directory**
-    ```bash
-    cd client
-    ```
+Avoids platform-specific crashes during local development and testing
 
-2.  **Install Dependencies**
-    ```bash
-    flutter pub get
-    ```
+Platform Stubs
 
-3.  **Run the Client (Desktop)**
-    ```bash
-    flutter run -d windows
-    # Note: Use -d macos or -d linux if you are on those platforms
-    ```
+Uses conditional imports to mock environment-specific behavior
 
-    The client expects the backend to be available at:
-    `http://127.0.0.1:8000`
+Safely handles Telegram WebApp and TON Connect APIs when running outside Telegram
 
-## 🧭 Application Behavior
+Prevents runtime dependency failures on Windows, macOS, Linux, and Web
 
-* **Displays Creator Balance:** Shows the 60% allocation in real-time.
-* **Split Execution:** Accepts a numeric input for executing the **60-30-10** split.
-* **Transaction History:** Shows persistent transaction logs.
-* **State Sync:** Reflects backend state immediately after restart.
+Sovereign Mock Mode
 
-> **Note:** All economic logic is enforced server-side by the Nexus Brain.
+Automatically activates when no external context is detected
 
-## 📂 Project Structure
+Ensures the 60-30-10 split protocol remains fully functional
 
-```text
-client/
-├── lib/
-│   └── main.dart        # Application entry point
-├── pubspec.yaml         # Flutter dependencies
-└── README.md            # This file
-The client is intentionally minimal in Phase 1.1 to prioritize:
+Preserves local-first execution under all conditions
 
-Deterministic behavior
+🛠️ Getting Started
+Prerequisites
 
-Clear auditability
+Flutter SDK (Stable, 3.x or higher)
 
-Grant reviewer usability
+Dart SDK (bundled with Flutter)
+
+Desktop or Web target enabled
+
+A running Nexus Backend (FastAPI on port 8000)
+
+Installation & Launch
+Navigate and Fetch Dependencies
+cd client
+flutter pub get
+
+Sovereign Launch (Web)
+flutter run -d web-server --web-port 5000 --release
+
+
+Open the client in your browser at:
+
+http://localhost:5000
+
+
+The client expects the backend to be available at:
+
+http://127.0.0.1:8000
+
+🧭 Application Behavior
+
+Liveness Indicator
+Real-time heartbeat monitor (Green / Red) validating connectivity between the UI (Body) and the Sovereign Vault (Brain)
+
+Deterministic Split Input
+Hardened numeric input field for executing the 60-30-10 split protocol
+
+Vault Visualization
+Persistent table displaying the last 10 local split events, sourced directly from the SQLite vault
+
+Zero-Knowledge UI
+The client never calculates economic logic and never mutates state independently
+It acts purely as a visual “window” into the backend’s deterministic execution
 
 🔐 Security Model (Phase 1.1)
-No private keys are handled by the client.
 
-No data is transmitted to third-party servers.
+Vault Isolation
+No private data is cached in the browser or local storage
+All state is fetched on-demand from the backend
 
-All state is sourced from the local Nexus Vault (SQLite).
+Local-First Privacy
+All interaction is restricted to localhost, preventing third-party data leakage
 
-TON Connect integration is planned for Phase 1.2.
+Handshake Discipline
+Communication with the Brain uses standardized request headers
+Only authorized local requests can mutate vault state
 
 🧪 Testing
-Basic UI and integration testing can be run with:
 
-Bash
+Basic widget and integration tests can be run with:
 
 flutter test
-(Advanced testing and benchmarking are planned for Phase 1.3.)
+
+
+Advanced performance benchmarking and stress testing are planned for Phase 1.3.
 
 🔮 Roadmap
-Phase 1.2: TON Connect Identity + Merkle-Anchored State
 
-Phase 1.3: Performance benchmarking and external audit
+Phase 1.2 — TON Connect v2 integration and Merkle-anchored state commits
 
-Phase 2.0: Opportunistic mesh synchronization
+Phase 1.3 — Performance stress-testing and UI/UX audit for Telegram users
 
-© 2026 Nexus Protocol Licensed under Apache License 2.0
+Phase 2.0 — Decentralized peer-to-peer synchronization between sovereign nodes
+
+📜 License
+
+© 2026 Nexus Protocol
+Licensed under the Apache License 2.0

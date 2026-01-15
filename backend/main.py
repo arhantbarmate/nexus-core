@@ -1,111 +1,127 @@
 import os
 import sqlite3
+import httpx
 from datetime import datetime
-from fastapi import FastAPI, HTTPException
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
-app = FastAPI(title="Nexus Protocol Execution Engine", version="1.1")
+# --- CONFIGURATION ---
+load_dotenv()
+TON_API_KEY = os.getenv("TON_BUILD_API_KEY", "").strip().replace("'", "").replace('"', "")
+# MUST match your GitHub Pages URL exactly
+REGISTERED_URL = "https://arhantbarmate.github.io/nexus-core/"
 
-# --- CONFIGURATION & DATABASE SETUP ---
-
-# Get the directory where main.py is located to ensure DB is saved in the same folder
+# --- DATABASE SETUP ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "nexus_vault.db")
 
 def get_db_connection():
-    """Safety wrapper for database connection with row factory."""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row  # Allows accessing columns by name
+    conn = sqlite3.connect(DB_PATH, timeout=5.0, check_same_thread=False, isolation_level=None)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL;") 
+    conn.execute("PRAGMA user_version = 1;")
     return conn
 
-def init_db():
-    """Initializes the deterministic 60-30-10 ledger."""
+# --- LIFESPAN HANDLER ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     conn = get_db_connection()
-    try:
-        curr = conn.cursor()
-        curr.execute('''
-            CREATE TABLE IF NOT EXISTS transactions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                amount REAL NOT NULL,
-                creator_share REAL NOT NULL,
-                user_pool_share REAL NOT NULL,
-                network_fee REAL NOT NULL,
-                timestamp TEXT NOT NULL
-            )
-        ''')
-        conn.commit()
-    finally:
-        conn.close()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            amount REAL NOT NULL,
+            creator_share REAL NOT NULL,
+            user_pool_share REAL NOT NULL,
+            network_fee REAL NOT NULL,
+            timestamp TEXT NOT NULL
+        )
+    """)
+    conn.close()
 
-# Initialize the Vault on startup
-init_db()
+    if TON_API_KEY:
+        try:
+            async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+                response = await client.post(
+                    "https://builders.ton.org/api/v1/event",
+                    headers={
+                        "Authorization": f"Bearer {TON_API_KEY}",
+                        "Content-Type": "application/json",
+                        "Origin": "https://arhantbarmate.github.io",
+                        "Referer": REGISTERED_URL,
+                        "User-Agent": "NexusNode/1.1"
+                    },
+                    json={
+                        "event_name": "app_open",
+                        "properties": {"node_status": "online"}
+                    }
+                )
+                print(f"TON Startup Heartbeat: {response.status_code}")
+        except Exception as e: 
+            print(f"TON Startup Error: {e}")
+    yield
+
+app = FastAPI(title="Nexus Protocol Node", version="1.1", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+async def signal_ton_builders(amount: float):
+    if not TON_API_KEY: return
+    try:
+        async with httpx.AsyncClient(timeout=5.0, follow_redirects=True) as client:
+            await client.post(
+                "https://builders.ton.org/api/v1/event",
+                headers={
+                    "Authorization": f"Bearer {TON_API_KEY}",
+                    "Referer": REGISTERED_URL
+                },
+                json={
+                    "event_name": "transaction", 
+                    "properties": {"amount": float(amount)}
+                }
+            )
+    except Exception: pass
 
 # --- API ENDPOINTS ---
 
-@app.get("/")
-def read_root():
-    return {"status": "Nexus Brain Online", "mode": "Local Sovereign", "version": "1.1"}
-
-@app.get("/ledger")
-async def get_ledger():
-    """Returns the authoritative aggregated ledger state."""
-    conn = get_db_connection()
-    try:
-        curr = conn.cursor()
-        curr.execute("SELECT SUM(creator_share), SUM(user_pool_share), SUM(network_fee) FROM transactions")
-        creator, user_pool, network = curr.fetchone()
-        
-        return {
-            "total_earned": creator or 0.0,
-            "global_user_pool": user_pool or 0.0,
-            "protocol_fees": network or 0.0
-        }
-    finally:
-        conn.close()
-
-@app.get("/transactions")
-async def get_transactions():
-    """Returns the full append-only transaction history for audit."""
-    conn = get_db_connection()
-    try:
-        curr = conn.cursor()
-        # Select ALL columns to prove the split math is correct in the logs
-        curr.execute("SELECT * FROM transactions ORDER BY id DESC")
-        rows = [dict(row) for row in curr.fetchall()]
-        return rows
-    finally:
-        conn.close()
+@app.get("/health")
+def health():
+    return {"status": "ok", "ton_analytics": "configured" if TON_API_KEY else "disabled"}
 
 @app.post("/execute_split/{amount}")
-async def execute_split(amount: float):
-    """Executes and records the 60-30-10 split."""
-    if amount <= 0:
-        raise HTTPException(status_code=400, detail="Amount must be positive")
-
-    # Authoritative 60-30-10 Logic (Deterministic Rounding)
-    creator = round(amount * 0.60, 2)
-    user_pool = round(amount * 0.30, 2)
-    network = round(amount * 0.10, 2)
-
+def execute_split(amount: float, background_tasks: BackgroundTasks):
+    if amount <= 0: raise HTTPException(status_code=400, detail="Invalid amount")
+    amount = round(amount, 2)
+    c, p, f = round(amount*0.6, 2), round(amount*0.3, 2), round(amount*0.1, 2)
     conn = get_db_connection()
     try:
-        curr = conn.cursor()
-        curr.execute(
+        conn.execute(
             "INSERT INTO transactions (amount, creator_share, user_pool_share, network_fee, timestamp) VALUES (?, ?, ?, ?, ?)",
-            (amount, creator, user_pool, network, datetime.now().isoformat())
+            (amount, c, p, f, datetime.utcnow().isoformat())
         )
-        conn.commit()
-        
-        return {
-            "status": "success",
-            "transaction_id": curr.lastrowid,
-            "split": {
-                "creator": creator,
-                "user_pool": user_pool,
-                "network": network
-            }
-        }
-    except Exception as e:
-        conn.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        conn.close()
+    finally: conn.close()
+    background_tasks.add_task(signal_ton_builders, amount)
+    return {"status": "success", "split": {"creator": c, "pool": p, "fee": f}}
+
+@app.get("/ledger")
+def get_ledger():
+    conn = get_db_connection()
+    try:
+        row = conn.execute("SELECT SUM(creator_share) as c, SUM(user_pool_share) as p, SUM(network_fee) as f FROM transactions").fetchone()
+        return {"total_earned": round(row['c'] or 0.0, 2), "global_user_pool": round(row['p'] or 0.0, 2), "protocol_fees": round(row['f'] or 0.0, 2)}
+    finally: conn.close()
+
+@app.get("/transactions")
+def get_transactions():
+    conn = get_db_connection()
+    try:
+        rows = conn.execute("SELECT id, amount, timestamp FROM transactions ORDER BY id DESC LIMIT 10").fetchall()
+        return [dict(row) for row in rows]
+    finally: conn.close()

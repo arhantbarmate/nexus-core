@@ -1,34 +1,37 @@
 @echo off
-:: Windows-only orchestration script for Phase 1.1 feasibility
-TITLE Nexus Protocol - Infrastructure Node
-COLOR 0B
+setlocal EnableDelayedExpansion
 
-echo ==========================================
-echo    NEXUS PROTOCOL: PHASE 1.1 BOOT
-echo ==========================================
+TITLE Nexus Protocol - Sovereign Node Launcher
+COLOR 0A
+
+echo ==================================================
+echo   NEXUS PROTOCOL: STARTING SOVEREIGN NODE
+echo ==================================================
+
+:: 1. CLEANUP PREVIOUS SESSIONS
+echo [1/4] Cleaning up stale Nexus processes...
+taskkill /F /IM dart.exe /T >nul 2>&1
+taskkill /F /IM uvicorn.exe /T >nul 2>&1
+
+:: 2. START BACKEND (BRAIN)
+echo [2/4] Launching FastAPI Backend...
+:: We use a single-line command string here to prevent "Blank Window" errors.
+start "Nexus_Backend" cmd /k "cd /d C:\nexus-core\backend && if exist venv\Scripts\activate.bat (call venv\Scripts\activate) && uvicorn main:app --reload --host 127.0.0.1 --port 8000"
+
+:: 3. VERIFICATION DELAY
+echo [3/4] Initializing SQLite and Port Binding...
+timeout /t 5 /nobreak >nul
+
+:: 4. START FRONTEND (BODY)
+echo [4/4] Launching Flutter Web Client...
+cd /d C:\nexus-core\client
+start "Nexus_Frontend" flutter run -d chrome --web-port 5000
+
 echo.
-
-:: Sanity check: Python availability
-echo [CHECK] Verifying Python installation...
-python --version
+echo ==================================================
+echo   SUCCESS: Nexus Sovereign Node is booting
+echo ==================================================
 echo.
-
-:: 1. Launch the Brain (Backend) - Green Terminal
-echo [1/2] Initializing Brain (FastAPI Execution Engine)...
-start "NEXUS BRAIN" cmd /k "color 0A && cd backend && venv\Scripts\activate && python -m uvicorn main:app --reload"
-
-:: Wait briefly to avoid race conditions
-timeout /t 3 /nobreak >nul
-
-:: 2. Launch the Body (Frontend) - Blue Terminal
-echo [2/2] Initializing Body (Flutter Dashboard)...
-start "NEXUS BODY" cmd /k "color 0B && cd client && flutter run -d windows"
-
-echo.
-echo ------------------------------------------
-echo Status: Systems Online
-echo Backend API: http://127.0.0.1:8000
-echo ------------------------------------------
-echo.
-echo Press any key to exit this launcher.
+echo Press any key to exit this launcher window.
 pause >nul
+endlocal

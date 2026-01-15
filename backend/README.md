@@ -1,102 +1,107 @@
-# Nexus Backend (Brain) 🧠
+Nexus Backend (Brain) 🧠
 
-The Nexus Backend is the FastAPI-based execution engine (“Brain”) for the Nexus Protocol.
+The Nexus Backend is the FastAPI-based execution engine (“Brain”) for the Nexus Protocol. It is responsible for enforcing deterministic economic logic, maintaining the local sovereign vault (SQLite), and exposing a minimal, strict API consumed by the Nexus Client (“Body”).
 
-It enforces deterministic economic logic, manages the local sovereign vault (SQLite), and exposes a strict API consumed by the Nexus Client (“Body”).
+In Phase 1.1, the Brain operates entirely local-first, validating restart-proof execution of the 60-30-10 economic model while emitting non-blocking telemetry to the TON Builders ecosystem for observability.
 
-In **Phase 1.1**, the backend runs entirely local-first to validate restart-proof execution of the **60-30-10** economic model.
+🚀 Getting Started
+Prerequisites
 
-## 🚀 Getting Started
+Python 3.10+
 
-These instructions allow you to run the Nexus Brain locally.
+pip (Python Package Manager)
 
-### Prerequisites
+Virtual Environment (strongly recommended)
 
-* **Python 3.10+**
-* **pip** (Python Package Manager)
-* **Virtual Environment** (Recommended)
+🛠️ Installation
+Navigate to the Backend Directory
+cd backend
 
-### 🛠️ Installation
+Create and Activate a Virtual Environment
+Windows
+python -m venv venv
+.\venv\Scripts\activate
 
-1.  **Navigate to the Backend Directory**
-    ```bash
-    cd backend
-    ```
+macOS / Linux
+python3 -m venv venv
+source venv/bin/activate
 
-2.  **Create & Activate Virtual Environment**
-    * **Windows:**
-        ```bash
-        python -m venv venv
-        .\venv\Scripts\activate
-        ```
-    * **macOS / Linux:**
-        ```bash
-        python3 -m venv venv
-        source venv/bin/activate
-        ```
+Install Dependencies
+pip install -r requirements.txt
 
-3.  **Install Dependencies**
-    ```bash
-    pip install -r requirements.txt
-    ```
+Run the Server
+uvicorn main:app --reload
 
-4.  **Run the Server**
-    ```bash
-    uvicorn main:app --reload
-    ```
-    
-    The API will be available at:
-    * **Base URL:** `http://127.0.0.1:8000`
-    * **Swagger Docs:** `http://127.0.0.1:8000/docs`
+Access Points
 
-## 🧠 Core Logic & API Endpoints
+Base URL: http://127.0.0.1:8000
 
-The Brain is the sole authority for enforcing the Nexus Protocol’s **60-30-10** split.
+Swagger UI: http://127.0.0.1:8000/docs
 
-### POST /execute_split/{amount}
-Executes a deterministic economic split.
-* **60%** → Creator allocation
-* **30%** → User pool
-* **10%** → Network fee
+🧠 Core Logic and API Endpoints
+📡 Automated Startup Heartbeat
 
-**Validation:**
-* Rejects zero or negative amounts
-* Rounds values deterministically
-* Appends immutable transaction record
+On startup, the Brain emits a background heartbeat event to the TON Builders analytics endpoint using a FastAPI lifespan handler.
 
-### GET /ledger
-Returns the authoritative aggregated ledger state:
-```json
+Observability: Confirms node availability to the TON ecosystem
+
+Non-Blocking: Executed asynchronously; failure has no effect on local execution or ledger state
+
+POST /execute_split/{amount}
+
+Executes the deterministic 60-30-10 economic split.
+
+60% → Creator allocation
+
+30% → User pool
+
+10% → Network fee
+
+Dual-Path Design
+
+Authoritative Path:
+Immediate write to nexus_vault.db (SQLite WAL mode)
+
+Observability Path:
+Non-blocking background signal sent to TON Builders
+
+GET /ledger
+
+Returns the aggregated ledger state derived from the local vault.
+
 {
   "total_earned": 0.0,
   "global_user_pool": 0.0,
   "protocol_fees": 0.0
 }
+
 GET /transactions
-Returns the append-only transaction history stored in the local vault.
 
-📂 Project Structure
-Plaintext
+Returns the append-only transaction history, bounded to the last 10 entries.
 
-backend/
-├── main.py              # FastAPI app, routes, and split logic
-├── nexus_vault.db       # SQLite vault (auto-created at runtime)
-├── requirements.txt     # Python dependencies
-└── README.md            # This file
-🔐 Security Model (Phase 1.1)
-Local Sovereignty: All data is stored in nexus_vault.db on the user’s machine.
+🔐 Security and Infrastructure Model
 
-Deterministic Enforcement: Economic logic is executed server-side only.
+Local Sovereignty:
+All economic state is stored locally. No external service is required to validate or persist execution.
 
-Isolation: No external services or blockchain dependencies in this phase.
+Concurrency Protection:
+SQLite operates in WAL mode with an explicit 5-second connection timeout to prevent file locks.
 
-Restart Safety: Ledger state survives full process termination.
+Versioned Schema:
+Uses PRAGMA user_version for forward-compatible migrations.
+
+Isolation by Design:
+Network or analytics failures cannot block the execution path.
 
 🔮 Roadmap
-Phase 1.2: TON Connect identity + Merkle-anchored state commitments
 
-Phase 1.3: Performance benchmarking & external audit
+Phase 1.2: Local Merkle root computation and TON Connect identity
 
-Phase 2.0: Opportunistic mesh synchronization & decentralized settlement
+Phase 1.3: Performance benchmarking and external audit
 
-© 2026 Nexus Protocol Licensed under Apache License 2.0
+Phase 2.0: Opportunistic mesh synchronization and decentralized settlement
+
+📜 License
+
+© 2026 Nexus Protocol
+Licensed under the Apache License 2.0
