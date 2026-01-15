@@ -1,0 +1,34 @@
+# --- SENSITIVE DATA (CRITICAL) ---
+.env
+.env.*
+*.properties
+local.properties
+*.jks
+*.keystore
+
+# --- PYTHON / FASTAPI ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+nexus_vault.db
+
+# --- FLUTTER / DART ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+*.png
+*.jpg
+*.jpeg
+
+# --- IDE / SYSTEM ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
