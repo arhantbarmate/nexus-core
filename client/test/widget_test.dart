@@ -3,11 +3,10 @@ import 'package:nexus_app/main.dart';
 
 void main() {
   testWidgets('Nexus Protocol Smoke Test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    // Build the NexusApp defined in lib/main.dart
+    await tester.pumpWidget(const NexusApp());
 
-    // Verify that the environment initialized.
-    // Replace 'Nexus' with a string actually present in your main.dart UI.
-    expect(find.byType(MyApp), findsOneWidget);
+    // Verify the widget tree initialized by checking for the Dashboard
+    expect(find.byType(NexusApp), findsOneWidget);
   });
 }
