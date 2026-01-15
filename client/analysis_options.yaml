@@ -1,3 +1,5 @@
+include: package:flutter_lints/flutter.yaml
+
 analyzer:
   errors:
     deprecated_member_use: ignore
@@ -5,4 +7,4 @@ analyzer:
 
 linter:
   rules:
-    - flutter_lints
+    # Additional custom rules can be added here if needed
