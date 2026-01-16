@@ -1,44 +1,8 @@
-# ==========================================================
-# 🧠 NEXUS BRAIN: SOVEREIGN DEPENDENCIES (PHASE 1.2)
-# ==========================================================
-# Architecture: Gateway Model (Brain-First)
-# Python Version: 3.9+
-# ----------------------------------------------------------
-
-# --- 🚀 THE GATEWAY ENGINE ---
-# FastAPI powers the Brain:
-# - Economic API execution
-# - Gateway routing
-# - Reverse proxy coordination
-fastapi>=0.100.0
-
-# Uvicorn is the ASGI server exposing the Brain
-# on the public interface (Port 8000).
-uvicorn[standard]>=0.23.0
-
-# --- 🔄 PROXY & BRIDGE UTILITIES ---
-# HTTPX is used for:
-# - Async reverse proxy (Brain → Body)
-# - Outbound notification requests (Telegram)
-httpx>=0.24.0
-
-# --- 🔐 TELEGRAM CONTEXT PARSING ---
-# Parses Telegram WebApp initData payloads.
-# NOTE:
-# - Phase 1.2 uses parsing only
-# - Cryptographic verification is deferred
-telegram-init-data>=0.1.0
-
-# --- ⚙️ CONFIGURATION ---
-# Loads environment variables (e.g. BOT_TOKEN)
-# from a local .env file.
-python-dotenv>=1.0.0
-
-# ==========================================================
-# ✅ PHASE 1.2 INTEGRITY NOTES
-# ----------------------------------------------------------
-# • No cryptographic identity libraries are required
-# • No database drivers beyond stdlib sqlite3
-# • No blockchain or networking dependencies
-# • All execution remains local-first
-# ==========================================================
+fastapi
+uvicorn
+python-multipart
+# Testing & Security
+pytest
+pytest-asyncio
+httpx
+safety
