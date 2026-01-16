@@ -1,6 +1,9 @@
+# Core Web Server
 fastapi
 uvicorn
 python-multipart
+python-dotenv
+
 # Testing & Security
 pytest
 pytest-asyncio
