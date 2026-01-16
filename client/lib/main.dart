@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
-// THE KEY: Redirects JS calls based on platform
-import 'platform_stub.dart' if (dart.library.js) 'platform_js.dart' as js;
+// FIX: Conditional Import for Platform Neutrality
+import 'platform_stub.dart'
+    if (dart.library.js) 'platform_js.dart' as js;
 
-void main() => runApp(const NexusApp());
+import 'package:telegram_web_app/telegram_web_app.dart';
+
+void main() {
+  if (kIsWeb) {
+    try {
+      if (TelegramWebApp.instance.isSupported) {
+        TelegramWebApp.instance.ready();
+        TelegramWebApp.instance.expand();
+      }
+    } catch (e) {
+      debugPrint("Nexus: Sovereign Mock Mode active (Non-TMA Context)");
+    }
+  }
+  runApp(const NexusApp());
+}
 
 class NexusApp extends StatelessWidget {
   const NexusApp({super.key});
@@ -15,6 +30,7 @@ class NexusApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Nexus Protocol',
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.blueAccent,
@@ -33,59 +49,72 @@ class NexusDashboard extends StatefulWidget {
 }
 
 class _NexusDashboardState extends State<NexusDashboard> {
+  // --- STATE VARIABLES ---
   double creatorBalance = 0.0;
   double userPoolBalance = 0.0;
   double protocolFees = 0.0;
   List transactions = [];
   bool isLoading = true;
   bool isBackendOnline = false;
+  bool _initialized = false;
   
-  // Track the environment for UI transparency
-  String currentEnv = "LOCAL_NODE"; 
-
   final TextEditingController _amountController = TextEditingController();
-  final String baseUrl = "http://127.0.0.1:8000";
+
+  // --- ROUTING LOGIC (FIXED) ---
+  String get baseUrl {
+    final host = Uri.base.host;
+    
+    // 1. LOCAL MODE (Fixing the Offline Issue)
+    if (host == 'localhost' || host == '127.0.0.1') {
+      // Must append /api to match the Python Gateway logic
+      return "http://127.0.0.1:8000/api";
+    }
+
+    // 2. BRIDGE MODE (Ngrok/Telegram)
+    // Uses the proxy path
+    return "${Uri.base.origin}/api"; 
+  }
 
   @override
   void initState() {
     super.initState();
-    _initializeTelegram();
-    refreshData();
+    if (!_initialized) {
+      _initialized = true;
+      refreshData();
+    }
   }
 
-  // Guarded initialization for Telegram SDK
-  void _initializeTelegram() {
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  Map<String, String> _getAuthHeaders() {
     if (kIsWeb) {
       try {
-        if (js.context.hasProperty('Telegram')) {
-          var webApp = js.context['Telegram']['WebApp'];
-          
-          // Verify if launch parameters exist to prevent the "No Context" crash
-          var initData = webApp['initData'] ?? "";
-          if (initData.toString().isNotEmpty) {
-            webApp.callMethod('ready');
-            setState(() => currentEnv = "TELEGRAM_MODE");
-            debugPrint("Nexus: Telegram Context Verified");
-          } else {
-            setState(() => currentEnv = "SOVEREIGN_MOCK");
-            debugPrint("Nexus: No initData, entering Mock Mode");
-          }
+        final String initData = TelegramWebApp.instance.initData.raw;
+        if (initData.isNotEmpty) {
+          return {
+            'Authorization': 'tma $initData',
+            'Content-Type': 'application/json',
+          };
         }
-      } catch (e) {
-        debugPrint("Nexus: Telegram Init suppressed: $e");
-      }
+      } catch (_) {}
     }
+    return {'Content-Type': 'application/json'};
   }
 
   Future<void> refreshData() async {
     try {
-      // Short timeout prevents UI hanging when browser blocks "Mixed Content"
-      final healthRes = await http.get(Uri.parse("$baseUrl/health"))
-          .timeout(const Duration(seconds: 3));
+      final headers = _getAuthHeaders();
+      // Cache-busting health check
+      final healthUri = Uri.parse("$baseUrl/health?t=${DateTime.now().millisecondsSinceEpoch}");
+      final healthRes = await http.get(healthUri).timeout(const Duration(seconds: 3));
       
       if (healthRes.statusCode == 200) {
-        final ledgerRes = await http.get(Uri.parse("$baseUrl/ledger"));
-        final txRes = await http.get(Uri.parse("$baseUrl/transactions"));
+        final ledgerRes = await http.get(Uri.parse("$baseUrl/ledger"), headers: headers);
+        final txRes = await http.get(Uri.parse("$baseUrl/transactions"), headers: headers);
 
         if (ledgerRes.statusCode == 200 && txRes.statusCode == 200) {
           final ledgerData = json.decode(ledgerRes.body);
@@ -101,7 +130,7 @@ class _NexusDashboardState extends State<NexusDashboard> {
         }
       }
     } catch (e) {
-      debugPrint("Nexus Connection Error: $e");
+      debugPrint("Nexus Network Error: $e");
       setState(() {
         isBackendOnline = false;
         isLoading = false;
@@ -112,10 +141,24 @@ class _NexusDashboardState extends State<NexusDashboard> {
   Future<void> executeSplit(double amount) async {
     setState(() => isLoading = true);
     try {
-      final response = await http.post(Uri.parse("$baseUrl/execute_split/$amount"));
+      final headers = _getAuthHeaders();
+      final response = await http.post(
+        Uri.parse("$baseUrl/execute_split/$amount"),
+        headers: headers,
+      );
+
       if (response.statusCode == 200) {
+        // Safe Haptic feedback
+        if (kIsWeb) {
+          try {
+            js.context.callMethod('eval', ["window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')"]);
+          } catch (_) {}
+        }
+        
         _amountController.clear();
-        refreshData();
+        await refreshData();
+      } else {
+        setState(() => isLoading = false);
       }
     } catch (e) {
       setState(() => isLoading = false);
@@ -127,47 +170,74 @@ class _NexusDashboardState extends State<NexusDashboard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("NEXUS PROTOCOL", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         actions: [
-          _buildStatusIndicator(),
-        ],
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildMainContent(),
-    );
-  }
-
-  Widget _buildStatusIndicator() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Row(
-        children: [
-          Text(currentEnv, style: const TextStyle(fontSize: 8, color: Colors.white54)),
-          const SizedBox(width: 8),
-          Icon(
-            Icons.circle,
-            size: 12,
-            color: isBackendOnline ? Colors.greenAccent : Colors.redAccent,
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Icon(
+              Icons.circle, 
+              size: 12, 
+              color: isBackendOnline ? Colors.greenAccent : Colors.redAccent
+            ),
           ),
         ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: refreshData,
+        child: isLoading ? const Center(child: CircularProgressIndicator()) : _buildMainContent(),
       ),
     );
   }
 
   Widget _buildMainContent() {
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          if (!isBackendOnline) _buildErrorBanner(),
           _buildMainBalance(),
           const SizedBox(height: 25),
           _buildInputSection(),
-          const Divider(height: 50),
+          const Divider(height: 50, color: Colors.white10),
           _buildTransactionList(),
         ],
       ),
     );
+  }
+
+  Widget _buildMainBalance() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blueAccent.withOpacity(0.1), Colors.transparent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.blueAccent.withOpacity(0.2)),
+      ),
+      child: Column(children: [
+        const Text("CREATOR REWARD (60%)", style: TextStyle(color: Colors.blueAccent, fontSize: 11, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Text("\$${creatorBalance.toStringAsFixed(2)}", style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 20),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          _smallStat("Pool (30%)", userPoolBalance),
+          _smallStat("Fees (10%)", protocolFees),
+        ])
+      ]),
+    );
+  }
+
+  Widget _smallStat(String label, double val) {
+    return Column(children: [
+      Text(label, style: const TextStyle(fontSize: 10, color: Colors.white54)),
+      const SizedBox(height: 4),
+      Text("\$${val.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+    ]);
   }
 
   Widget _buildInputSection() {
@@ -175,11 +245,14 @@ class _NexusDashboardState extends State<NexusDashboard> {
       children: [
         TextField(
           controller: _amountController,
-          keyboardType: TextInputType.number,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20),
           decoration: InputDecoration(
-            labelText: "Execute Split Amount",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            prefixIcon: const Icon(Icons.account_balance_wallet),
+            hintText: "Enter Amount",
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.05),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
           ),
         ),
         const SizedBox(height: 15),
@@ -189,61 +262,41 @@ class _NexusDashboardState extends State<NexusDashboard> {
             if (val != null && val > 0) executeSplit(val);
           } : null,
           style: ElevatedButton.styleFrom(
-            minimumSize: const Size(double.infinity, 50),
             backgroundColor: Colors.blueAccent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 55),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
-          child: const Text("RUN 60-30-10 EXECUTION", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          child: const Text("RUN 60-30-10 EXECUTION", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );
-  }
-
-  Widget _buildErrorBanner() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-      child: const Row(children: [Icon(Icons.warning, color: Colors.redAccent), SizedBox(width: 10), Expanded(child: Text("BRAIN OFFLINE: Ensure main.py is running on localhost", style: TextStyle(color: Colors.redAccent, fontSize: 12)))]),
-    );
-  }
-
-  Widget _buildMainBalance() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.blueAccent.withOpacity(0.2))),
-      child: Column(children: [
-        const Text("CREATOR REWARD (60%)", style: TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.w600)),
-        Text("\$${creatorBalance.toStringAsFixed(2)}", style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 15),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [_smallStat("Pool (30%)", userPoolBalance), _smallStat("Fees (10%)", protocolFees)])
-      ]),
-    );
-  }
-
-  Widget _smallStat(String label, double val) {
-    return Column(children: [Text(label, style: const TextStyle(fontSize: 10, color: Colors.white54)), Text("\$${val.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]);
   }
 
   Widget _buildTransactionList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("RECENT VAULT ACTIVITY", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white38)),
-        const SizedBox(height: 10),
+        const Text("RECENT VAULT ACTIVITY", style: TextStyle(fontSize: 11, color: Colors.white38, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 15),
+        if (transactions.isEmpty) 
+          const Center(child: Text("No activity recorded", style: TextStyle(color: Colors.white24, fontSize: 12))),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: transactions.length,
           itemBuilder: (context, index) {
             final tx = transactions[index];
-            return Card(
-              color: Colors.white.withOpacity(0.02),
-              margin: const EdgeInsets.symmetric(vertical: 4),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.02),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: ListTile(
-                title: Text("Split Event: \$${tx['amount']}", style: const TextStyle(fontSize: 14)),
-                subtitle: Text("Vault ID: ${tx['id']}", style: const TextStyle(fontSize: 10)),
-                trailing: const Icon(Icons.check_circle, color: Colors.greenAccent, size: 16),
+                leading: const Icon(Icons.account_balance_wallet_outlined, color: Colors.blueAccent),
+                title: Text("Split Event: \$${tx['amount']}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                subtitle: Text("ID: ${tx['id']} • ${tx['timestamp'].toString().substring(11, 16)}", style: const TextStyle(fontSize: 11)),
               ),
             );
           },

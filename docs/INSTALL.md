@@ -1,16 +1,47 @@
-# 🛠️ Nexus Installation Guide (Phase 1.1)
+# 🛠️ Nexus Installation Guide (Phase 1.2)
 
-This guide walks you through the steps to deploy the **Nexus Protocol Phase 1.1** prototype on your local machine.
+This guide describes how to deploy a **Nexus Protocol Phase 1.2 Gateway Node** on a local machine.
+
+Phase 1.2 introduces the **Gateway Architecture**, where the Brain (backend) acts as the single public interface and reverse proxy for the Body (frontend).
 
 ---
 
-## 1. Prerequisites
-Before beginning, ensure your environment meets the following requirements:
-* **Python 3.10+** (Required for the FastAPI Brain)
-* **Flutter SDK** (Stable Channel - Required for the Desktop Body)
-* **Git** (For version control)
+## 1. Deployment Visualization
 
-Verify your installations:
+In Phase 1.2, two services run in parallel, but **only one port is accessed by the user**.
+
+```text
+       [ WEB BROWSER ]
+              |
+              | 1. Open http://localhost:8000
+              |
+              v
++------------------------------+
+|  TERMINAL 1: THE BRAIN 🧠    |
+|  (Uvicorn / FastAPI :8000)   |  ← PUBLIC GATEWAY
++------------------------------+
+              |
+              | 2. Brain internally proxies UI
+              |    from localhost:8080
+              v
++------------------------------+
+|  TERMINAL 2: THE BODY 📱     |
+|  (Flutter Web :8080)         |  ← INTERNAL TARGET
++------------------------------+
+```
+
+**The Body is never accessed directly.**
+
+---
+
+## 2. Prerequisites
+
+Ensure the following are installed:
+* **Python 3.9+** (required for the Brain)
+* **Flutter SDK** (3.x stable) (required for the Body)
+* **Git**
+
+Verify installations:
 ```bash
 python --version
 flutter --version
@@ -19,67 +50,122 @@ git --version
 
 ---
 
-## 2. Automated Startup (Windows Preferred)
-For the fastest setup on Windows, use the automation scripts located in the root directory:
+## 3. Automated Startup (Windows)
 
-* **`start_nexus.bat`**: Automatically installs Python dependencies and launches both the Brain (FastAPI) and Body (Flutter) in separate terminal windows.
-* **`stop_nexus.bat`**: Safely terminates all running Nexus-related processes (Python, Uvicorn, Dart/Flutter).
+For Windows users, automation scripts are provided at the repository root.
+
+### Scripts
+* **`start_nexus.bat`**
+    * Launches the Brain
+    * Launches the Body
+    * Optionally launches Ngrok (if configured)
+* **`stop_nexus.bat`**
+    * Gracefully terminates all Nexus processes
+
+*This is the recommended startup method on Windows.*
 
 ---
 
-## 3. Manual Backend Setup (The "Brain")
-If you are on Linux/macOS or prefer manual control, follow these steps:
+## 4. Manual Backend Setup (The Brain)
 
-1.  **Navigate to the backend directory:**
+The Brain must be started **first**, as it serves as the gateway.
+
+1.  **Navigate to the backend directory**
     ```bash
     cd backend
     ```
-2.  **Install dependencies:**
+2.  **Install dependencies**
     ```bash
     pip install -r requirements.txt
     ```
-3.  **Start the server:**
+3.  **Start the Gateway (Terminal 1)**
     ```bash
-    uvicorn main:app --reload
+    # Must bind to 0.0.0.0 for bridge compatibility
+    python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
     ```
-*The Brain is now active at:* `http://127.0.0.1:8000`
+
+The Brain is now active at: **`http://localhost:8000`**
 
 ---
 
-## 4. Manual Frontend Setup (The "Body")
-1.  **Open a new terminal and navigate to the client directory:**
+## 5. Manual Frontend Setup (The Body)
+
+In Phase 1.2, the Body runs in **Proxy Mode**.
+
+1.  **Open a second terminal and navigate to the client**
     ```bash
     cd client
     ```
-2.  **Fetch dependencies:**
+2.  **Fetch dependencies**
     ```bash
     flutter pub get
     ```
-3.  **Launch the application:**
+3.  **Launch the Body (Terminal 2)**
     ```bash
-    flutter run -d windows
+    # MUST run on port 8080
+    flutter run -d web-server \
+      --web-port 8080 \
+      --web-hostname 0.0.0.0 \
+      --release
     ```
-*(For Linux/macOS users, use `-d linux` or `-d macos` accordingly).*
+
+> **⚠️ Important:**
+> * Do not open `http://localhost:8080`
+> * Always access the application via: **`http://localhost:8000`**
 
 ---
 
-## 5. Verification Checklist
-Once both services are running, perform these steps to confirm **Phase 1.1 Hardening**:
+## 6. Verification Checklist
 
-1.  **Execute an Action:** Trigger a transaction via the Flutter Dashboard.
-2.  **Verify Persistence:** Confirm the file `backend/nexus_vault.db` is created automatically.
-3.  **Persistence Test:** Restart the backend terminal. Re-open the dashboard and verify that all balances and transaction history remain intact.
+Confirm correct Phase 1.2 operation:
 
+1.  Open `http://localhost:8000` — Flutter UI should load.
+2.  Verify the **Heartbeat indicator** is green.
+3.  Execute a split (e.g., enter `100`).
+4.  Restart the Brain.
+5.  Reload the page and confirm the transaction persists.
 
+This validates:
+* Proxy routing
+* Vault persistence
+* Gateway authority
 
 ---
 
-## 6. Troubleshooting
-* **Connection Error:** Ensure the backend is running on port `8000` before starting the frontend.
-* **Port Conflict:** If port 8000 is occupied, you can change the port using `uvicorn main:app --port XXXX` and update the API URL in the Flutter config.
-* **Resetting State:** To clear all data, delete `backend/nexus_vault.db` and restart the Brain.
+## 7. Bridge Setup (Optional)
+
+To access the node remotely (mobile or Telegram WebApp):
+
+1.  **Install Ngrok:** Download from [ngrok.com](https://ngrok.com).
+2.  **Start a tunnel:**
+    ```bash
+    # Always point Ngrok to the Brain only
+    ngrok http 8000
+    ```
+3.  **Access the generated HTTPS URL.**
+    * The Brain will proxy the UI automatically.
+    * No additional configuration is required on the client.
 
 ---
 
-© 2026 Nexus Protocol  
+## 8. Troubleshooting
+
+* **Brain Disconnected (Red Indicator):**
+    * Ensure FastAPI is running on port 8000.
+    * Confirm no other service is occupying the port.
+
+* **UI Not Loading at :8000:**
+    * Verify Flutter is running on port 8080.
+    * Check Brain logs for proxy errors.
+
+* **Resetting State:**
+    * To reset all local data:
+        1. Stop the Brain.
+        2. Delete `backend/nexus_vault.db`.
+        3. Restart the Brain.
+
+---
+
+© 2026 Nexus Protocol
+
 Licensed under the **Apache License 2.0**

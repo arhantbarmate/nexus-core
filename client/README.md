@@ -1,112 +1,146 @@
-Nexus Client (Body) 📱
+# 📱 Nexus Client (Stateless Body v1.2)
 
-The Nexus Client is a high-performance Flutter-based user interface (“Body”) for the Nexus Protocol.
+The **Nexus Client (Body)** is a high-performance, stateless user interface for the Nexus Protocol.
 
-It provides real-time visualization and interaction with the local sovereign execution engine (“Brain”) while remaining strictly local-first in Phase 1.1.
+The Body has **zero economic authority**.
+- It does not calculate balances.
+- It does not persist state.
+- It does not own data.
 
-The client is environment-aware, allowing it to run seamlessly as a standalone desktop or web application while remaining ready for future Telegram Mini App (TMA) integration.
+All economic logic is executed by the **Sovereign Brain** and exposed via a gateway.
 
-🚀 Architectural Innovation: Platform Guarding
+---
 
-To resolve the constraints of running a blockchain-integrated application across multiple environments, the Nexus Client uses a Custom Stubbing Pattern.
+## 📌 Phase Status
 
-Universal Compatibility
+- **Phase 1.1:** Platform guarding & local mocking — **Closed**
+- **Phase 1.2:** Proxy target & dynamic routing — **Current**
 
-Compiles for Web and Desktop without requiring the Telegram WebApp SDK at runtime
+> *Note: No client-side signing, identity, or mesh logic exists in this phase.*
 
-Avoids platform-specific crashes during local development and testing
+---
 
-Platform Stubs
+## 🏗️ Architecture: Proxy Target Model (Phase 1.2)
 
-Uses conditional imports to mock environment-specific behavior
+In Phase 1.2, the Body runs on **Port 8080**, but it is never accessed directly by users. All UI traffic flows through the Brain.
 
-Safely handles Telegram WebApp and TON Connect APIs when running outside Telegram
+```mermaid
+graph TD
+    User((User)) -->|Visits :8000| Brain[🧠 Brain (Gateway)]
+    Brain -->|Proxy Fetch| Body[📱 Body :8080]
+    Body -->|HTML / JS| Brain
+    Brain -->|Served UI| User
+```
 
-Prevents runtime dependency failures on Windows, macOS, Linux, and Web
+### Key Properties
+1.  The Brain is the **only** public interface.
+2.  The Body is a **proxy target only**.
+3.  The Body cannot bypass the Brain.
 
-Sovereign Mock Mode
+---
 
-Automatically activates when no external context is detected
+## ⚡ Phase 1.2 Capabilities
 
-Ensures the 60-30-10 split protocol remains fully functional
+### Environment-Aware Routing
+The client automatically adapts its API base path:
 
-Preserves local-first execution under all conditions
+* **Local execution:** `http://127.0.0.1:8000/api`
+* **Bridged / Hosted execution:** Relative path `/api`
 
-🛠️ Getting Started
-Prerequisites
+This allows the same build to function correctly across:
+* Local browser
+* Telegram WebApp
+* Ngrok bridge
 
-Flutter SDK (Stable, 3.x or higher)
+### Platform Guarding
+Conditional imports are used to ensure safe compilation across environments:
 
-Dart SDK (bundled with Flutter)
+* `platform_stub.dart` — Desktop / non-Telegram
+* `platform_js.dart` — Telegram WebApp (Web only)
 
-Desktop or Web target enabled
+This prevents runtime crashes such as: `ReferenceError: Telegram is not defined`.
 
-A running Nexus Backend (FastAPI on port 8000)
+---
 
-Installation & Launch
-Navigate and Fetch Dependencies
+## 🚀 Quick Start
+
+### Prerequisites
+* Flutter SDK (3.x stable)
+* A running Nexus Brain on port 8000
+
+### Installation
+
+```bash
 cd client
 flutter pub get
+```
 
-Sovereign Launch (Web)
-flutter run -d web-server --web-port 5000 --release
+### Launch the Body (Proxy Mode)
 
+```bash
+# MUST run on port 8080
+flutter run -d web-server \
+  --web-port 8080 \
+  --web-hostname 0.0.0.0 \
+  --release
+```
 
-Open the client in your browser at:
+> **⚠️ Important:**
+> * Do not open `http://localhost:8080` directly.
+> * Always access the application via: **`http://localhost:8000`**
 
-http://localhost:5000
+---
 
+## 🧭 Application Behavior
 
-The client expects the backend to be available at:
+### 🟢 Liveness Indicator
+A real-time heartbeat indicator validates connectivity with the Brain:
+* **Green** → Brain reachable (Gateway active)
+* **Red** → Brain offline or proxy misconfigured
 
-http://127.0.0.1:8000
+### 🔢 Deterministic Input
+The client provides a hardened numeric input for split execution.
+* The client sends **intent only**.
+* The Brain performs all calculations.
+* The Vault is updated exclusively server-side.
 
-🧭 Application Behavior
+### 🚫 Stateless UI Guarantees
+* No ledger data stored in browser storage.
+* No caching of economic state.
+* Clearing browser data does not affect balances (All persistence lives in the Brain’s vault).
 
-Liveness Indicator
-Real-time heartbeat monitor (Green / Red) validating connectivity between the UI (Body) and the Sovereign Vault (Brain)
+---
 
-Deterministic Split Input
-Hardened numeric input field for executing the 60-30-10 split protocol
+## 🔐 Security & Isolation Model
 
-Vault Visualization
-Persistent table displaying the last 10 local split events, sourced directly from the SQLite vault
+### 1. Zero Authority UI
+The Body cannot:
+* Write to the database.
+* Compute economic values.
+* Modify ledger state.
 
-Zero-Knowledge UI
-The client never calculates economic logic and never mutates state independently
-It acts purely as a visual “window” into the backend’s deterministic execution
+### 2. Proxy Discipline
+* All requests flow through the Brain.
+* The client does not call external APIs directly.
 
-🔐 Security Model (Phase 1.1)
+### 3. Scope Discipline
+* No private keys.
+* No cryptographic signing.
+* No peer-to-peer logic.
+*(These are explicitly deferred)*.
 
-Vault Isolation
-No private data is cached in the browser or local storage
-All state is fetched on-demand from the backend
+---
 
-Local-First Privacy
-All interaction is restricted to localhost, preventing third-party data leakage
+## 🧭 Roadmap Alignment
 
-Handshake Discipline
-Communication with the Brain uses standardized request headers
-Only authorized local requests can mutate vault state
+- [x] **Phase 1.1** — Platform guarding & local mocking (Closed)
+- [x] **Phase 1.2** — **Proxy target & dynamic routing (Current)**
+- [ ] **Phase 2.0** — Client-side request signing (Ed25519)
+- [ ] **Phase 3.0** — Mesh visualization & relay UI
 
-🧪 Testing
+---
 
-Basic widget and integration tests can be run with:
+### 📜 License
+**© 2026 Nexus Protocol**
 
-flutter test
-
-
-Advanced performance benchmarking and stress testing are planned for Phase 1.3.
-
-🔮 Roadmap
-
-Phase 1.2 — TON Connect v2 integration and Merkle-anchored state commits
-
-Phase 1.3 — Performance stress-testing and UI/UX audit for Telegram users
-
-Phase 2.0 — Decentralized peer-to-peer synchronization between sovereign nodes
-
-📜 License
-
-© 2026 Nexus Protocol
 Licensed under the Apache License 2.0

@@ -1,80 +1,128 @@
-# 🗺️ Nexus Protocol — Engineering Roadmap (Research)
+# 🗺️ Nexus Protocol — Engineering Roadmap
 
-> ⚠️ **Non-Binding Research Document**
->
-> This roadmap describes **exploratory engineering directions** for Nexus Protocol.
-> It is **not a delivery commitment**, **not part of Phase 1.1 grant scope**, and
-> **subject to change** based on feasibility, funding, and external review.
+This document tracks the evolution of the Nexus Sovereign Node. The roadmap is strictly phased to ensure architectural correctness before feature expansion.
 
-**Current Status:** Phase 1.1 (Feasibility) — **Completed**
-**Research Focus:** Phase 1.2 (Anchoring & Identity)
+**Current Status:** `PHASE 1.2 — GATEWAY (LOCKED)`
+**Primary Focus:** Environment Consistency & Documentation
 
 ---
 
-## 📍 Phase 1: Foundation (The Local Machine)
+## 📅 Roadmap Overview
 
-### ✅ Phase 1.1: Feasibility Prototype (Completed)
-**Goal:** Prove that a deterministic economic engine can run offline on a user device.
-
-- [x] **The Brain:** FastAPI execution engine enforcing deterministic 60-30-10 logic.
-- [x] **The Vault:** Restart-proof SQLite persistence (append-only `transactions` table).
-- [x] **The Body:** Flutter dashboard for real-time local state visualization.
-- [x] **Auditability:** ISO 8601 timestamping for all transactions.
-- [x] **Cryptographic Feasibility:** `merkle_anchor.py` validating local state hashing.
-
-> **Note:** Phase 1.1 intentionally excludes identity, signatures, wallets, and on-chain settlement. All validated logic remains strictly local to the sovereign node.
-
----
-
-## 🧪 Phase 1.2: Anchoring & Identity (Research Target)
-**Goal:** Explore how local sovereign nodes can anchor state to TON without sacrificing local-first guarantees.
-
-- [ ] **TON Connect Integration (Exploratory):** Evaluate wallet-based identity binding for node ownership.
-- [ ] **Merkle Anchoring (Feasibility):** Extend Merkle root generation toward automated submission to TON test environments.
-- [ ] **Protocol Fee Handling (Research):** Investigate minimal on-chain mechanisms for protocol fee anchoring.
-
----
-
-## 🚀 Phase 2: The Mesh (Research)
-
-> **Scope Guard:** Phase 2 research is exploratory only and does not imply protocol inclusion without separate feasibility validation.
-
-### Phase 2.1: Peer-to-Peer Transport
-**Goal:** Explore local-area synchronization without reliance on centralized infrastructure.
-
-- [ ] **libp2p Evaluation:** Gossip-based peer discovery and message propagation.
-- [ ] **Local Transport Research:** Bluetooth Low Energy (BLE) and Wi-Fi Direct packet exchange.
-
-### Phase 2.2: Incentive Layer (The 30% Pool)
-**Goal:** Study economic incentives for physical infrastructure participation.
-
-- [ ] **Proof of Relay (Concept):** Cryptographic stamping of forwarded packets.
-- [ ] **Relay Reward Modeling:** Research distribution of the 30% pool to relay nodes.
-
-> **Economic Note:** Any incentive mechanisms described here are theoretical and not enforced by the protocol in Phase 1.x.
-
----
-
-## 📊 Research Timeline (Illustrative)
-
-```mermaid
-timeline
-    title Nexus Protocol — Illustrative Research Progression
-
-    section Phase 1.1 (Completed)
-        Local-First Execution Engine : FastAPI Brain
-        Sovereign Persistence        : SQLite Vault
-        Deterministic Economics      : 60-30-10 Enforcement
-        Cryptographic Feasibility    : Merkle Root Generation
-
-    section Phase 1.2 (Research)
-        Identity Integration         : TON Connect (Exploratory)
-        State Commitments            : Merkle Anchoring (Feasibility)
-
-    section Phase 2.0 (Research)
-        Mesh Transport               : libp2p / Gossip
-        Incentive Settlement         : Proof-of-Relay (Concept)
+```text
+PHASE 1.1: FOUNDATION (Done)      PHASE 1.2: GATEWAY (Active)      PHASE 1.3: HARDENING (Next)
++--------------------------+      +--------------------------+      +--------------------------+
+| • FastAPI Brain          |      | • Gateway Pattern        |      | • Observability          |
+| • SQLite Vault (WAL)     | ---> | • Reverse Proxy          | ---> | • Failure Mode Tests     |
+| • 60-30-10 Logic         |      | • Stateless Body         |      | • Operator Ergonomics    |
++--------------------------+      +--------------------------+      +--------------------------+
+       (Localhost)                     (Bridge / WebApp)                  (Production Ready)
 ```
+
+---
+
+## ✅ Phase 0 — Concept & Feasibility (Closed)
+**Core Question:** *Is this idea worth building?*
+
+* [x] **Economic Thesis:** Defined 60-30-10 split.
+* [x] **Local-First Verification:** Proved `merkle_anchor.py` feasibility.
+* [x] **Prototypes:** Throwaway scripts to validate deterministic math.
+
+---
+
+## ✅ Phase 1.1 — Sovereign Foundation (Closed)
+**Core Question:** *Can this run locally and deterministically?*
+
+* [x] **Brain:** FastAPI backend execution engine.
+* [x] **Vault:** SQLite database with WAL mode persistence.
+* [x] **Economics:** Deterministic 60-30-10 execution.
+* [x] **Local Execution:** Functional on localhost.
+
+*Status: Closed. The foundation is solid.*
+
+---
+
+## 🟢 Phase 1.2 — Gateway Architecture (LOCKED)
+**Core Question:** *Can a sovereign node behave identically across environments?*
+
+### Core Architecture
+* [x] **Gateway Pattern:** Brain (Port 8000) is the sole public interface.
+* [x] **Reverse Proxy:** Brain routes to Body (Port 8080) internally.
+* [x] **Unified Namespace:** `NEXUS_DEV_001` enforced for consistency.
+
+### Bridge & Security
+* [x] **Ngrok Support:** Validated tunneling for mobile/Telegram access.
+* [x] **Isolation:** Body is stateless; only Brain writes to Vault.
+* [x] **Recursion Guard:** Header-based protection against proxy loops.
+
+*Status: Active & Released. This is the current public baseline.*
+
+---
+
+## ⏳ Phase 1.3 — Hardening & Readiness (Planned)
+**Core Question:** *Is this architecture safe enough to build cryptography on?*
+
+Before adding identity, we must ensure the system handles failure gracefully.
+
+* [ ] **Observability:** Structured JSON logs and `/health` endpoints.
+* [ ] **Vault Integrity:** Startup checks for database corruption.
+* [ ] **Stress Testing:** Determinism validation under high load.
+* [ ] **Degraded States:** Clear UI feedback when the Brain is unreachable.
+
+*Status: Not Started. Recommended before Phase 2.0.*
+
+---
+
+## 🔮 Phase 2.0 — Identity & Cryptography (Future)
+**Core Question:** *Who is allowed to execute, and can we prove it?*
+
+* [ ] **Ed25519 Identity:** Persistent node/user keypairs.
+* [ ] **Client Signing:** Body signs requests; Brain verifies signatures.
+* [ ] **Verified Telegram Auth:** Cryptographic validation of `initData`.
+* [ ] **Multi-User Schema:** Ledger support for multiple `user_id`s.
+
+*Status: Future. Introduces cryptographic trust.*
+
+---
+
+## 🔮 Phase 3.0 — Mesh & Settlement (Future)
+**Core Question:** *How do sovereign nodes coordinate globally?*
+
+* [ ] **Peer Discovery:** mDNS / DHT-based node finding.
+* [ ] **Gossip Protocol:** Encrypted event propagation.
+* [ ] **Settlement Anchoring:** Merkle root commitments to TON.
+
+---
+
+## 🔮 Phase 4.0 — Ecosystem (Future)
+**Core Question:** *What can be built on top of Nexus?*
+
+* [ ] **Plugin System:** Third-party economic modules.
+* [ ] **Creator Tools:** SDKs for building sovereign apps.
+* [ ] **Governance:** Community-driven protocol updates.
+
+---
+
+## 📊 Phase Summary Table
+
+| Phase | Name | Core Question | Status |
+| :--- | :--- | :--- | :--- |
+| **0** | Concept | Is it worth building? | ✅ **Closed** |
+| **1.1** | Foundation | Can it run locally? | ✅ **Closed** |
+| **1.2** | **Gateway** | **Is it consistent?** | 🟢 **Locked** |
+| **1.3** | Hardening | Is it robust? | ⏳ **Next** |
+| **2.0** | Identity | Who can execute? | 🔮 **Future** |
+| **3.0** | Mesh | How to coordinate? | 🔮 **Future** |
+
+---
+
+## 🛑 Feature Deferral Log
+*To preserve correctness, the following are explicitly deferred until Phase 2.0+:*
+
+1.  **JWT / Session Tokens** (Phase 2.0)
+2.  **Client-Side Private Keys** (Phase 2.0)
+3.  **Peer-to-Peer Networking** (Phase 3.0)
+4.  **On-Chain Settlement** (Phase 3.0)
 
 ---
 

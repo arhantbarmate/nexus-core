@@ -1,5 +1,5 @@
 # ==============================================================================
-# NEXUS PROTOCOL - MASTER GITIGNORE (PHASE 1.1 FINAL)
+# NEXUS PROTOCOL - MASTER GITIGNORE (PHASE 1.2 GATEWAY)
 # ==============================================================================
 
 # --- 🔐 SENSITIVE DATA (CRITICAL) ---
@@ -10,6 +10,13 @@ local.properties
 *.jks
 *.keystore
 secrets.json
+
+# --- 🛠️ TOOLS & BINARIES (NEW) ---
+# Prevents committing the bridge tunnel binary
+ngrok.exe
+ngrok
+*.exe
+*.dll
 
 # --- 🛰️ NEXUS SOVEREIGN VAULT ---
 # Prevents local database state from leaking to GitHub
@@ -39,7 +46,6 @@ env/
 .venv/
 
 # --- 📱 FLUTTER / DART (BODY) ---
-# Do NOT ignore 'lib/' here; it is your source code!
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies

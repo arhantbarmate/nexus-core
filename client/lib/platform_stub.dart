@@ -1,9 +1,14 @@
-class _JsContext {
-  bool hasProperty(String name) => false;
-  _JsObject operator [](String name) => _JsObject();
+// platform_stub.dart
+// This acts as a shield for non-web platforms (Windows, Android).
+// It mimics the structure of dart:js so the app compiles safely.
+
+class MockContext {
+  // Matches the signature of the real js.context.callMethod
+  void callMethod(String method, [List? args]) {
+    // Intentionally empty. 
+    // On desktop, we just ignore these calls instead of crashing.
+  }
 }
-class _JsObject {
-  void callMethod(String method, [List<dynamic>? args]) {}
-  dynamic operator [](String name) => null;
-}
-final context = _JsContext();
+
+// CRITICAL: This must be named 'context' to match dart:js
+final MockContext context = MockContext();

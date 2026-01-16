@@ -1,107 +1,91 @@
-Nexus Backend (Brain) 🧠
+# ====================================================
+# 🏗️ NEXUS ARCHITECTURE & SYSTEM DESIGN (V1.2)
+# ====================================================
+# Focus: Economic Authority & Gateway Proxy Logic
+# Status: Phase 1.2 (Active)
+# ----------------------------------------------------
 
-The Nexus Backend is the FastAPI-based execution engine (“Brain”) for the Nexus Protocol. It is responsible for enforcing deterministic economic logic, maintaining the local sovereign vault (SQLite), and exposing a minimal, strict API consumed by the Nexus Client (“Body”).
+## 1. THE SOVEREIGN DESIGN PHILOSOPHY
 
-In Phase 1.1, the Brain operates entirely local-first, validating restart-proof execution of the 60-30-10 economic model while emitting non-blocking telemetry to the TON Builders ecosystem for observability.
+Nexus is built on the principle of "Separation of Concern with 
+Authority."
 
-🚀 Getting Started
-Prerequisites
+- THE BRAIN (Backend): The Economic Authority.
+- THE BODY (Frontend): The Stateless Observer.
 
-Python 3.10+
+By routing all traffic through the Brain (Port 8000), we 
+ensure the UI can never "trick" the ledger.
 
-pip (Python Package Manager)
+---
 
-Virtual Environment (strongly recommended)
+## 2. THE GATEWAY PROXY LOGIC (VISUALIZED)
 
-🛠️ Installation
-Navigate to the Backend Directory
-cd backend
+In Phase 1.1, we had two ports open. In Phase 1.2, we moved to 
+a Single Gateway model to ensure consistent behavior across 
+Localhost and Ngrok.
 
-Create and Activate a Virtual Environment
-Windows
-python -m venv venv
-.\venv\Scripts\activate
+[ USER / TELEGRAM ]
+       |
+       | (Connects to Port 8000)
+       v
++------------------------------------------+
+|          🧠 NEXUS BRAIN (GATEWAY)        |
+|------------------------------------------|
+|  1. Incoming Request Check               |
+|  2. "Is this an API call?"               |
+|                                          |
+|    YES (/api/*)           NO (/*)        |
+|         |                    |           |
+|         v                    v           |
+|  +--------------+    +---------------+   |
+|  |  FASTAPI     |    |  REVERSE      |   |
+|  |  LOGIC       |    |  PROXY        |   |
+|  +------+-------+    +-------+-------+   |
+|         |                    |           |
+|         | (Writes)           | (Fetches) |
+|         v                    v           |
+|  [ NEXUS_VAULT ]     [ FLUTTER BODY ]    |
+|  (SQLite DB)         (Localhost:8080)    |
++------------------------------------------+
 
-macOS / Linux
-python3 -m venv venv
-source venv/bin/activate
+This design allows the Node to appear as a single unified 
+service to the outside world.
 
-Install Dependencies
-pip install -r requirements.txt
+---
 
-Run the Server
-uvicorn main:app --reload
+## 3. DATA PERSISTENCE: THE VAULT
 
-Access Points
+The node uses SQLite for its "Sovereign Vault."
 
-Base URL: http://127.0.0.1:8000
+- MODE: Write-Ahead Logging (WAL).
+- ATOMICITY: Every split (60-30-10) is a single transaction. 
+- ISOLATION: The database file is locked to the backend process.
 
-Swagger UI: http://127.0.0.1:8000/docs
+---
 
-🧠 Core Logic and API Endpoints
-📡 Automated Startup Heartbeat
+## 4. UNIFIED NAMESPACE (SYNC STRATEGY)
 
-On startup, the Brain emits a background heartbeat event to the TON Builders analytics endpoint using a FastAPI lifespan handler.
+To ensure that state is identical whether accessed from 
+a desktop browser or a mobile Telegram app, the system 
+uses a hardcoded Debug Namespace in this phase:
 
-Observability: Confirms node availability to the TON ecosystem
+   ID: "NEXUS_DEV_001"
 
-Non-Blocking: Executed asynchronously; failure has no effect on local execution or ledger state
+This prevents the "Split-Brain" scenario where different 
+devices see different balances before we implement real 
+cryptographic identity.
 
-POST /execute_split/{amount}
+---
 
-Executes the deterministic 60-30-10 economic split.
+## 5. DESIGN DISCIPLINE (PHASE 1.2 LIMITS)
 
-60% → Creator allocation
+Consistent with Phase 1.2 goals, the following are 
+INTENTIONALLY EXCLUDED from the current architecture:
 
-30% → User pool
+[ ] NO CRYPTO IDENTITY: User authentication is context-based.
+[ ] NO P2P PEERING: This node does not talk to other nodes.
+[ ] NO BLOCKCHAIN ANCHORING: State is local-only.
 
-10% → Network fee
-
-Dual-Path Design
-
-Authoritative Path:
-Immediate write to nexus_vault.db (SQLite WAL mode)
-
-Observability Path:
-Non-blocking background signal sent to TON Builders
-
-GET /ledger
-
-Returns the aggregated ledger state derived from the local vault.
-
-{
-  "total_earned": 0.0,
-  "global_user_pool": 0.0,
-  "protocol_fees": 0.0
-}
-
-GET /transactions
-
-Returns the append-only transaction history, bounded to the last 10 entries.
-
-🔐 Security and Infrastructure Model
-
-Local Sovereignty:
-All economic state is stored locally. No external service is required to validate or persist execution.
-
-Concurrency Protection:
-SQLite operates in WAL mode with an explicit 5-second connection timeout to prevent file locks.
-
-Versioned Schema:
-Uses PRAGMA user_version for forward-compatible migrations.
-
-Isolation by Design:
-Network or analytics failures cannot block the execution path.
-
-🔮 Roadmap
-
-Phase 1.2: Local Merkle root computation and TON Connect identity
-
-Phase 1.3: Performance benchmarking and external audit
-
-Phase 2.0: Opportunistic mesh synchronization and decentralized settlement
-
-📜 License
-
-© 2026 Nexus Protocol
-Licensed under the Apache License 2.0
+----------------------------------------------------
+© 2026 Nexus Protocol | Apache License 2.0
+----------------------------------------------------

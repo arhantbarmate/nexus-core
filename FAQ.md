@@ -1,51 +1,136 @@
-# Nexus Protocol — Frequently Asked Questions
+# Nexus Protocol — Frequently Asked Questions (Phase 1.2)
 
-This document addresses common architectural and design questions about Nexus Protocol Phase 1.1.
-
----
-
-## Q: Why does Nexus use SQLite instead of a full database (PostgreSQL/MongoDB)?
-**A:** SQLite aligns with the **local-first sovereign node** philosophy. It requires zero external services, runs entirely on the user’s device, and provides restart-proof persistence without the operational overhead of a database server. This ensures the user physically owns their data file (`nexus_vault.db`).
+This document answers common architectural, economic, and operational questions about the **Nexus Protocol Phase 1.2 Gateway Node**.
 
 ---
 
-## Q: Is the 60-30-10 economic split hardcoded?
-**A:** Yes. In Phase 1.1, the split is intentionally hardcoded to ensure **deterministic, auditable behavior**. By fixing these parameters, we can validate the correctness of the execution engine and the persistence layer before introducing governance or adaptive parameters in later phases.
+## 🏛️ Architecture & Design
+
+### Q: Why does Nexus use SQLite instead of PostgreSQL or MongoDB?
+**A:** SQLite aligns with the **Local-First Sovereign Node** philosophy.
+It:
+* Requires no external services.
+* Runs entirely on the local device.
+* Provides ACID guarantees with minimal operational overhead.
+* Enables restart-proof persistence without server management.
+
+This makes it ideal for Phase 1.2, where correctness and sovereignty are prioritized over horizontal scale.
+
+**Conceptual Comparison:**
+```text
+  [ TRADITIONAL CLOUD APP ]          [ NEXUS SOVEREIGN NODE ]
+  User -> Cloud Server -> DB         User -> Local Brain -> Local File
+     (Data owned by provider)          (Data owned by operator)
+```
+
+### Q: Why not execute the economic logic directly on-chain?
+**A:** High-frequency micro-transactions are too slow and costly for real-time on-chain execution.
+In Phase 1.2:
+* All economic logic executes **locally** at zero gas cost.
+* Latency is near-instant.
+* The system remains usable without external dependencies.
+
+Future phases will introduce cryptographic anchoring (e.g., Merkle roots) to external chains to combine local speed with global verifiability.
 
 ---
 
-## Q: Why not execute the split logic directly on-chain?
-**A:** High-frequency micro-transactions are often too slow and expensive for real-time on-chain execution. Nexus executes economic logic locally at **zero gas cost**, allowing for high performance. Future phases will anchor cryptographic commitments (Merkle roots) to the TON blockchain to provide global trust without the network overhead.
+## 💰 Economics (60-30-10)
+
+### Q: Is the 60-30-10 economic split hardcoded?
+**A:** **Yes.**
+In Phase 1.2, the split is hardcoded and non-configurable to ensure:
+* Deterministic execution.
+* Easy auditing.
+* Elimination of governance complexity during validation.
+
+Governance and parameterization are intentionally deferred.
+
+**Economic Flow:**
+```text
+      [ INPUT: 100 ]
+            |
+            v
+   +------------------+
+   |  BRAIN ENGINE    |
+   |  (Deterministic) |
+   +--------+---------+
+            |
+    +-------+-------+
+    |       |       |
+  60.00   30.00   10.00
+(Creator) (Pool)  (Fee)
+```
+
+### Q: How does Nexus ensure calculation accuracy?
+**A:** The Brain uses **explicit deterministic rounding** to two decimal places.
+This avoids floating-point drift and guarantees:
+* The sum of all outputs always equals exactly the input.
+* Results are repeatable across executions.
+* Ledger entries are audit-safe.
 
 ---
 
-## Q: How does Nexus ensure calculation accuracy?
-**A:** The "Brain" (FastAPI engine) uses **deterministic rounding to 2-decimal precision**. This prevents floating-point drift and ensures that the sum of the 60-30-10 split always equals 100% of the input, maintaining ledger integrity across millions of local transactions.
+## 💾 Persistence & Data
+
+### Q: How is data persistence handled?
+**A:** Nexus uses SQLite in **WAL (Write-Ahead Logging) mode**.
+WAL enables:
+* Concurrent reads and writes.
+* Non-blocking UI updates.
+* Crash-safe commits.
+
+**WAL Conceptual Flow:**
+```text
+[ BRAIN (Writer) ]  --->  [ nexus_vault.db-wal ]
+                                   |
+                               (Checkpoint)
+                                   v
+[ BODY (Reader) ]   <---  [ nexus_vault.db ]
+```
+
+### Q: How do I reset the local ledger for testing?
+**A:**
+1. Stop the Brain.
+2. Delete `backend/nexus_vault.db`.
+3. Restart the Brain.
+
+A fresh, empty vault will be automatically initialized.
+
+### Q: Does Phase 1.2 require a TON wallet or blockchain connection?
+**A:** **No.**
+Phase 1.2 intentionally avoids:
+* Wallets
+* Keys
+* Signatures
+* On-chain execution
+
+Identity integration and anchoring are planned for **Phase 2.0**.
 
 ---
 
-## Q: How is data persistence handled?
-**A:** All economic events are written to a local SQLite vault using **Write-Ahead Logging (WAL) mode**. This ensures that data survives application restarts, system crashes, and power failures while allowing the Flutter "Body" to read state without blocking the "Brain."
+## 🔍 Operational Status & Troubleshooting
+
+### Q: Is Nexus production-ready?
+**A:** **No.**
+Phase 1.2 is a feasibility and architecture validation phase.
+It is stable for development and auditing but **not suitable for real-value deployment**.
+
+### Q: I see a red indicator in the UI. What does this mean?
+**A:** The Body cannot reach the Brain.
+Check the following:
+* Brain is running on **port 8000**.
+* Body is running on **port 8080**.
+* You are accessing the app via `http://localhost:8000`, NOT `localhost:8080`.
 
 ---
 
-## Q: How do I reset the local ledger for testing?
-**A:** Simply delete the `nexus_vault.db` file located in the backend directory. The system will automatically initialize a fresh, empty vault upon the next transaction or system restart.
+## 📌 Final Notes
+Phase 1.2 prioritizes:
+1. **Determinism**
+2. **Local sovereignty**
+3. **Architectural correctness**
 
----
-
-## Q: Does Phase 1.1 require a TON wallet or TON Connect?
-**A:** **No.** Phase 1.1 is designed to validate local-first execution in isolation. Identity integration via TON Connect and on-chain anchoring are research targets for **Phase 1.2**.
-
----
-
-## Q: Is Nexus Protocol a social media platform?
-**A:** No. Nexus is **economic infrastructure**. While the 60-30-10 model is inspired by creator-economy dynamics, the protocol is a foundational layer upon which various social, content, or P2P applications can be built.
-
----
-
-## Q: Is Nexus production-ready?
-**A:** Phase 1.1 is a **feasibility prototype** focused on technical correctness, persistence, and auditability. It is a research foundation intended for developers and auditors, with production hardening planned for subsequent phases.
+Security and cryptographic guarantees are introduced only **after** correctness is proven.
 
 ---
 

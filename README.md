@@ -1,121 +1,127 @@
 <div align="center">
-  <img src="client/assets/nexus-logo.png" width="120" height="120" alt="Nexus Protocol Logo">
+  <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png" width="120" height="120" alt="Nexus Protocol Logo">
   <h1>NEXUS PROTOCOL</h1>
-  <p><b>Local-First Economic Execution Engine for Sovereign Nodes</b></p>
+  <p><b>Phase 1.2: The Gateway-Based Sovereign Node</b></p>
 
-  [![Nexus CI](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg)](https://github.com/arhantbarmate/nexus-core/actions)
-  ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" />
+  </a>
+  <a href="docs/ROADMAP.md">
+    <img src="https://img.shields.io/badge/Status-PHASE_1.2_ACTIVE-green.svg" />
+  </a>
+  <a href="docs/ARCHITECTURE.md">
+    <img src="https://img.shields.io/badge/Arch-Gateway_Proxy-purple.svg" />
+  </a>
   
-  <p><i>Local-First Execution · Deterministic Economics · Cryptographic Anchoring Readiness</i></p>
+  <p><i>Local-First Execution · Deterministic Economics · Gateway Sovereignty</i></p>
 </div>
 
 ---
 
 ## 📖 Documentation Index
-- **[Installation & Automation](./docs/INSTALL.md)** — Run a local node in seconds using `.bat` scripts.
-- **[Technical Architecture](./docs/architecture.md)** — Deep dive into the Brain / Body / Vault design.
-- **[Economic Model](./docs/economic-model.md)** — Rationale behind the 60-30-10 deterministic split.
-- **[Research Roadmap](./docs/ROADMAP.md)** — *Non-binding* future research directions (Phase 1.2+).
-- **[Frequently Asked Questions](./docs/FAQ.md)** — Design decisions and scope clarifications.
+
+| 📚 Category | 📄 Document | 🔍 Description |
+| :--- | :--- | :--- |
+| **Start Here** | **[Installation Guide](docs/INSTALL.md)** | ⚡ Run a local node in minutes |
+| **Deep Dive** | **[Architecture](docs/ARCHITECTURE.md)** | 🏛️ Brain-First Gateway design |
+| **Logic** | **[Economic Model](docs/ECONOMICS.md)** | 💰 Deterministic 60-30-10 split |
+| **Future** | **[Roadmap](docs/ROADMAP.md)** | 🗺️ Gateway → Identity evolution |
+| **FAQ** | **[Common Questions](docs/FAQ.md)** | ❓ SQLite, Local-First, Scope |
 
 ---
 
 ## 1. Overview
 
-**Nexus Protocol** is a research-driven infrastructure project exploring how **economic logic can execute locally on user devices**, persist independently of centralized servers, and later synchronize with a global blockchain via **cryptographic proofs** rather than raw data replication.
+**Nexus Protocol** is a research initiative building a **Local-First Sovereign Node**.
+Unlike cloud platforms where data and execution are rented, Nexus runs entirely on **your device**.
+You own the execution, the database, and the full transaction history.
 
-Nexus is **not a social media application** and **not a blockchain**. It is a **local-first economic execution engine** designed to remain functional during outages, censorship, or partial connectivity loss.
+**Phase 1.2** introduces the **Gateway Architecture**, unifying local and bridged access into a **single deterministic execution surface**.
 
-> **Core Research Question:** Can user devices operate as *sovereign economic nodes* while remaining verifiable at a global level?
-
----
-
-## 2. Core Principle: Sovereignty → Sync
-
-Most modern applications are **cloud-first**, meaning execution happens on remote servers and users "rent" their data. Nexus is **local-first**:
-- **Execution:** Happens on the user’s machine (The Brain).
-- **Persistence:** State is stored in a local vault (The Vault).
-- **Offline-Ready:** The system remains fully functional without an internet connection.
-- **Verification:** When online, Nexus synchronizes by anchoring cryptographic commitments (Merkle roots) to the TON blockchain—without uploading private data.
-
-
+> **Core Principle:**
+> *The Brain (Backend) is the sole authority. The Body (UI) is a reflection.*
 
 ---
 
-## 3. System Architecture (Phase 1.1)
+## 2. Phase 1.2 Architecture
 
-Nexus follows a strict layered architecture separating execution, visualization, and persistence.
+In Phase 1.2, Nexus operates as a **Reverse Proxy Gateway**.
+Users interact **only** with the Brain (Port 8000). The Brain internally proxies the UI from the Body (Port 8080).
 
 ```text
-NEXUS PROTOCOL — PHASE 1.1 TOPOLOGY
-
-    [ BODY ]  <-------- REST API -------->  [ BRAIN ]
- (Flutter UI)                             (FastAPI Engine)
-      |                                        |
-      |                                        |
-      v                                        v
- [ Dashboard ]                          [ 60-30-10 Logic ]
- [ Visualization ]                      [ Validation Layer ]
-                                               |
-                                               | (SQL / WAL Mode)
-                                               v
-                                          [   VAULT   ]
-                                        (SQLite DB File)
+       [ USER / BROWSER ]
+              |
+              | 1. Request http://localhost:8000
+              v
++------------------------------+
+|   THE BRAIN (Gateway Node)   |  🧠 SOVEREIGN AUTHORITY
+|   (FastAPI · Port 8000)      |
++-------------+----------------+
+              |
+      2. Internal Reverse Proxy
+      (Invisible to User)
+              |
+              v
++------------------------------+
+|   THE BODY (Visualizer)      |  📱 STATELESS UI
+|   (Flutter · Port 8080)      |
++------------------------------+
 ```
 
-### The Brain (Execution Engine)
-* **Tech:** FastAPI (Python)
-* **Role:** Sole authority for economic execution. Enforces deterministic **60-30-10 logic** and guarantees restart-safe persistence.
-
-### The Body (Reference Client)
-* **Tech:** Flutter (Desktop)
-* **Role:** Visualization and control surface. Displays ledger state in real-time but holds **no economic authority**.
-
-### The Vault (Persistence)
-* **Tech:** SQLite (Local File)
-* **Role:** Sovereign storage layer. Features an append-only transaction history that survives system crashes and is fully user-owned.
+### 🧩 System Components
+1.  **🧠 Brain (FastAPI / Python):** Sole execution authority. Owns all economic logic. Writes to the Vault. Acts as the public web gateway.
+2.  **📱 Body (Flutter Web):** Stateless visualization layer. Performs no calculations. Cannot mutate economic state.
+3.  **💾 Vault (SQLite WAL):** Local-first, crash-safe ledger. Append-only transaction history. Stored as `nexus_vault.db`.
 
 ---
 
-## 4. 🚦 Quick Start (Windows)
+## 3. 🚦 Quick Start (Windows)
 
-The fastest way to launch the Phase 1.1 prototype is via the root automation scripts:
+The fastest way to run a node is via the included automation scripts.
 
-1.  Double-click **`start_nexus.bat`**.
-2.  Wait for the FastAPI server to initialize and the Flutter Dashboard to launch.
-3.  To shut down, run **`stop_nexus.bat`**.
+1.  **Start:** Double-click **`start_nexus.bat`**.
+2.  **Open:** Visit **`http://localhost:8000`**.
+3.  **Stop:** Run **`stop_nexus.bat`**.
 
-*For manual setup (Linux/macOS), see the [Full Installation Guide](./docs/INSTALL.md).*
-
----
-
-## 5. Economic Primitive: The 60-30-10 Rule
-
-Every transaction processed by the engine is split deterministically:
-- **60% — Creator Allocation**
-- **30% — User / Network Pool**
-- **10% — Protocol Fee**
-
-This is an **invariant of the execution engine**, ensuring absolute auditability and preventing floating-point drift through 2-decimal rounding.
+*For manual setup or macOS/Linux, see [docs/INSTALL.md](docs/INSTALL.md).*
 
 ---
 
-## 6. Project Status & Scope Guard
+## 4. Economic Primitive — The 60-30-10 Rule
 
-Nexus is currently in the **Feasibility & Infrastructure Research** phase (Phase 1.1).
+Every transaction processed by the Brain follows a deterministic split:
 
-> **Phase 1.1 Scope Guard:** This version intentionally excludes identity, signatures, wallets, and on-chain settlement. All validated logic remains strictly local to the sovereign node. Cryptographic anchoring is currently provided as a standalone feasibility script (`research/merkle_anchor.py`).
+* **60%** → Creator
+* **30%** → Network Pool
+* **10%** → Protocol Fee
 
----
+The rule is hardcoded in Phase 1.2 to guarantee auditability and correctness.
 
-## 🔮 Phase 1.2: TON Connect (Roadmap)
-
-*Non-binding research goals for Phase 1.2 include:*
-1.  **Client-Side Signing:** Integrating TON Connect 2.0 for wallet-based identity.
-2.  **Merkle Anchoring:** Batching local transaction splits into signed Merkle Roots.
-3.  **On-Chain Verification:** Publishing "Check-In" transactions to TON to prove ledger state without revealing raw data.
+📄 **Full details:** [docs/ECONOMICS.md](docs/ECONOMICS.md)
 
 ---
 
-© 2026 Nexus Protocol  
-Licensed under the **Apache License, Version 2.0**
+## 5. Project Status & Roadmap
+
+**Current Phase:** `1.2 — ACTIVE`
+**Focus:** Gateway Architecture & Environment Consistency.
+
+| Phase | Goal | Status |
+| :--- | :--- | :--- |
+| **1.1** | Sovereign Foundation | ✅ **Completed** |
+| **1.2** | Gateway Node | 🚧 **Active** |
+| **2.0** | Identity Layer | 🔮 **Planned** |
+
+> **Scope Discipline:** Phase 1.2 includes no wallets, keys, or signatures. Security relies on architecture, not cryptography. Cryptographic identity begins in Phase 2.0.
+
+---
+
+## 🛡️ Governance & Safety
+
+* **[Code of Conduct](docs/CODE_OF_CONDUCT.md)** — Community standards (Contributor Covenant v2.1)
+* **[Contributing](docs/CONTRIBUTING.md)** — Phase 1.2 contribution rules
+* **[Security Policy](docs/SECURITY.md)** — Vulnerability disclosure & threat scope
+
+---
+
+© 2026 Nexus Protocol · Licensed under the **Apache License 2.0**
