@@ -11,12 +11,12 @@ client = TestClient(app)
 
 def test_api_bootstrap():
     """
-    Smoke Test:
-    Verifies that the FastAPI application boots correctly
-    and can accept incoming HTTP requests without crashing.
+    Sovereign Health Check:
+    Verifies the Brain (FastAPI) is alive and the Vault is accessible.
+    We hit /api/health to bypass the Flutter Proxy (which would 502 in CI).
     """
-    # We attempt to hit the root endpoint.
-    # Receiving *any* valid HTTP status (200 OK or 404 Not Found)
-    # proves the server is up and handling traffic.
-    response = client.get("/")
-    assert response.status_code in [200, 404]
+    response = client.get("/api/health")
+    
+    # 200 means the FastAPI app is running and the database is linked.
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
