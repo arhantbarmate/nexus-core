@@ -18,6 +18,19 @@
 
 ---
 
+## 🔎 Phase 1.2 System Status: Gateway Node
+**Release:** `v1.2.3` | **Status:** ✅ Stable · CI-Clean · Environment-Consistent
+
+Phase 1.2 marks the successful transition of Nexus Protocol from a local prototype to a **Gateway-based Sovereign Node**. The system now runs identically across Localhost, CI/CD, Browser, and Telegram WebApp environments.
+
+### 🏛️ Milestone Highlights
+* **🔗 Unified Platform Bridge:** Implemented `tg_bridge.dart` to isolate platform-specific APIs, allowing the Flutter "Body" to compile cleanly on Linux CI/CD while functioning as a full Mini App on Web.
+* **🌉 Gateway Routing:** Established a strict `/api/*` namespace. All external traffic enters via the **Brain** (Port 8000), which reverse-proxies the UI.
+* **💾 Vault Integrity:** Connected the Brain to a local SQLite Vault operating in **WAL mode** for append-only, crash-safe economic record keeping.
+* **🛡️ Namespace Shielding:** Resolved Flutter/Telegram symbol collisions and locked in version-stable haptics via the internal bridge.
+
+---
+
 ## 📖 Documentation Index
 
 | 📚 Category | 📄 Document | 🔍 Description |
@@ -32,8 +45,8 @@
 
 ## 1. Overview
 
-**Nexus Protocol** is a research initiative building a **Local-First Sovereign Node**.
-Unlike cloud platforms where data and execution are rented, Nexus runs entirely on **your device**.
+**Nexus Protocol** is a research initiative building a **Local-First Sovereign Node**. 
+Unlike cloud platforms where data and execution are rented, Nexus runs entirely on **your device**. 
 You own the execution, the database, and the full transaction history.
 
 **Phase 1.2** introduces the **Gateway Architecture**, unifying local and bridged access into a **single deterministic execution surface**.
@@ -45,23 +58,22 @@ You own the execution, the database, and the full transaction history.
 
 ## 2. Phase 1.2 Architecture
 
-In Phase 1.2, Nexus operates as a **Reverse Proxy Gateway**.
-Users interact **only** with the Brain (Port 8000). The Brain internally proxies the UI from the Body (Port 8080).
+In Phase 1.2, Nexus operates as a **Reverse Proxy Gateway**. Users interact **only** with the Brain (Port 8000). The Brain internally proxies the UI from the Body (Port 8080).
 
 ```text
-       [ USER / BROWSER ]
-              |
-              | 1. Request http://localhost:8000
-              v
+        [ USER / BROWSER ]
+               |
+               | 1. Request http://localhost:8000
+               v
 +------------------------------+
 |   THE BRAIN (Gateway Node)   |  🧠 SOVEREIGN AUTHORITY
 |   (FastAPI · Port 8000)      |
 +-------------+----------------+
-              |
-      2. Internal Reverse Proxy
-      (Invisible to User)
-              |
-              v
+               |
+       2. Internal Reverse Proxy
+       (Invisible to User)
+               |
+               v
 +------------------------------+
 |   THE BODY (Visualizer)      |  📱 STATELESS UI
 |   (Flutter · Port 8080)      |
@@ -70,7 +82,7 @@ Users interact **only** with the Brain (Port 8000). The Brain internally proxies
 
 ### 🧩 System Components
 1.  **🧠 Brain (FastAPI / Python):** Sole execution authority. Owns all economic logic. Writes to the Vault. Acts as the public web gateway.
-2.  **📱 Body (Flutter Web):** Stateless visualization layer. Performs no calculations. Cannot mutate economic state.
+2.  **📱 Body (Flutter Web):** Stateless visualization layer. Performs no calculations. Cannot mutate economic state. Uses `tg_bridge` for environment-safe execution.
 3.  **💾 Vault (SQLite WAL):** Local-first, crash-safe ledger. Append-only transaction history. Stored as `nexus_vault.db`.
 
 ---
@@ -109,16 +121,15 @@ The rule is hardcoded in Phase 1.2 to guarantee auditability and correctness.
 | Phase | Goal | Status |
 | :--- | :--- | :--- |
 | **1.1** | Sovereign Foundation | ✅ **Completed** |
-| **1.2** | Gateway Node | 🚧 **Active** |
+| **1.2** | Gateway Node | ✅ **Stable / Active** |
+| **1.3** | Hardening & Sentry | 🚧 **Upcoming** |
 | **2.0** | Identity Layer | 🔮 **Planned** |
-
-> **Scope Discipline:** Phase 1.2 includes no wallets, keys, or signatures. Security relies on architecture, not cryptography. Cryptographic identity begins in Phase 2.0.
 
 ---
 
 ## 🛡️ Governance & Safety
 
-* **[Code of Conduct](docs/CODE_OF_CONDUCT.md)** — Community standards (Contributor Covenant v2.1)
+* **[Code of Conduct](docs/CODE_OF_CONDUCT.md)** — Community standards
 * **[Contributing](docs/CONTRIBUTING.md)** — Phase 1.2 contribution rules
 * **[Security Policy](docs/SECURITY.md)** — Vulnerability disclosure & threat scope
 

@@ -1,11 +1,17 @@
 from fastapi.testclient import TestClient
 from main import app
 
+# Create the test client using the FastAPI app
 client = TestClient(app)
 
-def test_read_root():
-    """Sanity check: Ensure the Brain is alive."""
-    response = client.get("/")
-    # In Phase 1.2, root might return 404 or a status JSON. 
-    # We accept 200 or 404 just to prove the server booted.
-    assert response.status_code in [200, 404]
+def test_health_check():
+    """Verify that the Gateway Health endpoint is reachable."""
+    response = client.get("/api/health")
+    # In Phase 1.2, a 200 OK means the Brain is healthy
+    assert response.status_code == 200
+
+def test_ledger_access():
+    """Verify that the Vault (Ledger) can be read."""
+    response = client.get("/api/ledger")
+    assert response.status_code == 200
+    assert "total_earned" in response.json()

@@ -3,21 +3,19 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// FIX: Conditional Import for Platform Neutrality
-import 'platform_stub.dart'
-    if (dart.library.js) 'platform_js.dart' as js;
-
-import 'package:telegram_web_app/telegram_web_app.dart';
+// --- THE FIX: Bridge handles everything now ---
+import 'tg_bridge.dart';
 
 void main() {
   if (kIsWeb) {
     try {
-      if (TelegramWebApp.instance.isSupported) {
-        TelegramWebApp.instance.ready();
-        TelegramWebApp.instance.expand();
+      // Phase 1.2: Use the bridge to initialize Telegram context safely
+      if (TelegramBridge.isSupported) {
+        TelegramBridge.ready();
+        TelegramBridge.expand();
       }
     } catch (e) {
-      debugPrint("Nexus: Sovereign Mock Mode active (Non-TMA Context)");
+      debugPrint("Nexus: Sovereign Mock Mode active");
     }
   }
   runApp(const NexusApp());
@@ -49,7 +47,6 @@ class NexusDashboard extends StatefulWidget {
 }
 
 class _NexusDashboardState extends State<NexusDashboard> {
-  // --- STATE VARIABLES ---
   double creatorBalance = 0.0;
   double userPoolBalance = 0.0;
   double protocolFees = 0.0;
@@ -60,18 +57,12 @@ class _NexusDashboardState extends State<NexusDashboard> {
   
   final TextEditingController _amountController = TextEditingController();
 
-  // --- ROUTING LOGIC (FIXED) ---
+  // --- GATEWAY ROUTING ---
   String get baseUrl {
     final host = Uri.base.host;
-    
-    // 1. LOCAL MODE (Fixing the Offline Issue)
     if (host == 'localhost' || host == '127.0.0.1') {
-      // Must append /api to match the Python Gateway logic
       return "http://127.0.0.1:8000/api";
     }
-
-    // 2. BRIDGE MODE (Ngrok/Telegram)
-    // Uses the proxy path
     return "${Uri.base.origin}/api"; 
   }
 
@@ -93,7 +84,8 @@ class _NexusDashboardState extends State<NexusDashboard> {
   Map<String, String> _getAuthHeaders() {
     if (kIsWeb) {
       try {
-        final String initData = TelegramWebApp.instance.initData.raw;
+        // Safe access to Telegram data through the bridge
+        final String initData = TelegramBridge.initData;
         if (initData.isNotEmpty) {
           return {
             'Authorization': 'tma $initData',
@@ -108,7 +100,6 @@ class _NexusDashboardState extends State<NexusDashboard> {
   Future<void> refreshData() async {
     try {
       final headers = _getAuthHeaders();
-      // Cache-busting health check
       final healthUri = Uri.parse("$baseUrl/health?t=${DateTime.now().millisecondsSinceEpoch}");
       final healthRes = await http.get(healthUri).timeout(const Duration(seconds: 3));
       
@@ -148,11 +139,9 @@ class _NexusDashboardState extends State<NexusDashboard> {
       );
 
       if (response.statusCode == 200) {
-        // Safe Haptic feedback
+        // Safe Haptic feedback via the bridge
         if (kIsWeb) {
-          try {
-            js.context.callMethod('eval', ["window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')"]);
-          } catch (_) {}
+          TelegramBridge.triggerHaptic();
         }
         
         _amountController.clear();
