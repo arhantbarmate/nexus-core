@@ -3,6 +3,9 @@
   <h1>NEXUS PROTOCOL</h1>
   <p><b>Phase 1.2: The Gateway-Based Sovereign Node</b></p>
 
+  <a href="https://github.com/arhantbarmate/nexus-core/actions">
+    <img src="https://github.com/arhantbarmate/nexus-core/actions/workflows/main.yml/badge.svg" alt="CI Status" />
+  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" />
   </a>
@@ -59,6 +62,11 @@ You own the execution, the database, and the full transaction history.
 ## 2. Phase 1.2 Architecture
 
 In Phase 1.2, Nexus operates as a **Reverse Proxy Gateway**. Users interact **only** with the Brain (Port 8000). The Brain internally proxies the UI from the Body (Port 8080).
+
+
+
+[Image of a reverse proxy architecture diagram]
+
 
 ```text
         [ USER / BROWSER ]
