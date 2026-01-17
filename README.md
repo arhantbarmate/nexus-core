@@ -1,19 +1,23 @@
 <div align="center">
-  <img src="[https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png](https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png)" width="120" height="120" alt="Nexus Protocol Logo">
+  <img src="client/assets/nexus-logo.png" width="120" height="120" alt="Nexus Protocol Logo">
+  
   <h1>NEXUS PROTOCOL</h1>
   <p><b>Phase 1.3: The Hardened Sovereign Gateway</b></p>
 
-  <a href="[https://github.com/arhantbarmate/nexus-core/actions](https://github.com/arhantbarmate/nexus-core/actions)">
-    <img src="[https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main)" alt="CI Status" />
+  <a href="https://github.com/arhantbarmate/nexus-core/actions">
+    <img src="https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Status" />
   </a>
+
   <a href="LICENSE">
-    <img src="[https://img.shields.io/badge/License-Apache_2.0-blue.svg](https://img.shields.io/badge/License-Apache_2.0-blue.svg)" />
+    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License" />
   </a>
+
   <a href="docs/ROADMAP.md">
-    <img src="[https://img.shields.io/badge/Status-PHASE_1.3_HARDENING-indigo.svg](https://img.shields.io/badge/Status-PHASE_1.3_HARDENING-indigo.svg)" />
+    <img src="https://img.shields.io/badge/Status-PHASE_1.3_HARDENING-indigo.svg" alt="Phase 1.3" />
   </a>
+
   <a href="docs/ARCHITECTURE.md">
-    <img src="[https://img.shields.io/badge/Security-Sentry_Staged-blueviolet.svg](https://img.shields.io/badge/Security-Sentry_Staged-blueviolet.svg)" />
+    <img src="https://img.shields.io/badge/Security-Sentry_Staged-blueviolet.svg" alt="Security Staged" />
   </a>
   
   <p><i>Request Legitimacy · Deterministic State Transitions · Perimeter Hardening</i></p>
