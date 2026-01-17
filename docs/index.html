@@ -1,94 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nexus Protocol is a local-first sovereign gateway node for Telegram Mini Apps, featuring perimeter hardening and deterministic execution.">
     <title>Nexus Protocol | Hardened Perimeter</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Code&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Code&display=swap)" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .accent-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-        .status-badge { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0f172a; 
+            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: #f8fafc; 
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .glass-card { 
+            background: rgba(30, 41, 59, 0.85); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+        .column { flex: 1; min-width: 300px; }
+        .terminal-box {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+        }
+        .status-badge {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .btn {
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            transition: transform 0.2s, background 0.2s;
+            display: inline-block;
+        }
+        .btn-primary { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        .btn-secondary { background: #334155; }
+        .btn-outline { border: 1px solid #475569; }
+        .btn:hover { transform: translateY(-2px); }
+        h1 { font-size: 42px; margin: 0; font-weight: 800; letter-spacing: -1px; }
+        p { color: #cbd5e1; line-height: 1.6; }
+        .arch-step {
+            padding: 10px;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            text-align: center;
+            margin: 8px 0;
+        }
+        footer a { color: #64748b; text-decoration: none; font-size: 12px; margin: 0 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
+<body>
 
-    <div class="mb-8 text-center">
-        <img src="[https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png](https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png)" alt="Nexus Logo" class="w-32 h-32 mx-auto mb-4 drop-shadow-2xl">
-        <h1 class="text-5xl font-bold tracking-tighter mb-2">NEXUS <span class="text-indigo-500">PROTOCOL</span></h1>
-        <div class="flex items-center justify-center space-x-2">
-            <span class="status-badge px-3 py-1 rounded-full text-xs font-mono tracking-widest uppercase">Phase 1.3: Hardened Gateway</span>
-        </div>
+    <div style="text-align: center; margin-bottom: 40px;">
+        <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png?v=1" 
+             alt="Nexus Protocol Logo" 
+             style="width: 100px; height: 100px; margin-bottom: 10px;">
+        <h1>NEXUS <span style="color: #6366f1;">PROTOCOL</span></h1>
+        <span class="status-badge">Phase 1.3: Hardened Gateway</span>
     </div>
 
-    <div class="glass max-w-5xl w-full rounded-3xl p-8 shadow-2xl">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-            
-            <div>
-                <h2 class="text-2xl font-bold mb-4">Request Legitimacy & Integrity</h2>
-                <p class="text-slate-300 mb-6 leading-relaxed">
-                    Nexus is a sovereign node protocol evolved for the TON ecosystem. Phase 1.3 introduces <strong>Perimeter Hardening</strong>, ensuring that deterministic state transitions are gated by request validation (HMAC-SHA256).
-                </p>
-                <div class="space-y-3">
-                    <div class="flex items-center space-x-3">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-                        <span class="text-sm font-mono text-slate-400">Sentry: HMAC-SHA256 Guard</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-                        <span class="text-sm font-mono text-slate-400">Engine: 60-30-10 Invariants</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                        <span class="text-sm font-mono text-slate-400">Vault: Atomic Ledger (SQLite)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-slate-900/80 rounded-2xl p-6 border border-white/5 font-mono text-xs shadow-inner">
-                <p class="text-indigo-400 mb-4 font-bold">// Hardened Architecture</p>
-                <div class="space-y-2">
-                    <div class="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-indigo-300">
-                        🛡️ SENTRY: Integrity Validation [HMAC]
-                    </div>
-                    <div class="text-center text-slate-600">↓</div>
-                    <div class="p-3 bg-slate-800 rounded-lg border border-white/5">
-                        🧠 BRAIN: Sovereign Execution Engine
-                    </div>
-                    <div class="text-center text-slate-600">↓</div>
-                    <div class="flex space-x-2">
-                        <div class="flex-1 p-3 bg-slate-800/50 rounded-lg border border-white/5 text-center">
-                            📱 BODY: Observer UI
-                        </div>
-                        <div class="flex-1 p-3 bg-slate-800/50 rounded-lg border border-white/5 text-center">
-                            💾 VAULT: Ledger
-                        </div>
-                    </div>
-                </div>
+    <div class="glass-card">
+        <div class="column">
+            <h2 style="margin-top: 0; font-size: 24px;">Request Integrity</h2>
+            <p>Nexus is a sovereign node protocol for the TON ecosystem. Phase 1.3 ensures that state transitions are gated by cryptographic validation (HMAC-SHA256).</p>
+            <div style="font-family: 'Fira Code', monospace; font-size: 13px; color: #94a3b8; margin-top: 20px;">
+                <p style="margin: 5px 0;">● Sentry: Verification Guard</p>
+                <p style="margin: 5px 0;">● Engine: 60-30-10 Invariants</p>
+                <p style="margin: 5px 0;">● Vault: SQLite Atomic Ledger</p>
             </div>
         </div>
 
-        <div class="mt-12 flex flex-wrap gap-4 justify-center">
-            <a href="[https://github.com/arhantbarmate/nexus-core](https://github.com/arhantbarmate/nexus-core)" class="accent-gradient px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform shadow-lg shadow-indigo-500/20">
-                Explore Source
-            </a>
-            <a href="[https://github.com/arhantbarmate/nexus-core/blob/main/docs/ARCHITECTURE.md](https://github.com/arhantbarmate/nexus-core/blob/main/docs/ARCHITECTURE.md)" class="bg-slate-700 px-8 py-3 rounded-full font-bold hover:bg-slate-600 transition-colors">
-                Architecture Spec
-            </a>
-            <a href="[https://github.com/arhantbarmate/nexus-core/blob/main/ROADMAP.md](https://github.com/arhantbarmate/nexus-core/blob/main/ROADMAP.md)" class="border border-slate-600 px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-colors">
-                Engineering Roadmap
-            </a>
+        <div class="column">
+            <div class="terminal-box">
+                <p style="color: #818cf8; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px;">// HARDENED ARCHITECTURE</p>
+                <div class="arch-step" style="background: rgba(99, 102, 241, 0.1); color: #a5b4fc; border-color: rgba(99, 102, 241, 0.3);">🛡️ SENTRY: HMAC GUARD</div>
+                <div style="text-align: center; color: #475569; margin: 4px 0;">↓</div>
+                <div class="arch-step">🧠 BRAIN: EXECUTION</div>
+                <div style="text-align: center; color: #475569; margin: 4px 0;">↓</div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="arch-step" style="flex:1; font-size: 10px;">📱 BODY: UI</div>
+                    <div class="arch-step" style="flex:1; font-size: 10px;">💾 VAULT: DB</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer class="mt-12 text-slate-500 text-sm font-mono text-center space-y-2">
-        <p>© 2026 NEXUS PROTOCOL · APACHE 2.0 LICENSE</p>
-        <div class="flex justify-center space-x-4">
-            <a href="privacy.html" class="hover:text-indigo-400">Privacy</a>
+    <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+        <a href="https://github.com/arhantbarmate/nexus-core" 
+           class="btn btn-primary" 
+           aria-label="View Nexus Protocol source code on GitHub">Source Code</a>
+        <a href="https://github.com/arhantbarmate/nexus-core/blob/main/docs/ARCHITECTURE.md" 
+           class="btn btn-secondary">Architecture</a>
+        <a href="https://github.com/arhantbarmate/nexus-core/blob/main/docs/ROADMAP.md" 
+           class="btn btn-outline">Roadmap</a>
+    </div>
+
+    <footer style="margin-top: 50px; text-align: center; font-family: monospace; color: #64748b;">
+        <p style="font-size: 11px; margin-bottom: 10px;">© 2026 NEXUS PROTOCOL · APACHE 2.0</p>
+        <div>
+            <a href="privacy.html">Privacy</a>
             <span>·</span>
-            <a href="terms.html" class="hover:text-indigo-400">Terms</a>
+            <a href="terms.html">Terms</a>
         </div>
     </footer>
 
