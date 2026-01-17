@@ -1,136 +1,61 @@
-# Nexus Protocol — Frequently Asked Questions (Phase 1.2)
+# Nexus Protocol — Frequently Asked Questions (Phase 1.3)
 
-This document answers common architectural, economic, and operational questions about the **Nexus Protocol Phase 1.2 Gateway Node**.
-
----
-
-## 🏛️ Architecture & Design
-
-### Q: Why does Nexus use SQLite instead of PostgreSQL or MongoDB?
-**A:** SQLite aligns with the **Local-First Sovereign Node** philosophy.
-It:
-* Requires no external services.
-* Runs entirely on the local device.
-* Provides ACID guarantees with minimal operational overhead.
-* Enables restart-proof persistence without server management.
-
-This makes it ideal for Phase 1.2, where correctness and sovereignty are prioritized over horizontal scale.
-
-**Conceptual Comparison:**
-```text
-  [ TRADITIONAL CLOUD APP ]          [ NEXUS SOVEREIGN NODE ]
-  User -> Cloud Server -> DB         User -> Local Brain -> Local File
-     (Data owned by provider)          (Data owned by operator)
-```
-
-### Q: Why not execute the economic logic directly on-chain?
-**A:** High-frequency micro-transactions are too slow and costly for real-time on-chain execution.
-In Phase 1.2:
-* All economic logic executes **locally** at zero gas cost.
-* Latency is near-instant.
-* The system remains usable without external dependencies.
-
-Future phases will introduce cryptographic anchoring (e.g., Merkle roots) to external chains to combine local speed with global verifiability.
+This document answers common architectural, economic, and operational questions about the **Hardened Gateway Node (Phase 1.3)**.
 
 ---
 
-## 💰 Economics (60-30-10)
+## 🏛️ Architecture & Perimeter Security
 
-### Q: Is the 60-30-10 economic split hardcoded?
-**A:** **Yes.**
-In Phase 1.2, the split is hardcoded and non-configurable to ensure:
-* Deterministic execution.
-* Easy auditing.
-* Elimination of governance complexity during validation.
+### Q: What is the "Sentry" and why was it added in Phase 1.3?
+**A:** The Sentry is a **deterministic verification guard** that sits at the gateway boundary. Its role is to validate the integrity of incoming requests using the Telegram WebApp `initData` protocol. 
 
-Governance and parameterization are intentionally deferred.
+It was added to move the system from "Architectural Authority" to "Perimeter Hardening"—ensuring that the Economic Brain only processes requests that have been verified as legitimate at the protocol level.
 
-**Economic Flow:**
-```text
-      [ INPUT: 100 ]
-            |
-            v
-   +------------------+
-   |  BRAIN ENGINE    |
-   |  (Deterministic) |
-   +--------+---------+
-            |
-    +-------+-------+
-    |       |       |
-  60.00   30.00   10.00
-(Creator) (Pool)  (Fee)
-```
+### Q: Why not implement full authentication now?
+**A:** Authentication and identity introduce long-lived keys, recovery paths, and on-chain dependencies. Phase 1.3 deliberately focuses on **request legitimacy** as a prerequisite. Identity without a hardened perimeter would increase complexity without improving safety.
 
-### Q: How does Nexus ensure calculation accuracy?
-**A:** The Brain uses **explicit deterministic rounding** to two decimal places.
-This avoids floating-point drift and guarantees:
-* The sum of all outputs always equals exactly the input.
-* Results are repeatable across executions.
-* Ledger entries are audit-safe.
+### Q: Why use HMAC-SHA256 for request validation?
+**A:** This aligns with the official Telegram Mini App security model. By deriving a site-specific secret from the `BOT_TOKEN`, we can verify that a request:
+1. Originated from our specific Mini App.
+2. Has not been tampered with in transit.
+3. Is contextually legitimate.
+
+---
+
+## 💰 Economics & State Machine
+
+### Q: Why do you use the term "State Transition" instead of "Transaction"?
+**A:** In Phase 1.3, we treat the 60-30-10 split as a **deterministic state transition invariant**. This frames the economics as a technical "test harness" for ledger integrity rather than a finalized business model or social tokenomic structure.
+
+### Q: Are the 60-30-10 ratios final?
+**A:** **No.** These numerical ratios are **arbitrary placeholders** chosen for simplicity and auditability during early-phase validation. They allow us to test the atomicity of the Vault and the enforcement of the Sentry gate without the complexity of governance.
 
 ---
 
 ## 💾 Persistence & Data
 
-### Q: How is data persistence handled?
-**A:** Nexus uses SQLite in **WAL (Write-Ahead Logging) mode**.
-WAL enables:
-* Concurrent reads and writes.
-* Non-blocking UI updates.
-* Crash-safe commits.
+### Q: Why SQLite instead of a cloud database?
+**A:** SQLite supports the **Local-First Sovereign Node** philosophy. It allows the node to operate independently of centralized cloud providers, providing ACID-compliant persistence on the user's local environment.
 
-**WAL Conceptual Flow:**
-```text
-[ BRAIN (Writer) ]  --->  [ nexus_vault.db-wal ]
-                                   |
-                               (Checkpoint)
-                                   v
-[ BODY (Reader) ]   <---  [ nexus_vault.db ]
-```
-
-### Q: How do I reset the local ledger for testing?
-**A:**
-1. Stop the Brain.
-2. Delete `backend/nexus_vault.db`.
-3. Restart the Brain.
-
-A fresh, empty vault will be automatically initialized.
-
-### Q: Does Phase 1.2 require a TON wallet or blockchain connection?
-**A:** **No.**
-Phase 1.2 intentionally avoids:
-* Wallets
-* Keys
-* Signatures
-* On-chain execution
-
-Identity integration and anchoring are planned for **Phase 2.0**.
+### Q: How is the Vault protected from local tampering?
+**A:** In Phase 1.3, protection is provided by **Process Isolation**. Only the Brain process has write-access to the Vault file. In Phase 2.0, we will introduce **Cryptographic Anchoring** to the TON blockchain to provide external verifiability of the local state.
 
 ---
 
-## 🔍 Operational Status & Troubleshooting
+## 🔍 Operational Status
 
-### Q: Is Nexus production-ready?
-**A:** **No.**
-Phase 1.2 is a feasibility and architecture validation phase.
-It is stable for development and auditing but **not suitable for real-value deployment**.
+### Q: Does Phase 1.3 require a TON wallet?
+**A:** **No.** We continue to prioritize "correctness before crypto." By focusing on the Sentry's HMAC validation first, we ensure the gateway is secure before we introduce the complexity of on-chain wallet interactions in Phase 2.0.
 
-### Q: I see a red indicator in the UI. What does this mean?
-**A:** The Body cannot reach the Brain.
-Check the following:
-* Brain is running on **port 8000**.
-* Body is running on **port 8080**.
-* You are accessing the app via `http://localhost:8000`, NOT `localhost:8080`.
+### Q: Is this production-ready?
+**A:** **No.** Phase 1.3 is a "Perimeter Hardening" milestone. It is designed for developers, auditors, and grant reviewers to evaluate the protocol's security mindset and architectural discipline.
 
 ---
 
-## 📌 Final Notes
-Phase 1.2 prioritizes:
-1. **Determinism**
-2. **Local sovereignty**
-3. **Architectural correctness**
-
-Security and cryptographic guarantees are introduced only **after** correctness is proven.
+## 📌 Phase 1.3 Focus
+1. **Perimeter Hardening** (The Sentry)
+2. **Request Legitimacy** (HMAC-SHA256)
+3. **Execution Invariants** (State Machine Logic)
 
 ---
 

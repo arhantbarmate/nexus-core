@@ -1,6 +1,6 @@
-# Security Policy — Nexus Protocol
+# 🛡️ Security Policy — Nexus Protocol
 
-This document defines the responsible disclosure process, security scope, and threat assumptions for **Nexus Protocol Phase 1.2**.
+This document defines the responsible disclosure process, security scope, and threat assumptions for the **Hardened Gateway Architecture (Phase 1.3)**.
 
 ---
 
@@ -13,85 +13,54 @@ Please submit private vulnerability reports to:
 📧 **arhantbarmate@outlook.com**
 
 ### Reporting Guidelines
-When reporting a vulnerability:
-* **Do not** disclose exploit details in public issues or forums.
-* If private reporting is not possible, open a GitHub issue clearly marked **[SECURITY]**.
-* **Include:**
-    * Clear reproduction steps.
-    * Impact description.
-    * A minimal Proof of Concept (PoC) where applicable.
-
-*Please avoid weaponized exploits or automated scanning that could disrupt local node operation.*
+* **Private First:** Do not disclose exploit details in public issues or forums.
+* **Tagging:** If private reporting is not possible, open a GitHub issue clearly marked **[SECURITY]**.
+* **Include:** Reproduction steps, impact description, and a minimal Proof of Concept (PoC).
 
 ---
 
-## 2. Threat Model & Scope (Phase 1.2)
+## 2. Threat Model & Scope (Phase 1.3)
 
-Nexus Protocol Phase 1.2 implements a **Gateway-based Sovereign Node**.
-Security research should be evaluated against the actual architectural guarantees of this phase.
+Phase 1.3 introduces the **Sentry**, a deterministic verification guard. Security research in this phase should evaluate the integrity of the gateway perimeter.
 
 ### 🎯 In-Scope Vulnerabilities (High Priority)
-The following issues are considered in scope for Phase 1.2:
-
-* **Economic Drift:** Incorrect 60-30-10 split calculations, rounding inconsistencies, negative values, or arithmetic edge cases.
-* **Gateway / Proxy Violations:** Access to the internal Body (Port 8080) via the Brain (Port 8000), proxy routing bypasses, or path confusion attacks.
-* **Header Manipulation:** Abuse of the `x-nexus-proxy-gate` mechanism, recursive proxy loops, or header injection exploits.
-* **Vault Integrity Failures:** WAL corruption leading to unrecoverable ledger state, or partial/inconsistent transaction commits.
+* **Sentry Bypass:** Any method to trigger economic logic (60-30-10 split) without a valid HMAC-SHA256 signature.
+* **Integrity Logic Flaws:** Vulnerabilities in how `sentry.py` parses or validates Telegram WebApp `initData`.
+* **Path Confusion:** Forcing the Gateway (Port 8000) to expose internal routes or bypass Sentry validation.
+* **Deterministic Drift:** Bypassing state machine invariants via malformed payloads that pass initial validation.
 
 ### 🚫 Out-of-Scope Vulnerabilities (Lower Priority)
-The following are explicitly **out of scope** for Phase 1.2:
+* **Compromised Secrets:** Attacks assuming the attacker already has the `BOT_TOKEN`.
+* **Local Physical Access:** Attacks requiring direct read/write access to the machine's file system or the `nexus_vault.db` file.
+* **Replay Attacks:** Recognized but not yet enforced; freshness and timestamp validation are planned extensions within Phase 1.3 hardening.
 
-* **Physical Access Attacks:** Attacks requiring direct access to the machine hardware.
-* **User-Managed Bridge Exposure:** Insecure Ngrok/tunnel configurations or leaked bridge URLs.
-* **Operating System Permissions:** File-system permission issues, OS-level sandboxing, or malware.
-* **Denial of Service (DoS):** CPU, memory, or disk exhaustion attacks on the local node.
 
-*Phase 1.2 prioritizes correctness and sovereignty, not adversarial network hardening.*
 
 ---
 
-## 3. Bridge & Network Security Assumptions
+## 3. Hardened Gateway Assumptions
 
-Phase 1.2 optionally allows users to expose their node via a bridge (e.g., Ngrok).
+Phase 1.3 operates under a **"Fail-Closed"** security posture:
 
-**Security Assumptions:**
-* The bridge connection uses HTTPS.
-* The Gateway does **not** implement authentication (JWT, OAuth, sessions).
-* There is no request signing or identity verification.
-
-**User Responsibility:**
-* Keep bridge URLs private.
-* Rotate tunnels if exposure is suspected.
-* Treat bridged access as equivalent to local access.
+1.  **Legitimacy Over Identity:** The system verifies that a request is contextually "real" (via platform signatures) rather than identifying a specific human user (deferred to Phase 2.0).
+2.  **Protocol-Level Trust:** The Brain trusts the Sentry's validation. All economic transitions are gated by this verification.
+3.  **Sovereign Isolation:** Security is maintained by ensuring the **Body (UI)** never handles sensitive validation secrets or cryptographic keys.
 
 ---
 
 ## 4. Safe Harbor
 
-Nexus Protocol provides safe harbor for security researchers who:
-* Act in good faith.
-* Avoid harm to users or data.
-* Respect this disclosure policy.
-* Allow reasonable time for remediation before public disclosure.
-
-*We will not pursue legal action against researchers who comply with these conditions.*
+Nexus Protocol provides safe harbor for security researchers who act in good faith, avoid harm to users, and follow this disclosure policy. We will not pursue legal action against researchers who comply with these conditions.
 
 ---
 
 ## 5. Response Timeline
 
-Nexus Protocol is currently a **feasibility and architecture validation project**.
+Nexus Protocol is currently a **Security Hardening & Architecture Validation** project.
 
-* Vulnerability reports are handled on a **best-effort basis**.
 * Initial acknowledgment is typically provided within **72 hours**.
-* Updates will be shared as remediation progresses.
+* Remediation progress will be shared via private channels until a fix is deployed.
 
 ---
 
-## 📌 Final Note
-Phase 1.2 security relies on **architectural isolation**, not cryptographic enforcement.
-Identity, signing, and adversarial hardening are planned for **Phase 2.0** and beyond.
-
----
-
-© 2026 Nexus Protocol
+**© 2026 Nexus Protocol | Phase 1.3 Hardened Gateway**

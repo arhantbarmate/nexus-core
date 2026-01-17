@@ -1,86 +1,73 @@
 # Contributing to Nexus Protocol
 
 Thank you for your interest in **Nexus Protocol**.
-This repository currently represents the **Phase 1.2 Gateway Node**, focused on Environment Sovereignty, Gateway Architecture, and deterministic local-first execution.
+This repository currently represents the **Phase 1.3 Hardened Gateway**, focused on Perimeter Security, Request Legitimacy, and Deterministic State Transitions.
 
-Contributions are welcome, but the project enforces **strict architectural boundaries** to preserve correctness.
+Contributions are welcome, but the project enforces **strict architectural boundaries** to preserve protocol integrity.
 
 ---
 
-## 1. Project Focus (Phase 1.2)
-At this stage, development is intentionally constrained.
+## 1. Project Focus (Phase 1.3)
+At this stage, development is governed by the "Hardened Sentry" model. 
 Primary priorities:
 
-1.  **Gateway Integrity**
-    Ensure the Brain (Port 8000) correctly proxies, routes, and isolates the Body (Port 8080).
+1.  **Perimeter Hardening**
+    Ensure the **Sentry (HMAC-SHA256)** correctly validates platform-provided integrity signatures before requests reach the execution engine.
 
-2.  **Environment Consistency**
-    The node must behave identically across:
-    * Localhost
-    * Ngrok bridge
-    * Telegram WebApp context
+2.  **Request Legitimacy**
+    Validating that all inbound traffic originates from a legitimate Telegram WebApp context without introducing long-lived session state.
 
 3.  **Stateless UI Discipline**
-    The Flutter client must remain a pure visualization layer with **zero economic authority**.
+    The Flutter client must remain a pure visualization layer with **zero economic authority** and zero local persistence of ledger state.
 
 ---
 
 ## 2. How to Contribute
 
 ### Reporting Issues
-Please open a GitHub Issue for the following categories only:
+Please open a GitHub Issue for the following categories:
 
-* **Proxy Failures:** Cases where the Brain fails to correctly route or serve the Body.
-* **Environment Drift:** Bugs that appear only under bridged execution but not on localhost (or vice versa).
-* **Documentation Gaps:** Missing, inaccurate, or confusing information in the Installation guide, Architecture docs, or Phase descriptions.
-
-**When reporting issues, include:**
-* Execution environment (Local / Bridge / Telegram)
-* Relevant logs (Brain preferred)
-* Clear reproduction steps
+* **Integrity Failures:** Cases where legitimate Telegram signatures are rejected or malformed requests are accepted.
+* **Environment Drift:** Bugs that appear only under bridged execution (Ngrok/Telegram) but not on localhost.
+* **Documentation Gaps:** Missing or inaccurate technical specifications in the Architecture or Economics docs.
 
 ### Pull Requests
-Pull requests are welcome but strictly reviewed.
 All PRs must satisfy the following:
 
-* **Atomic Scope:** One bug fix or one architectural improvement per PR.
-* **Gateway-Compliant:** All economic or routing logic must reside in the Brain. UI-only changes must not affect execution semantics.
-* **Stateless UI Enforcement:** Any PR introducing business logic, persistence, or economic computation in the Flutter client will be **rejected without exception**.
-* **Phase Discipline:** Changes must align strictly with Phase 1.2 goals.
+* **Atomic Scope:** One fix or one architectural improvement per PR.
+* **Sentry-Compliant:** Logic must not bypass or weaken the Sentry verification gate.
+* **Stateless Enforcement:** Any PR introducing business logic, persistence, or economic computation in the Flutter client will be **rejected without exception**.
+* **Phase Discipline:** Changes must align strictly with Phase 1.3 hardening goals.
 
 ---
 
 ## 3. Scope Boundaries (Strict Enforcement)
-Nexus Protocol is currently in **Phase 1.2**.
-The following boundaries are non-negotiable.
 
 ### ❌ Out of Scope — Do Not Submit
-* **Cryptographic Identity:** Wallets, private keys, signing, or verification logic (Reserved for Phase 2.0).
-* **Peer-to-Peer Networking:** Libp2p, gossip protocols, mesh logic (Reserved for Phase 3.0).
-* **Client-Side Persistence:** LocalStorage, IndexedDB, cookies, or cached ledger state.
-* **Authentication Layers:** JWTs, sessions, OAuth, or role systems.
+* **User-Level Private Keys:** Client-side signing or seed phrase management (Reserved for Phase 2.0).
+* **On-Chain Settlement:** TON smart contract integration or gas management (Reserved for Phase 3.0).
+* **Centralized Auth:** JWTs, sessions, or traditional OAuth systems.
 
 ### ✅ In Scope — Encouraged Contributions
-* Hardening the FastAPI reverse proxy.
-* Improving SQLite WAL performance or safety.
-* Enhancing observability (logs, health signals).
-* Improving UI liveness indicators (non-authoritative).
-* Documentation corrections and clarifications.
+* Hardening the FastAPI / Sentry verification logic.
+* Improving SQLite WAL-mode performance under concurrent reads.
+* Enhancing protocol observability (structured JSON logs for security events).
+* UI liveness indicators that confirm gateway availability and Sentry readiness.
 
 ---
 
 ## 4. Governance & Conduct
-All contributors are expected to follow the project’s **Code of Conduct** (Contributor Covenant v2.1).
-
-Violations may result in warnings, temporary bans, or permanent removal from the project, as outlined in `CODE_OF_CONDUCT.md`.
+All contributors must adhere to the **Code of Conduct**. Nexus Protocol prioritizes technical objectivity and professional integrity. Violations will result in corrective action as outlined in `CODE_OF_CONDUCT.md`.
 
 ---
 
-## 5. Final Note
-Nexus Protocol prioritizes **correctness over speed** and **architecture over features**.
+## 5. Architectural Philosophy
+Nexus Protocol prioritizes **correctness over speed** and **integrity over features**.
 
-If a contribution weakens determinism, sovereignty, or phase discipline, it will not be merged—regardless of intent. Thank you for respecting the constraints that make this system coherent.
+
+
+If a contribution weakens determinism, sovereignty, or perimeter security, it will not be merged—regardless of intent. We value contributions that make the system more robust, transparent, and auditable.
 
 ---
 
-© 2026 Nexus Protocol
+© 2026 Nexus Protocol | Phase 1.3 Hardened Gateway

@@ -1,90 +1,71 @@
 # ====================================================
-# 🏗️ NEXUS ARCHITECTURE & SYSTEM DESIGN (V1.2)
+# 🏗️ NEXUS ARCHITECTURE & SYSTEM DESIGN (V1.3)
 # ====================================================
-# Focus: Economic Authority & Gateway Proxy Logic
-# Status: Phase 1.2 (Active)
+# Focus: Request Legitimacy & Perimeter Hardening
+# Status: Phase 1.3 (In Progress - Sentry Active)
 # ----------------------------------------------------
 
 ## 1. THE SOVEREIGN DESIGN PHILOSOPHY
 
-Nexus is built on the principle of "Separation of Concern with 
-Authority."
-
+Nexus operates on "Separation of Concern with Authority."
 - THE BRAIN (Backend): The Economic Authority.
 - THE BODY (Frontend): The Stateless Observer.
-
-By routing all traffic through the Brain (Port 8000), we 
-ensure the UI can never "trick" the ledger.
+- THE SENTRY (Security): The Perimeter Guard.
 
 ---
 
-## 2. THE GATEWAY PROXY LOGIC (VISUALIZED)
+## 2. THE HARDENED GATEWAY LOGIC (VISUALIZED)
 
-In Phase 1.1, we had two ports open. In Phase 1.2, we moved to 
-a Single Gateway model to ensure consistent behavior across 
-Localhost and Ngrok.
+Phase 1.3 introduces the **Sentry Layer**, a cryptographic guard that validates incoming Telegram WebApp signatures before they reach the Economic Engine.
 
 [ USER / TELEGRAM ]
        |
-       | (Connects to Port 8000)
+       | (X-Nexus-TMA Header)
        v
 +------------------------------------------+
-|          🧠 NEXUS BRAIN (GATEWAY)        |
+|       🛡️ NEXUS SENTRY (GATEWAY)          |
 |------------------------------------------|
-|  1. Incoming Request Check               |
-|  2. "Is this an API call?"               |
-|                                          |
-|    YES (/api/*)           NO (/*)        |
-|         |                    |           |
-|         v                    v           |
-|  +--------------+    +---------------+   |
-|  |  FASTAPI     |    |  REVERSE      |   |
-|  |  LOGIC       |    |  PROXY        |   |
-|  +------+-------+    +-------+-------+   |
-|         |                    |           |
-|         | (Writes)           | (Fetches) |
-|         v                    v           |
-|  [ NEXUS_VAULT ]     [ FLUTTER BODY ]    |
-|  (SQLite DB)         (Localhost:8080)    |
+|  1. HMAC-SHA256 Signature Check          |
+|  2. Re-calculate Hash (Bot Token Secret) |
+|  3. Reject Malformed/Unsigned Requests   |
++------------------------------------------+
+       |
+       | (IF VERIFIED)
+       v
++------------------------------------------+
+|        🧠 NEXUS BRAIN (LOGIC)            |
+|------------------------------------------|
+|  YES (/api/*)           NO (/*)          |
+|      |                     |             |
+|      v                     v             |
+| [ NEXUS_VAULT ]     [ FLUTTER BODY ]     |
+| (SQLite WAL)        (Reverse Proxy)      |
 +------------------------------------------+
 
-This design allows the Node to appear as a single unified 
-service to the outside world.
+---
+
+## 3. THE SENTRY: HMAC-SHA256 VERIFICATION
+
+The Sentry (`sentry.py`) implements the official Telegram WebApp authentication protocol:
+- **Secret Derivation:** A site-specific key is derived from `BOT_TOKEN`.
+- **Integrity Check:** Validates `initData` payload using timing-safe comparisons.
+- **Protocol Discipline:** Establishes request legitimacy without requiring centralized OAuth.
 
 ---
 
-## 3. DATA PERSISTENCE: THE VAULT
-
-The node uses SQLite for its "Sovereign Vault."
+## 4. DATA PERSISTENCE: THE VAULT
 
 - MODE: Write-Ahead Logging (WAL).
-- ATOMICITY: Every split (60-30-10) is a single transaction. 
-- ISOLATION: The database file is locked to the backend process.
+- ATOMICITY: Every economic split (60-30-10) is a single atomic transaction. 
+- ISOLATION: The database is locked to the Brain process to prevent external tampering.
 
 ---
 
-## 4. UNIFIED NAMESPACE (SYNC STRATEGY)
+## 5. EVOLVING DESIGN LIMITS (PHASE 1.3)
 
-To ensure that state is identical whether accessed from 
-a desktop browser or a mobile Telegram app, the system 
-uses a hardcoded Debug Namespace in this phase:
-
-   ID: "NEXUS_DEV_001"
-
-This prevents the "Split-Brain" scenario where different 
-devices see different balances before we implement real 
-cryptographic identity.
-
----
-
-## 5. DESIGN DISCIPLINE (PHASE 1.2 LIMITS)
-
-Consistent with Phase 1.2 goals, the following are 
-INTENTIONALLY EXCLUDED from the current architecture:
-
-[ ] NO CRYPTO IDENTITY: User authentication is context-based.
-[ ] NO P2P PEERING: This node does not talk to other nodes.
-[ ] NO BLOCKCHAIN ANCHORING: State is local-only.
+[X] REQUEST LEGITIMACY: Handled by Sentry (HMAC).
+[ ] CRYPTOGRAPHIC IDENTITY: Reserved for Phase 2.0 (TON Anchoring).
+[ ] P2P PEERING: Deferring to Phase 2.5 (Network Mesh).
 
 ----------------------------------------------------
 © 2026 Nexus Protocol | Apache License 2.0

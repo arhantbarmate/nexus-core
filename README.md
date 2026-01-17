@@ -1,36 +1,38 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png" width="120" height="120" alt="Nexus Protocol Logo">
+  <img src="[https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png](https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png)" width="120" height="120" alt="Nexus Protocol Logo">
   <h1>NEXUS PROTOCOL</h1>
-  <p><b>Phase 1.2: The Gateway-Based Sovereign Node</b></p>
+  <p><b>Phase 1.3: The Hardened Sovereign Gateway</b></p>
 
-  <a href="https://github.com/arhantbarmate/nexus-core/actions">
-    <img src="https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Status" />
+  <a href="[https://github.com/arhantbarmate/nexus-core/actions](https://github.com/arhantbarmate/nexus-core/actions)">
+    <img src="[https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main)" alt="CI Status" />
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" />
+    <img src="[https://img.shields.io/badge/License-Apache_2.0-blue.svg](https://img.shields.io/badge/License-Apache_2.0-blue.svg)" />
   </a>
   <a href="docs/ROADMAP.md">
-    <img src="https://img.shields.io/badge/Status-PHASE_1.2_ACTIVE-green.svg" />
+    <img src="[https://img.shields.io/badge/Status-PHASE_1.3_HARDENING-indigo.svg](https://img.shields.io/badge/Status-PHASE_1.3_HARDENING-indigo.svg)" />
   </a>
   <a href="docs/ARCHITECTURE.md">
-    <img src="https://img.shields.io/badge/Arch-Gateway_Proxy-purple.svg" />
+    <img src="[https://img.shields.io/badge/Security-Sentry_Staged-blueviolet.svg](https://img.shields.io/badge/Security-Sentry_Staged-blueviolet.svg)" />
   </a>
   
-  <p><i>Local-First Execution · Deterministic Economics · Gateway Sovereignty</i></p>
+  <p><i>Request Legitimacy · Deterministic State Transitions · Perimeter Hardening</i></p>
 </div>
 
 ---
 
-## 🔎 Phase 1.2 System Status: Gateway Node
-**Release:** `v1.2.3` | **Status:** ✅ Stable · CI-Clean · Environment-Consistent
+## 🔎 Phase 1.3 System Status: Hardened Gateway
+**Current Milestone:** `v1.3.0-staged` | **Focus:** Perimeter Security & Request Validation
 
-Phase 1.2 marks the successful transition of Nexus Protocol from a local prototype to a **Gateway-based Sovereign Node**. The system now runs identically across Localhost, CI/CD, Browser, and Telegram WebApp environments.
+Phase 1.3 marks the transition of Nexus Protocol from a consistent gateway to a **Hardened Sovereign Node**. The primary objective is to ensure that the Economic Engine only processes state transitions that have been cryptographically validated at the perimeter.
+
+> **Note:** The Sentry is staged and audited in v1.3.0; enforcement will be enabled once perimeter validation is fully verified.
 
 ### 🏛️ Milestone Highlights
-* **🔗 Unified Platform Bridge:** Implemented `tg_bridge.dart` to isolate platform-specific APIs, allowing the Flutter "Body" to compile cleanly on Linux CI/CD while functioning as a full Mini App on Web.
-* **🌉 Gateway Routing:** Established a strict `/api/*` namespace. All external traffic enters via the **Brain** (Port 8000), which reverse-proxies the UI.
-* **💾 Vault Integrity:** Connected the Brain to a local SQLite Vault operating in **WAL mode** for append-only, crash-safe economic record keeping.
-* **🛡️ Namespace Shielding:** Resolved Flutter/Telegram symbol collisions and locked in version-stable haptics via the internal bridge.
+* **🛡️ Sentry Verification:** Introduced the **Sentry Guard** (`backend/sentry.py`), a deterministic perimeter module designed to validate Telegram WebApp integrity signatures (HMAC-SHA256).
+* **🔒 Fail-Closed Security:** Implementation of the "Hardened Sentry" model where unverified platform requests are rejected before reaching the logic layer.
+* **🧬 Economic Invariants:** The Economic Engine is treated as a **deterministic state transition primitive**, ensuring auditability across all 60-30-10 splits.
+* **🌉 Consistent Authority:** Maintained the "Brain-First" architecture, ensuring the local Vault remains the single, verified source of truth.
 
 ---
 
@@ -38,108 +40,89 @@ Phase 1.2 marks the successful transition of Nexus Protocol from a local prototy
 
 | 📚 Category | 📄 Document | 🔍 Description |
 | :--- | :--- | :--- |
-| **Start Here** | **[Installation Guide](docs/INSTALL.md)** | ⚡ Run a local node in minutes |
-| **Deep Dive** | **[Architecture](docs/ARCHITECTURE.md)** | 🏛️ Brain-First Gateway design |
-| **Logic** | **[Economic Model](docs/ECONOMICS.md)** | 💰 Deterministic 60-30-10 split |
-| **Future** | **[Roadmap](docs/ROADMAP.md)** | 🗺️ Gateway → Identity evolution |
-| **FAQ** | **[Common Questions](docs/FAQ.md)** | ❓ SQLite, Local-First, Scope |
+| **Start Here** | **[Installation Guide](docs/INSTALL.md)** | ⚡ Run a hardened node locally |
+| **Deep Dive** | **[Architecture](docs/ARCHITECTURE.md)** | 🏛️ Sentry-Gated Gateway design |
+| **Logic** | **[Economic Model](docs/ECONOMICS.md)** | 💰 Deterministic 60-30-10 invariants |
+| **Future** | **[Roadmap](docs/ROADMAP.md)** | 🗺️ Hardening → Identity evolution |
+| **Security** | **[Security Policy](docs/SECURITY.md)** | 🛡️ Threat models & disclosure |
 
 ---
 
 ## 1. Overview
 
-**Nexus Protocol** is a research initiative building a **Local-First Sovereign Node**. 
-Unlike cloud platforms where data and execution are rented, Nexus runs entirely on **your device**. 
-You own the execution, the database, and the full transaction history.
+**Nexus Protocol** is an infrastructure research initiative building a **Local-First Sovereign Node**. 
+Unlike traditional cloud-hosted Mini Apps, Nexus runs entirely on your hardware. You own the execution, the database, and the ledger history.
 
-**Phase 1.2** introduces the **Gateway Architecture**, unifying local and bridged access into a **single deterministic execution surface**.
-
-> **Core Principle:**
-> *The Brain (Backend) is the sole authority. The Body (UI) is a reflection.*
+**Phase 1.3** introduces **Perimeter Hardening**, establishing a "Clean Room" environment where requests are validated for platform legitimacy (HMAC) before they are allowed to mutate the sovereign state.
 
 ---
 
-## 2. Phase 1.2 Architecture
+## 2. Hardened Architecture
 
-In Phase 1.2, Nexus operates as a **Reverse Proxy Gateway**. Users interact **only** with the Brain (Port 8000). The Brain internally proxies the UI from the Body (Port 8080).
-
-
-
-[Image of a reverse proxy architecture diagram]
-
+In Phase 1.3, the system enforces a strict verification gate. The **Sentry** validates the request signature, the **Brain** executes the logic, and the **Vault** persists the result.
 
 ```text
-        [ USER / BROWSER ]
-               |
-               | 1. Request http://localhost:8000
-               v
-+------------------------------+
-|   THE BRAIN (Gateway Node)   |  🧠 SOVEREIGN AUTHORITY
-|   (FastAPI · Port 8000)      |
-+-------------+----------------+
-               |
-       2. Internal Reverse Proxy
-       (Invisible to User)
-               |
-               v
-+------------------------------+
-|   THE BODY (Visualizer)      |  📱 STATELESS UI
-|   (Flutter · Port 8080)      |
-+------------------------------+
+         [ USER / BROWSER / TMA ]
+                   |
+                   | 1. Request with HMAC Signature
+                   v
++---------------------------------------+
+|   THE BRAIN (Hardened Gateway)        |  🛡️ SENTRY GUARD
+|   (FastAPI · Port 8000)               |  (Verification Gate)
++------------------+--------------------+
+                   |
+           2. If Verified: Execute
+           Deterministic Logic
+                   |
+                   v
++------------------+--------------------+
+|   THE VAULT (Sovereign Ledger)        |  🧠 BRAIN AUTHORITY
+|   (SQLite WAL · nexus_vault.db)       |  (Atomic Persistence)
++---------------------------------------+
 ```
-
-### 🧩 System Components
-1.  **🧠 Brain (FastAPI / Python):** Sole execution authority. Owns all economic logic. Writes to the Vault. Acts as the public web gateway.
-2.  **📱 Body (Flutter Web):** Stateless visualization layer. Performs no calculations. Cannot mutate economic state. Uses `tg_bridge` for environment-safe execution.
-3.  **💾 Vault (SQLite WAL):** Local-first, crash-safe ledger. Append-only transaction history. Stored as `nexus_vault.db`.
 
 ---
 
 ## 3. 🚦 Quick Start (Windows)
 
-The fastest way to run a node is via the included automation scripts.
+The fastest way to deploy a node and audit the Sentry-staged codebase:
 
-1.  **Start:** Double-click **`start_nexus.bat`**.
-2.  **Open:** Visit **`http://localhost:8000`**.
-3.  **Stop:** Run **`stop_nexus.bat`**.
+1. **Start:** Double-click **`start_nexus.bat`**.
+2. **Open:** Visit **`http://localhost:8000`**.
+3. **Stop:** Run **`stop_nexus.bat`**.
 
-*For manual setup or macOS/Linux, see [docs/INSTALL.md](docs/INSTALL.md).*
+*For manual setup or security auditing, see [docs/INSTALL.md](docs/INSTALL.md).*
 
 ---
 
-## 4. Economic Primitive — The 60-30-10 Rule
+## 4. Execution Primitive — The 60-30-10 Invariant
 
-Every transaction processed by the Brain follows a deterministic split:
+Every state transition processed by the Brain follows a fixed, deterministic split to ensure ledger auditability:
 
-* **60%** → Creator
-* **30%** → Network Pool
-* **10%** → Protocol Fee
-
-The rule is hardcoded in Phase 1.2 to guarantee auditability and correctness.
+* **60%** → Primary Actor Allocation
+* **30%** → Secondary Pool Reservation
+* **10%** → Network Reserved Fee
 
 📄 **Full details:** [docs/ECONOMICS.md](docs/ECONOMICS.md)
 
 ---
 
-## 5. Project Status & Roadmap
-
-**Current Phase:** `1.2 — ACTIVE`
-**Focus:** Gateway Architecture & Environment Consistency.
+## 5. Roadmap
 
 | Phase | Goal | Status |
 | :--- | :--- | :--- |
 | **1.1** | Sovereign Foundation | ✅ **Completed** |
-| **1.2** | Gateway Node | ✅ **Stable / Active** |
-| **1.3** | Hardening & Sentry | 🚧 **Upcoming** |
-| **2.0** | Identity Layer | 🔮 **Planned** |
+| **1.2** | Gateway Consistency | ✅ **Completed** |
+| **1.3** | **Perimeter Hardening** | 🔵 **Active** |
+| **2.0** | Identity & Signing | 🔮 **Planned** |
 
 ---
 
 ## 🛡️ Governance & Safety
 
-* **[Code of Conduct](docs/CODE_OF_CONDUCT.md)** — Community standards
-* **[Contributing](docs/CONTRIBUTING.md)** — Phase 1.2 contribution rules
-* **[Security Policy](docs/SECURITY.md)** — Vulnerability disclosure & threat scope
+* **[Security Policy](docs/SECURITY.md)** — Disclosure & threat scope
+* **[Contributing](docs/CONTRIBUTING.md)** — Architectural boundaries
+* **[Code of Conduct](docs/CODE_OF_CONDUCT.md)** — Professional standards
 
 ---
 
