@@ -24,18 +24,20 @@ All economic logic is executed by the **Sovereign Brain** and exposed via a gate
 
 In Phase 1.2, the Body runs on **Port 8080**, but it is never accessed directly by users. All UI traffic flows through the Brain.
 
+
+
 ```mermaid
 graph TD
-    User((User)) -->|Visits :8000| Brain[🧠 Brain (Gateway)]
-    Brain -->|Proxy Fetch| Body[📱 Body :8080]
+    User((User)) -->|Visits :8000| Brain["🧠 Brain (Gateway)"]
+    Brain -->|Proxy Fetch| Body["📱 Body :8080"]
     Body -->|HTML / JS| Brain
     Brain -->|Served UI| User
 ```
 
 ### Key Properties
-1.  The Brain is the **only** public interface.
-2.  The Body is a **proxy target only**.
-3.  The Body cannot bypass the Brain.
+1. The Brain is the **only** public interface.
+2. The Body is a **proxy target only**.
+3. The Body cannot bypass the Brain.
 
 ---
 
