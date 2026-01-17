@@ -1,4 +1,4 @@
-﻿# Code of Conduct â€” Nexus Protocol
+# Code of Conduct â€” Nexus Protocol
 
 ## 1. Our Pledge
 
