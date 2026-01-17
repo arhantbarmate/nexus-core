@@ -1,4 +1,4 @@
-# Code of Conduct â€” Nexus Protocol
+# Code of Conduct Ã¢â‚¬ -  Nexus Protocol
 
 ## 1. Our Pledge
 
@@ -62,4 +62,4 @@ Community Impact Guidelines were inspired by [Mozilla's code of conduct enforcem
 
 ---
 
-Â© 2026 Nexus Protocol
+Ã‚(c) 2026 Nexus Protocol
