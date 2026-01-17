@@ -32,27 +32,26 @@ jobs:
         run: |
           cd client
           flutter pub get
-          flutter build web --release --base-href /nexus-core/
+          # Note: base-href is set to /app/ because we are moving the app files there
+          flutter build web --release --base-href /nexus-core/app/
 
       - name: Prepare Deployment Directory
         run: |
           mkdir -p staging
           
-          # 1. Flutter Web App
-          # Provides the visual dashboard for the economic engine
-          cp -r client/build/web/* staging/
+          # 1. ROOT LEVEL: Documentation Portal
+          # We copy the CONTENTS of docs/ into staging/ so index.html is at the root
+          cp -r docs/* staging/
 
-          # 2. Full Docs (Legal + Technical)
-          # Ensures README links and TON manifest URLs remain valid
-          cp -r docs staging/
+          # 2. SUBFOLDER LEVEL: Flutter Web App
+          # We move the app to /app to prevent it from overwriting the portal index
+          mkdir -p staging/app
+          cp -r client/build/web/* staging/app/
 
-          # 3. TON Connect Manifest (Root Discovery)
-          # Required for wallet identification in Phase 1.2 research
-          cp tonconnect-manifest.json staging/
-
-          # 4. Brand Asset
-          # Ensures the TON manifest can resolve the project logo
-          cp client/assets/nexus-logo.png staging/ || echo "Logo not found, skipping."
+          # 3. GLOBAL ASSETS: TON Manifest & Logo
+          # Placed at root for discovery by wallets and metadata scrapers
+          cp tonconnect-manifest.json staging/ || echo "Manifest not found"
+          cp client/assets/nexus-logo.png staging/ || echo "Logo not found"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
