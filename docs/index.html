@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Protocol | Sovereign Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .accent-gradient { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="mb-8 text-center">
+        <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png" alt="Nexus Logo" class="w-32 h-32 mx-auto mb-4 drop-shadow-2xl">
+        <h1 class="text-5xl font-bold tracking-tighter mb-2">NEXUS <span class="text-blue-500">PROTOCOL</span></h1>
+        <p class="text-slate-400 font-mono text-sm uppercase tracking-widest">Phase 1.2.1: Sovereign Gateway Node</p>
+    </div>
+
+    <div class="glass max-w-4xl w-full rounded-3xl p-8 shadow-2xl">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            
+            <div>
+                <h2 class="text-2xl font-bold mb-4">Local-First Execution</h2>
+                <p class="text-slate-300 mb-6 leading-relaxed">
+                    Nexus is a research-grade sovereign node designed to run entirely on your hardware. 
+                    Own your execution, your vault, and your deterministic economic future.
+                </p>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <span class="text-sm font-mono text-slate-400">Gateway: Active (Port 8000)</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span class="text-sm font-mono text-slate-400">Vault: SQLite WAL-Mode</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/50 rounded-xl p-6 border border-white/5 font-mono text-xs">
+                <p class="text-blue-400 mb-2">// System Architecture</p>
+                <div class="space-y-2">
+                    <div class="p-2 bg-slate-800 rounded">BRAIN: FastAPI Gateway [Entry]</div>
+                    <div class="text-center">↓</div>
+                    <div class="p-2 bg-slate-800 rounded">BODY: Flutter UI Visualizer</div>
+                    <div class="text-center">↓</div>
+                    <div class="p-2 bg-slate-800 rounded">VAULT: Sovereign Ledger</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 flex flex-wrap gap-4 justify-center">
+            <a href="https://github.com/arhantbarmate/nexus-core" class="accent-gradient px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
+                View Source on GitHub
+            </a>
+            <a href="docs/INSTALL.md" class="bg-slate-700 px-8 py-3 rounded-full font-bold hover:bg-slate-600 transition-colors">
+                Installation Guide
+            </a>
+        </div>
+    </div>
+
+    <footer class="mt-12 text-slate-500 text-sm font-mono">
+        © 2026 NEXUS PROTOCOL · APACHE 2.0 LICENSE
+    </footer>
+
+</body>
+</html>
