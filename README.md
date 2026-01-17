@@ -4,7 +4,7 @@
   <p><b>Phase 1.2: The Gateway-Based Sovereign Node</b></p>
 
   <a href="https://github.com/arhantbarmate/nexus-core/actions">
-    <img src="https://github.com/arhantbarmate/nexus-core/actions/workflows/main.yml/badge.svg" alt="CI Status" />
+    <img src="https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Status" />
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" />
