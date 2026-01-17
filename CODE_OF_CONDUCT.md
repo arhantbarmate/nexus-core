@@ -1,4 +1,4 @@
-# Code of Conduct — Nexus Protocol
+﻿# Code of Conduct â€” Nexus Protocol
 
 ## 1. Our Pledge
 
@@ -32,7 +32,7 @@ Community leaders have the right and responsibility to remove, edit, or reject c
 
 ## 4. Scope
 
-This Code of Conduct applies within all project spaces, and it also applies when an individual is representing the project or its community in public spaces. Examples of representing our community include using an official e-mail address, posting via an official social media account, or acting as an appointed representative at an online or offline event.
+This Code of Conduct applies within all project spaces, and it also applies when an individual is representing the project or its community in public spaces. Examples of representing our community include using an official e-mail address, or acting as an appointed representative at an online or offline event.
 
 ## 5. Enforcement Guidelines
 
@@ -44,7 +44,7 @@ Community leaders will follow these Community Impact Guidelines in determining t
 
 ### 2. Warning
 **Community Impact:** A violation through a single incident or series of actions.
-**Consequence:** A warning with consequences for continued behavior. No interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, for a specified period of time. This includes avoiding interactions in community spaces as well as external channels like social media. Violating these terms may lead to a temporary or permanent ban.
+**Consequence:** A warning with consequences for continued behavior. No interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, for a specified period of time. This includes avoiding interactions in community spaces. Violating these terms may lead to a temporary or permanent ban.
 
 ### 3. Temporary Ban
 **Community Impact:** A serious violation of community standards, including sustained inappropriate behavior.
@@ -62,4 +62,4 @@ Community Impact Guidelines were inspired by [Mozilla's code of conduct enforcem
 
 ---
 
-© 2026 Nexus Protocol
+Â© 2026 Nexus Protocol
