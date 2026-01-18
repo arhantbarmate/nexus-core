@@ -6,19 +6,29 @@ from fastapi import Request, HTTPException
 
 class Sentry:
     """
-    Phase 1.3: The Sentry
-    Validates Telegram WebApp initData to establish request legitimacy.
+    Phase 1.3: Multichain Sentry (v1.3.1)
     
-    NOTE: This establishes that the request originated from the 
-    authorized Telegram Mini App. It does NOT establish high-level 
-    identity or cryptographic ownership (reserved for Phase 2.0).
+    Perimeter guard enforcing the 'Verify-then-Execute' (VTE) pattern.
+    Modularly architected for TON (Social) and IoTeX (DePIN) staging.
     """
-    def __init__(self):
-        # Fallback to a placeholder for CI/Dev; Production requires real BOT_TOKEN
-        self.bot_token = os.getenv("BOT_TOKEN", "DEV_TOKEN_UNSECURE")
-        self._secret_key = self._generate_secret_key()
 
-    def _generate_secret_key(self):
+    def __init__(self):
+        # Explicit Environment Check
+        env = os.getenv("NEXUS_ENV", "dev")
+        self.bot_token = os.getenv("BOT_TOKEN")
+
+        # Hard-fail in production/non-dev if token is missing
+        if env != "dev" and not self.bot_token:
+            raise RuntimeError("NEXUS_SENTRY: BOT_TOKEN is required in non-dev environments")
+
+        # Fallback only permitted in explicit 'dev' mode
+        if not self.bot_token:
+            self.bot_token = "DEV_TOKEN_UNSECURE"
+
+        self._ton_secret_key = self._generate_ton_secret()
+        self.iotex_mode = "staged"  # Identity not yet enforced in Phase 1.3
+
+    def _generate_ton_secret(self):
         """Derives a site-specific secret key from the Bot Token per Telegram spec."""
         return hmac.new(
             key=b"WebAppData",
@@ -26,17 +36,16 @@ class Sentry:
             digestmod=hashlib.sha256
         ).digest()
 
-    def verify_request(self, init_data: str) -> bool:
+    def verify_ton_request(self, init_data: str) -> bool:
         """
-        Validates the raw initData string signature.
+        Validates TON/Telegram WebApp initData signatures.
         Logic: Parse -> Sort -> HMAC-SHA256 -> Timing-safe comparison.
         """
         try:
             params = dict(urllib.parse.parse_qsl(init_data, strict_parsing=True))
-            if "hash" not in params:
+            received_hash = params.pop("hash", None)
+            if not received_hash:
                 return False
-            
-            received_hash = params.pop("hash")
             
             # Data-check-string must be constructed from alphabetically sorted keys
             data_check_string = "\n".join(
@@ -44,7 +53,7 @@ class Sentry:
             )
             
             calculated_hash = hmac.new(
-                key=self._secret_key,
+                key=self._ton_secret_key,
                 msg=data_check_string.encode(),
                 digestmod=hashlib.sha256
             ).hexdigest()
@@ -53,19 +62,47 @@ class Sentry:
         except Exception:
             return False
 
+    def inspect_iotex_request(self, auth_payload: str) -> dict:
+        """
+        Phase 1.3: IoTeX identity inspection.
+        Returns presence metadata but does NOT authorize execution.
+        """
+        return {
+            "present": bool(auth_payload),
+            "mode": self.iotex_mode
+        }
+
 # Global Instance
 sentry = Sentry()
 
-async def telegram_guard(request: Request):
+async def multichain_guard(request: Request):
     """
-    FastAPI Dependency: X-Nexus-TMA Header Check.
-    Ensures the request perimeter is hardened before reaching the Brain.
+    FastAPI Dependency: Modular Perimeter Gate.
+    Enforces network-specific validation with explicit precedence (TON > IoTeX).
     """
-    auth_data = request.headers.get("X-Nexus-TMA")
     
-    if not auth_data or not sentry.verify_request(auth_data):
-        raise HTTPException(
-            status_code=403, 
-            detail="Nexus Sentry: Request legitimacy could not be verified."
-        )
-    return True
+    # 1. TON/Telegram Perimeter (Active Enforcement)
+    ton_data = request.headers.get("X-Nexus-TMA")
+    if ton_data:
+        if sentry.verify_ton_request(ton_data):
+            return {"network": "ton", "verified": True}
+        # Explicit rejection for malformed signatures
+        raise HTTPException(status_code=403, detail="Invalid TON initData signature")
+
+    # 2. IoTeX DePIN Perimeter (Staged Inspection)
+    iotex_data = request.headers.get("X-Nexus-IOTX")
+    if iotex_data:
+        inspection = sentry.inspect_iotex_request(iotex_data)
+        if inspection["present"]:
+            # Returns verified: False to signal 'Staged' status to the Brain
+            return {
+                "network": "iotex", 
+                "verified": False, 
+                "mode": inspection["mode"]
+            }
+
+    # 3. Fail-Closed
+    raise HTTPException(
+        status_code=403, 
+        detail="Nexus Sentry: No valid network perimeter verification found."
+    )
