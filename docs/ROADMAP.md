@@ -1,6 +1,9 @@
-﻿# 🗺️ Nexus Protocol — Engineering Roadmap
+﻿# 🗺️ Nexus Protocol — Engineering Roadmap (v1.3.1)
 
 This document tracks the evolution of the Nexus Sovereign Node. The roadmap is strictly phased to ensure architectural correctness before feature expansion.
+
+> [!NOTE]
+> **Roadmap Disclaimer:** This represents an engineering dependency plan, not a delivery schedule. Later phases are contingent on system correctness, security review, and grant availability.
 
 **Current Status:** `PHASE 1.3 — HARDENING (ACTIVE)`  
 **Primary Focus:** Perimeter Security & Multichain Readiness
@@ -8,6 +11,8 @@ This document tracks the evolution of the Nexus Sovereign Node. The roadmap is s
 ---
 
 ## 📅 Roadmap Overview
+
+
 
 ```text
 PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)     PHASE 2.0: IDENTITY (Next)
@@ -19,7 +24,13 @@ PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)     PHASE 2.0: IDEN
       (Consistency)                      (Perimeter)                      (Multichain Identity)
 ```
 
+---
 
+## 🚫 Non-Goals (Explicitly Out of Scope)
+To preserve architectural integrity, the following are **not** objectives of the current development cycle:
+* **On-chain execution** or settlement in Phase 1.x.
+* **Token issuance**, staking, or speculative mechanics.
+* **Permissionless mesh networking** prior to identity hardening.
 
 ---
 
@@ -40,6 +51,8 @@ PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)     PHASE 2.0: IDEN
 ## 🔵 Phase 1.3 — Hardening & Perimeter (Active)
 **Core Question:** *Is this architecture safe enough to process multichain intents?*
 
+> **Scope Clarification:** Phase 1.3 introduces no live multichain execution. References to TON and IoTeX reflect interface readiness and threat modeling only.
+
 * [x] **Sentry Guard:** Implementation of `sentry.py` for signature validation.
 * [x] **Request Legitimacy:** Validating Telegram `initData` via HMAC-SHA256.
 * [x] **v1.3.1 Multichain Staging:** Defensive framing for TON/IoTeX integration.
@@ -52,10 +65,10 @@ PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)     PHASE 2.0: IDEN
 ## 🔮 Phase 2.0 — Identity & DePIN Readiness (Next)
 **Core Question:** *Who owns the state, and can we verify hardware identity?*
 
-* [ ] **IoTeX ioID Integration:** Using IoTeX Decentralized Identity (DID) to verify physical gateway hardware.
+* [ ] **IoTeX ioID Integration:** Using IoTeX DID to verify physical gateway hardware.
 * [ ] **Ed25519 Identity:** Persistent node/user keypairs for sovereign ownership.
 * [ ] **Client Signing:** Body signs requests; Brain verifies signatures.
-* [ ] **Network Anchoring:** Committing local Merkle roots to the **TON** and **IoTeX** blockchains for global auditability.
+* [ ] **Network Anchoring:** Optional submission of local Merkle roots to the TON and IoTeX blockchains for auditability (**non-executing**).
 
 ---
 
