@@ -2,9 +2,21 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   errors:
+    # 🛡️ BRIDGE PROTECTORS: Mandatory for conditional imports
+    uri_does_not_exist: ignore
+    undefined_prefixed_name: ignore
+    
+    # 🏛️ LEGACY & WEB: Keep these for 3.14/Web compatibility
     deprecated_member_use: ignore
     avoid_web_libraries_in_flutter: ignore
+    
+    # 💎 ARCHITECTURAL HYGIENE
+    depend_on_referenced_packages: error
 
 linter:
   rules:
-    # Additional custom rules can be added here if needed
+    # 📋 Professional DePIN Audit Rules
+    - always_declare_return_types
+    - prefer_final_locals
+    - avoid_print 
+    - cancel_subscriptions

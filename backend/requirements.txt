@@ -1,11 +1,21 @@
-# Core Web Server
+# ====================================================
+# NEXUS PROTOCOL: BACKEND REQUIREMENTS (v1.3.1)
+# ====================================================
+
+# Core Web Server & Gateway
 fastapi
 uvicorn
 python-multipart
 python-dotenv
 
-# Testing & Security
+# Testing & Security Auditing
 pytest
 pytest-asyncio
 httpx
 safety
+
+# ----------------------------------------------------
+# STAGED FOR PHASE 2.0 (DO NOT UNCOMMENT IN CI)
+# ----------------------------------------------------
+# iotex-antenna  # Reserved for ioID & IoTeX L1 Anchoring
+# pydantic-settings # Reserved for complex multichain config

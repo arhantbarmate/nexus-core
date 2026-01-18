@@ -3,20 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Nexus Protocol - Local-First Economic Execution Engine.">
+  <meta name="description" content="Nexus Protocol - Local-First DePIN Economic Execution Engine.">
 
   <base href="$FLUTTER_BASE_HREF">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Nexus Protocol">
+  <meta name="format-detection" content="telephone=no">
   
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>Nexus Protocol</title>
+  <title>Nexus Protocol | Sovereign Node</title>
   <link rel="manifest" href="manifest.json">
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -29,10 +30,16 @@
           token: 'eyJhcHBfbmFtZSI6Im5leHVzX3Byb3RvY29sX3Byb2QiLCJhcHBfdXJsIjoiaHR0cHM6Ly90Lm1lL05leHVzUHJvdG9jb2xfQXBwX2JvdCIsImFwcF9kb21haW4iOiJodHRwczovL2FyaGFudGJhcm1hdGUuZ2l0aHViLmlvL25leHVzLWNvcmUvIn0=!L+IqaEPyZdEnCe0ulp+IxVB/3eko056YMQf036ZDXLw=', 
           appName: 'nexus_protocol_prod'
         });
-        console.log("Nexus: Sovereign Analytics Initialized");
+        console.log("🛡️ Nexus: Sovereign Analytics Initialized");
       }
     }
   </script>
+
+  <style>
+    /* Prevent gray highlight on tap in mobile browsers */
+    * { -webkit-tap-highlight-color: transparent; }
+    body { background-color: #0A0E14; margin: 0; padding: 0; overflow: hidden; }
+  </style>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

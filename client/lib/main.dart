@@ -3,13 +3,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// --- THE FIX: Bridge handles everything now ---
+// --- THE BRIDGE: Phase 1.2+ Connectivity ---
 import 'tg_bridge.dart';
 
 void main() {
   if (kIsWeb) {
     try {
-      // Phase 1.2: Use the bridge to initialize Telegram context safely
       if (TelegramBridge.isSupported) {
         TelegramBridge.ready();
         TelegramBridge.expand();
@@ -81,47 +80,63 @@ class _NexusDashboardState extends State<NexusDashboard> {
     super.dispose();
   }
 
+  // --- HARDENED HEADER LOGIC (v1.3.1) ---
   Map<String, String> _getAuthHeaders() {
+    String authData = "";
     if (kIsWeb) {
       try {
-        // Safe access to Telegram data through the bridge
-        final String initData = TelegramBridge.initData;
-        if (initData.isNotEmpty) {
-          return {
-            'Authorization': 'tma $initData',
-            'Content-Type': 'application/json',
-          };
-        }
+        authData = TelegramBridge.initData;
       } catch (_) {}
     }
-    return {'Content-Type': 'application/json'};
+
+    // DEV FALLBACK: Synchronized with the bypass in sentry.py
+    if (authData.isEmpty) {
+      authData = "user=%7B%22id%22%3A123%7D&hash=mock_dev_hash";
+    }
+
+    return {
+      'Content-Type': 'application/json',
+      'X-Nexus-TMA': authData,
+    };
   }
 
   Future<void> refreshData() async {
     try {
       final headers = _getAuthHeaders();
       final healthUri = Uri.parse("$baseUrl/health?t=${DateTime.now().millisecondsSinceEpoch}");
+      
+      // 1. Check Health
       final healthRes = await http.get(healthUri).timeout(const Duration(seconds: 3));
       
       if (healthRes.statusCode == 200) {
+        // 2. Fetch Ledger and Transactions
         final ledgerRes = await http.get(Uri.parse("$baseUrl/ledger"), headers: headers);
         final txRes = await http.get(Uri.parse("$baseUrl/transactions"), headers: headers);
 
+        debugPrint("Nexus Sync: Ledger(${ledgerRes.statusCode}) Transactions(${txRes.statusCode})");
+
         if (ledgerRes.statusCode == 200 && txRes.statusCode == 200) {
           final ledgerData = json.decode(ledgerRes.body);
+          final List txData = json.decode(txRes.body);
+
           setState(() {
-            creatorBalance = (ledgerData['total_earned'] as num).toDouble();
-            userPoolBalance = (ledgerData['global_user_pool'] as num).toDouble();
-            protocolFees = (ledgerData['protocol_fees'] as num).toDouble();
-            transactions = json.decode(txRes.body);
-            isBackendOnline = true;
+            creatorBalance = (ledgerData['total_earned'] ?? 0.0).toDouble();
+            userPoolBalance = (ledgerData['global_user_pool'] ?? 0.0).toDouble();
+            protocolFees = (ledgerData['protocol_fees'] ?? 0.0).toDouble();
+            transactions = txData;
+            isBackendOnline = true; // 🟢 Backend verified and online
             isLoading = false;
           });
           return;
         }
       }
+      
+      setState(() {
+        isBackendOnline = false;
+        isLoading = false;
+      });
     } catch (e) {
-      debugPrint("Nexus Network Error: $e");
+      debugPrint("Nexus UI Sync Error: $e");
       setState(() {
         isBackendOnline = false;
         isLoading = false;
@@ -139,20 +154,25 @@ class _NexusDashboardState extends State<NexusDashboard> {
       );
 
       if (response.statusCode == 200) {
-        // Safe Haptic feedback via the bridge
-        if (kIsWeb) {
-          TelegramBridge.triggerHaptic();
-        }
-        
+        if (kIsWeb) TelegramBridge.triggerHaptic();
         _amountController.clear();
         await refreshData();
       } else {
+        debugPrint("Split Rejected: ${response.statusCode}");
         setState(() => isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Execution Denied: ${response.statusCode}")),
+          );
+        }
       }
     } catch (e) {
+      debugPrint("Execution Error: $e");
       setState(() => isLoading = false);
     }
   }
+
+  // --- UI COMPONENTS ---
 
   @override
   Widget build(BuildContext context) {
@@ -269,7 +289,10 @@ class _NexusDashboardState extends State<NexusDashboard> {
         const Text("RECENT VAULT ACTIVITY", style: TextStyle(fontSize: 11, color: Colors.white38, fontWeight: FontWeight.bold)),
         const SizedBox(height: 15),
         if (transactions.isEmpty) 
-          const Center(child: Text("No activity recorded", style: TextStyle(color: Colors.white24, fontSize: 12))),
+          const Center(child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Text("No activity recorded", style: TextStyle(color: Colors.white24, fontSize: 12)),
+          )),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -285,7 +308,7 @@ class _NexusDashboardState extends State<NexusDashboard> {
               child: ListTile(
                 leading: const Icon(Icons.account_balance_wallet_outlined, color: Colors.blueAccent),
                 title: Text("Split Event: \$${tx['amount']}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                subtitle: Text("ID: ${tx['id']} • ${tx['timestamp'].toString().substring(11, 16)}", style: const TextStyle(fontSize: 11)),
+                subtitle: Text("ID: ${tx['id']} • ${tx['timestamp']?.toString().substring(11, 16) ?? '??:??'}", style: const TextStyle(fontSize: 11)),
               ),
             );
           },

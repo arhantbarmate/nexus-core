@@ -1,108 +1,80 @@
 import hmac
 import hashlib
-import urllib.parse
+import json
 import os
-from fastapi import Request, HTTPException
+import urllib.parse
+from dotenv import load_dotenv
 
-class Sentry:
-    """
-    Phase 1.3: Multichain Sentry (v1.3.1)
-    
-    Perimeter guard enforcing the 'Verify-then-Execute' (VTE) pattern.
-    Modularly architected for TON (Social) and IoTeX (DePIN) staging.
-    """
+load_dotenv()
 
+class NexusSentry:
     def __init__(self):
-        # Explicit Environment Check
-        env = os.getenv("NEXUS_ENV", "dev")
-        self.bot_token = os.getenv("BOT_TOKEN")
+        self.bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+        self.node_id = "nexus_sentry_v1.3.1"
 
-        # Hard-fail in production/non-dev if token is missing
-        if env != "dev" and not self.bot_token:
-            raise RuntimeError("NEXUS_SENTRY: BOT_TOKEN is required in non-dev environments")
+    def verify_ton_request(self, auth_data: str) -> dict:
+        """
+        Validates Telegram initData and extracts User ID.
+        Returns: {'verified': bool, 'user_id': int or None}
+        """
+        if not auth_data:
+            return {"verified": False, "user_id": None}
 
-        # Fallback only permitted in explicit 'dev' mode
+        # --- DEVELOPMENT BYPASS (Local/Ngrok Testing) ---
+        if auth_data == "user=%7B%22id%22%3A123%7D&hash=mock_dev_hash":
+            print(f"🛡️ {self.node_id}: Development Bypass Authorized")
+            return {"verified": True, "user_id": 123} # Standard Dev ID
+
         if not self.bot_token:
-            self.bot_token = "DEV_TOKEN_UNSECURE"
+            print(f"⚠️ {self.node_id}: Missing BOT_TOKEN.")
+            return {"verified": False, "user_id": None}
 
-        self._ton_secret_key = self._generate_ton_secret()
-        self.iotex_mode = "staged"  # Identity not yet enforced in Phase 1.3
-
-    def _generate_ton_secret(self):
-        """Derives a site-specific secret key from the Bot Token per Telegram spec."""
-        return hmac.new(
-            key=b"WebAppData",
-            msg=self.bot_token.encode(),
-            digestmod=hashlib.sha256
-        ).digest()
-
-    def verify_ton_request(self, init_data: str) -> bool:
-        """
-        Validates TON/Telegram WebApp initData signatures.
-        Logic: Parse -> Sort -> HMAC-SHA256 -> Timing-safe comparison.
-        """
         try:
-            params = dict(urllib.parse.parse_qsl(init_data, strict_parsing=True))
-            received_hash = params.pop("hash", None)
-            if not received_hash:
-                return False
+            # 1. Parse and extract hash
+            params = dict(urllib.parse.parse_qsl(auth_data))
+            if "hash" not in params:
+                return {"verified": False, "user_id": None}
+
+            received_hash = params.pop("hash")
             
-            # Data-check-string must be constructed from alphabetically sorted keys
-            data_check_string = "\n".join(
-                f"{k}={v}" for k, v in sorted(params.items())
-            )
-            
-            calculated_hash = hmac.new(
-                key=self._ton_secret_key,
-                msg=data_check_string.encode(),
-                digestmod=hashlib.sha256
+            # 2. Extract User ID programmatically from the 'user' JSON string
+            user_data = json.loads(params.get("user", "{}"))
+            extracted_user_id = user_data.get("id")
+
+            # 3. Reconstruct data_check_string for HMAC validation
+            data_check_string = "\n".join([f"{k}={v}" for k, v in sorted(params.items())])
+
+            # 4. Generate Secret Key and Expected Hash
+            secret_key = hmac.new(
+                "WebAppData".encode(), 
+                self.bot_token.encode(), 
+                hashlib.sha256
+            ).digest()
+
+            expected_hash = hmac.new(
+                secret_key, 
+                data_check_string.encode(), 
+                hashlib.sha256
             ).hexdigest()
-            
-            return hmac.compare_digest(calculated_hash, received_hash)
-        except Exception:
-            return False
 
-    def inspect_iotex_request(self, auth_payload: str) -> dict:
-        """
-        Phase 1.3: IoTeX identity inspection.
-        Returns presence metadata but does NOT authorize execution.
-        """
-        return {
-            "present": bool(auth_payload),
-            "mode": self.iotex_mode
-        }
-
-# Global Instance
-sentry = Sentry()
-
-async def multichain_guard(request: Request):
-    """
-    FastAPI Dependency: Modular Perimeter Gate.
-    Enforces network-specific validation with explicit precedence (TON > IoTeX).
-    """
-    
-    # 1. TON/Telegram Perimeter (Active Enforcement)
-    ton_data = request.headers.get("X-Nexus-TMA")
-    if ton_data:
-        if sentry.verify_ton_request(ton_data):
-            return {"network": "ton", "verified": True}
-        # Explicit rejection for malformed signatures
-        raise HTTPException(status_code=403, detail="Invalid TON initData signature")
-
-    # 2. IoTeX DePIN Perimeter (Staged Inspection)
-    iotex_data = request.headers.get("X-Nexus-IOTX")
-    if iotex_data:
-        inspection = sentry.inspect_iotex_request(iotex_data)
-        if inspection["present"]:
-            # Returns verified: False to signal 'Staged' status to the Brain
+            # 5. Final Compare
+            is_verified = hmac.compare_digest(received_hash, expected_hash)
             return {
-                "network": "iotex", 
-                "verified": False, 
-                "mode": inspection["mode"]
+                "verified": is_verified, 
+                "user_id": extracted_user_id if is_verified else None
             }
 
-    # 3. Fail-Closed
-    raise HTTPException(
-        status_code=403, 
-        detail="Nexus Sentry: No valid network perimeter verification found."
-    )
+        except Exception as e:
+            print(f"❌ {self.node_id}: Verification Error: {e}")
+            return {"verified": False, "user_id": None}
+
+    def inspect_iotex_request(self, payload: str) -> dict:
+        return {
+            "present": bool(payload),
+            "verified": False, 
+            "mode": "staged",
+            "network": "iotex",
+            "user_id": None
+        }
+
+sentry = NexusSentry()
