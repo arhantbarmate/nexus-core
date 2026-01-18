@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Installation Guide
+title: Installation & Deployment
 permalink: /install/
 ---
 
@@ -113,7 +113,6 @@ Restart=always
 ---
 
 © 2026 Nexus Protocol · v1.3.1
-
 
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
