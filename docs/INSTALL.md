@@ -114,7 +114,11 @@ Restart=always
 
 © 2026 Nexus Protocol · v1.3.1
 
+<details>
+<summary>⚙️ <strong>System Internals (Click to Expand)</strong></summary>
+<br>
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({ startOnLoad: true });
 </script>
+</details>
