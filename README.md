@@ -2,7 +2,7 @@
   <img src="client/assets/nexus-logo.png" width="120" height="120" alt="Nexus Protocol Logo">
   
   <h1>NEXUS PROTOCOL</h1>
-  <p><b>Phase 1.3: The Hardened Sovereign Gateway</b></p>
+  <p><b>Phase 1.3: Multichain Sovereign Gateway & Sentry</b></p>
 
   <a href="https://github.com/arhantbarmate/nexus-core/actions">
     <img src="https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Status" />
@@ -17,26 +17,27 @@
   </a>
 
   <a href="docs/ARCHITECTURE.md">
-    <img src="https://img.shields.io/badge/Security-Sentry_Staged-blueviolet.svg" alt="Security Staged" />
+    <img src="https://img.shields.io/badge/Network-TON_|_IOTEX_STAGING-orange.svg" alt="Network Support" />
   </a>
   
-  <p><i>Request Legitimacy · Deterministic State Transitions · Perimeter Hardening</i></p>
+  <p><i>Sovereign Infrastructure · DePIN-Ready Identity · Perimeter Hardening</i></p>
 </div>
 
 ---
 
-## 🔎 Phase 1.3 System Status: Hardened Gateway
-**Current Milestone:** `v1.3.0-staged` | **Focus:** Perimeter Security & Request Validation
+## 🔎 Phase 1.3: Hardened Sovereign Node
+**Current Milestone:** `v1.3.1-staged` | **Focus:** Multichain Perimeter Security & DePIN Readiness
 
-Phase 1.3 marks the transition of Nexus Protocol from a consistent gateway to a **Hardened Sovereign Node**. The primary objective is to ensure that the Economic Engine only processes state transitions that have been cryptographically validated at the perimeter.
+Nexus Protocol is a **Local-First Sovereign Gateway** that moves the trust perimeter from the cloud to user-owned hardware. Phase 1.3 establishes the **Sentry Guard**, a modular verification engine designed to validate request legitimacy across heterogeneous networks (TON and IoTeX).
 
-> **Note:** The Sentry is staged and audited in v1.3.0; enforcement will be enabled once perimeter validation is fully verified.
+> [!IMPORTANT]
+> **Execution Scope Disclaimer:** Phase 1.x performs **no on-chain execution or settlement**. All logic executes locally on user hardware. Blockchain networks (TON / IoTeX) are treated strictly as **future anchoring or identity layers**, not execution environments.
 
 ### 🏛️ Milestone Highlights
-* **🛡️ Sentry Verification:** Introduced the **Sentry Guard** (`backend/sentry.py`), a deterministic perimeter module designed to validate Telegram WebApp integrity signatures (HMAC-SHA256).
-* **🔒 Fail-Closed Security:** Implementation of the "Hardened Sentry" model where unverified platform requests are rejected before reaching the logic layer.
-* **🧬 Economic Invariants:** The Economic Engine is treated as a **deterministic state transition primitive**, ensuring auditability across all 60-30-10 splits.
-* **🌉 Consistent Authority:** Maintained the "Brain-First" architecture, ensuring the local Vault remains the single, verified source of truth.
+* **🛡️ Sentry Guard (`backend/sentry.py`):** A deterministic perimeter module that validates platform integrity. While currently optimized for Telegram HMAC, it is architected for **IoTeX ioID** integration (Phase 2).
+* **🔒 Sovereign Perimeter:** Requests are rejected at the edge before hitting the Economic Engine, ensuring only cryptographically verified state transitions occur.
+* **🧬 Deterministic Economics:** Every transaction follows a strictly audited 60-30-10 split, maintaining ledger invariants regardless of the settlement chain.
+* **🧠 Modular Authority:** Nexus treats the local Vault as the single source of truth; the Brain acts as the authoritative logic gate for the local environment.
 
 ---
 
@@ -47,67 +48,57 @@ Phase 1.3 marks the transition of Nexus Protocol from a consistent gateway to a 
 | **Start Here** | **[Installation Guide](docs/INSTALL.md)** | ⚡ Run a hardened node locally |
 | **Deep Dive** | **[Architecture](docs/ARCHITECTURE.md)** | 🏛️ Sentry-Gated Gateway design |
 | **Logic** | **[Economic Model](docs/ECONOMICS.md)** | 💰 Deterministic 60-30-10 invariants |
-| **Future** | **[Roadmap](docs/ROADMAP.md)** | 🗺️ Hardening → Identity evolution |
-| **Security** | **[Security Policy](docs/SECURITY.md)** | 🛡️ Threat models & disclosure |
+| **Future** | **[Roadmap](docs/ROADMAP.md)** | 🗺️ From TON Gateway to IoTeX DePIN |
 
 ---
 
 ## 1. Overview
 
-**Nexus Protocol** is an infrastructure research initiative building a **Local-First Sovereign Node**. 
-Unlike traditional cloud-hosted Mini Apps, Nexus runs entirely on your hardware. You own the execution, the database, and the ledger history.
+**Nexus Protocol** is an infrastructure research initiative building **User-Owned Sovereign Nodes**. Unlike centralized cloud gateways, Nexus runs entirely on user hardware. You own the execution, the local ledger, and the verification logic.
 
-**Phase 1.3** introduces **Perimeter Hardening**, establishing a "Clean Room" environment where requests are validated for platform legitimacy (HMAC) before they are allowed to mutate the sovereign state.
+**Network Perimeter Evolution:** Phase 1 hardens the **Telegram/TON** gateway. Phase 2 (Planned) extends this to the **IoTeX DePIN** stack, allowing the Sentry to verify physical hardware identity (ioID) and prepare for off-chain data proofs (W3bstream).
 
 ---
 
-## 2. Hardened Architecture
+## 2. Why Nexus Matters to Multichain Ecosystems
 
-In Phase 1.3, the system enforces a strict verification gate. The **Sentry** validates the request signature, the **Brain** executes the logic, and the **Vault** persists the result.
+Nexus explores how transaction integrity, identity verification, and economic logic can be validated **before** interacting with congested or cost-bearing networks. By shifting validation to the edge, Nexus reduces unnecessary on-chain load while preserving deterministic outcomes.
+
+## 3. Hardened Architecture
+
+Nexus enforces a strict **"Verify-then-Execute"** flow. The **Sentry** handles network-specific verification, while the **Brain** handles the universal economic logic.
 
 ```text
-         [ USER / BROWSER / TMA ]
-                   |
-                   | 1. Request with HMAC Signature
-                   v
+         [ USER / DEVICE / APP ]
+                    |
+                    | 1. Signed Request (HMAC / ioID)
+                    v
 +---------------------------------------+
-|   THE BRAIN (Hardened Gateway)        |  🛡️ SENTRY GUARD
-|   (FastAPI · Port 8000)               |  (Verification Gate)
+|   THE BRAIN (Multichain Gateway)      |  🛡️ SENTRY GUARD
+|   (FastAPI · Python Stack)            |  (Identity Verification)
 +------------------+--------------------+
-                   |
-           2. If Verified: Execute
-           Deterministic Logic
-                   |
-                   v
+                    |
+             2. Verified Logic
+             Execution (60-30-10)
+                    |
+                    v
 +------------------+--------------------+
 |   THE VAULT (Sovereign Ledger)        |  🧠 BRAIN AUTHORITY
-|   (SQLite WAL · nexus_vault.db)       |  (Atomic Persistence)
+|   (Local Persistence)                 |  (Atomic State Update)
 +---------------------------------------+
 ```
 
 ---
 
-## 3. 🚦 Quick Start (Windows)
+## 4. 🚦 Quick Start (Windows)
 
-The fastest way to deploy a node and audit the Sentry-staged codebase:
+Audit the staged Sentry-hardening codebase:
 
 1. **Start:** Double-click **`start_nexus.bat`**.
 2. **Open:** Visit **`http://localhost:8000`**.
-3. **Stop:** Run **`stop_nexus.bat`**.
+3. **Audit:** Review `backend/sentry.py` for the core verification logic.
 
-*For manual setup or security auditing, see [docs/INSTALL.md](docs/INSTALL.md).*
-
----
-
-## 4. Execution Primitive — The 60-30-10 Invariant
-
-Every state transition processed by the Brain follows a fixed, deterministic split to ensure ledger auditability:
-
-* **60%** → Primary Actor Allocation
-* **30%** → Secondary Pool Reservation
-* **10%** → Network Reserved Fee
-
-📄 **Full details:** [docs/ECONOMICS.md](docs/ECONOMICS.md)
+> **Note:** Sentry enforcement hooks are currently **staged** and not yet mandatory in the request pipeline. This phase focuses on logic hardening and architectural auditability.
 
 ---
 
@@ -115,19 +106,11 @@ Every state transition processed by the Brain follows a fixed, deterministic spl
 
 | Phase | Goal | Status |
 | :--- | :--- | :--- |
-| **1.1** | Sovereign Foundation | ✅ **Completed** |
-| **1.2** | Gateway Consistency | ✅ **Completed** |
-| **1.3** | **Perimeter Hardening** | 🔵 **Active** |
-| **2.0** | Identity & Signing | 🔮 **Planned** |
+| **1.1** | Sovereign Foundation (Local-First) | ✅ **Completed** |
+| **1.2** | Gateway Consistency (TON) | ✅ **Completed** |
+| **1.3** | **Perimeter Hardening (Sentry Staged)** | 🔵 **Active** |
+| **2.0** | **DePIN Identity (IoTeX ioID)** | 🔮 **Planned Integration** |
 
 ---
 
-## 🛡️ Governance & Safety
-
-* **[Security Policy](docs/SECURITY.md)** — Disclosure & threat scope
-* **[Contributing](docs/CONTRIBUTING.md)** — Architectural boundaries
-* **[Code of Conduct](docs/CODE_OF_CONDUCT.md)** — Professional standards
-
----
-
-© 2026 Nexus Protocol · Licensed under the **Apache License 2.0**
+© 2026 Nexus Protocol · Licensed under **Apache License 2.0**
