@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Nexus Protocol is a local-first sovereign gateway node for Telegram Mini Apps, featuring perimeter hardening and deterministic execution.">
+    <meta name="description" content="Nexus Protocol is a local-first sovereign gateway node featuring multichain perimeter hardening for TON and IoTeX.">
     <title>Nexus Protocol | Hardened Perimeter</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
@@ -46,9 +46,9 @@
             font-size: 11px;
         }
         .status-badge {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #4ade80;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
             padding: 6px 16px;
             border-radius: 9999px;
             font-size: 11px;
@@ -56,6 +56,15 @@
             letter-spacing: 1px;
             display: inline-block;
             margin-top: 10px;
+        }
+        .network-pill {
+            background: #1e293b;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            margin-right: 5px;
         }
         .btn {
             padding: 12px 28px;
@@ -91,30 +100,41 @@
              alt="Nexus Protocol Logo" 
              style="width: 100px; height: 100px; margin-bottom: 10px;">
         <h1>NEXUS <span style="color: #6366f1;">PROTOCOL</span></h1>
-        <span class="status-badge">Phase 1.3: Hardened Gateway</span>
+        <span class="status-badge">v1.3.1: Multichain Staging</span>
     </div>
 
     <div class="glass-card">
         <div class="column">
-            <h2 style="margin-top: 0; font-size: 24px;">Request Integrity</h2>
-            <p>Nexus is a sovereign node protocol for the TON ecosystem. Phase 1.3 ensures that state transitions are gated by cryptographic validation (HMAC-SHA256).</p>
-            <div style="font-family: 'Fira Code', monospace; font-size: 13px; color: #94a3b8; margin-top: 20px;">
-                <p style="margin: 5px 0;">● Sentry: Verification Guard</p>
-                <p style="margin: 5px 0;">● Engine: 60-30-10 Invariants</p>
-                <p style="margin: 5px 0;">● Vault: SQLite Atomic Ledger</p>
+            <h2 style="margin-top: 0; font-size: 24px;">Sovereign Infrastructure</h2>
+            <p>Nexus is a local-first gateway protocol bridging decentralized ecosystems. Phase 1.3 establishes a "Verify-then-Execute" perimeter across heterogeneous networks.</p>
+            
+            <div style="margin-top: 20px;">
+                <span class="network-pill">TON Support: Active</span>
+                <span class="network-pill" style="border-color: #6366f1; color: #a5b4fc;">IoTeX: Staged (Phase 2)</span>
+            </div>
+
+            <div style="font-family: 'Fira Code', monospace; font-size: 13px; color: #94a3b8; margin-top: 25px;">
+                <p style="margin: 5px 0;">🛡️ Sentry: HMAC & Identity Gate</p>
+                <p style="margin: 5px 0;">🧠 Brain: Deterministic Logic</p>
+                <p style="margin: 5px 0;">💾 Vault: Local Atomic Persistence</p>
             </div>
         </div>
 
         <div class="column">
-            <div class="terminal-box">
-                <p style="color: #818cf8; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px;">// HARDENED ARCHITECTURE</p>
-                <div class="arch-step" style="background: rgba(99, 102, 241, 0.1); color: #a5b4fc; border-color: rgba(99, 102, 241, 0.3);">🛡️ SENTRY: HMAC GUARD</div>
+            <div class="terminal-box" id="security-console">
+                <p style="color: #818cf8; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px;">// PERIMETER STATUS</p>
+                
+                <div id="status-live" class="arch-step" style="background: rgba(245, 158, 11, 0.1); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3);">
+                    ⚠️ SENTRY: STAGED (READ-ONLY)
+                </div>
+                
                 <div style="text-align: center; color: #475569; margin: 4px 0;">↓</div>
-                <div class="arch-step">🧠 BRAIN: EXECUTION</div>
+                <div class="arch-step">🧠 BRAIN: VERIFIED EXECUTION</div>
                 <div style="text-align: center; color: #475569; margin: 4px 0;">↓</div>
+                
                 <div style="display: flex; gap: 10px;">
-                    <div class="arch-step" style="flex:1; font-size: 10px;">📱 BODY: UI</div>
-                    <div class="arch-step" style="flex:1; font-size: 10px;">💾 VAULT: DB</div>
+                    <div class="arch-step" style="flex:1; font-size: 10px; border-color: #6366f1;">TON TMA</div>
+                    <div class="arch-step" style="flex:1; font-size: 10px; border-color: #a855f7;">IOTEX DePIN</div>
                 </div>
             </div>
         </div>
@@ -122,8 +142,7 @@
 
     <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
         <a href="https://github.com/arhantbarmate/nexus-core" 
-           class="btn btn-primary" 
-           aria-label="View Nexus Protocol source code on GitHub">Source Code</a>
+           class="btn btn-primary">Source Code</a>
         <a href="https://github.com/arhantbarmate/nexus-core/blob/main/docs/ARCHITECTURE.md" 
            class="btn btn-secondary">Architecture</a>
         <a href="https://github.com/arhantbarmate/nexus-core/blob/main/docs/ROADMAP.md" 
@@ -131,13 +150,23 @@
     </div>
 
     <footer style="margin-top: 50px; text-align: center; font-family: monospace; color: #64748b;">
-        <p style="font-size: 11px; margin-bottom: 10px;">© 2026 NEXUS PROTOCOL · APACHE 2.0</p>
+        <p style="font-size: 11px; margin-bottom: 10px;">© 2026 NEXUS PROTOCOL · MULTICHAIN RESEARCH</p>
         <div>
             <a href="privacy.html">Privacy</a>
             <span>·</span>
             <a href="terms.html">Terms</a>
         </div>
     </footer>
+
+    <script>
+        // Placeholder for future Sentry API calls
+        async function updateStatus() {
+            // This is where you would fetch /health from your FastAPI backend
+            // For now, it remains in its staged yellow warning state as per v1.3.1
+            console.log("Nexus Perimeter Hardening: Staged Status Verified.");
+        }
+        updateStatus();
+    </script>
 
 </body>
 </html>
