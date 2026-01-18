@@ -9,124 +9,158 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #6366f1; --accent: #a855f7; --bg: #0f172a; --glass: rgba(30, 41, 59, 0.85); }
+        :root { --primary: #6366f1; --accent: #a855f7; --bg: #0f172a; --glass: rgba(30, 41, 59, 0.75); }
         body { 
             font-family: 'Inter', sans-serif; background-color: var(--bg);
-            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
-            color: #f8fafc; margin: 0; padding: 20px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;
+            background-image: radial-gradient(circle at top center, #1e293b, #0f172a);
+            color: #f8fafc; margin: 0; padding: 40px 20px;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+        .hero-section {
+            text-align: center; margin-bottom: 50px;
         }
         .glass-card { 
-            background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px;
-            max-width: 1100px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px;
+            background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 50px;
+            max-width: 1000px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            display: flex; flex-direction: column; gap: 50px;
+        }
+        
+        /* Centered Sovereign Infrastructure Block */
+        .infra-block {
+            text-align: center; max-width: 700px; margin: 0 auto;
         }
         .terminal-box {
-            background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px; padding: 20px; font-family: 'Fira Code', monospace; font-size: 11px;
+            background: rgba(10, 15, 30, 0.8); border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px; padding: 25px; font-family: 'Fira Code', monospace; font-size: 12px;
+            text-align: left; display: inline-block; width: 100%; max-width: 500px; margin-top: 25px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
-        .matrix-container { grid-column: 1 / -1; margin-top: 20px; }
-        .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+        
+        /* Matrix Grid */
+        .matrix-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; 
+        }
         .matrix-card { 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            padding: 20px; border-radius: 16px; text-align: center;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px; border-radius: 16px; text-align: center; transition: transform 0.2s;
         }
-        .matrix-card.nexus { border: 1px solid var(--primary); background: rgba(99, 102, 241, 0.05); }
-        .check { color: #4ade80; font-weight: bold; }
-        .cross { color: #f87171; font-weight: bold; }
+        .matrix-card:hover { transform: translateY(-5px); }
+        .matrix-card.nexus { 
+            border: 1px solid var(--primary); 
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(15, 23, 42, 0) 100%);
+        }
+        .check { color: #4ade80; font-weight: bold; margin-right: 8px; }
+        .cross { color: #f87171; font-weight: bold; margin-right: 8px; }
 
         .status-badge {
-            background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3);
-            color: #a5b4fc; padding: 6px 16px; border-radius: 9999px; font-size: 11px;
-            text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px;
+            background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc; padding: 8px 18px; border-radius: 9999px; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;
+            display: inline-block; margin-top: 15px;
         }
         .btn {
-            padding: 12px 28px; border-radius: 30px; font-weight: bold; text-decoration: none;
-            color: white; font-size: 14px; transition: transform 0.2s, background 0.2s; display: inline-block;
+            padding: 14px 32px; border-radius: 30px; font-weight: bold; text-decoration: none;
+            color: white; font-size: 14px; transition: all 0.2s; display: inline-block;
         }
-        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); }
-        .btn-secondary { background: #334155; }
-        .btn-outline { border: 1px solid #475569; }
-        .btn:hover { transform: translateY(-2px); }
-        .arch-step { padding: 10px; background: #1e293b; border-radius: 8px; text-align: center; margin: 8px 0; }
-        footer a { color: #64748b; text-decoration: none; font-size: 12px; margin: 0 10px; }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); 
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4); }
+        
+        .arch-step { 
+            padding: 8px 12px; margin: 6px 0; border-radius: 4px; 
+            display: flex; justify-content: space-between;
+        }
+        footer a { color: #64748b; text-decoration: none; font-size: 12px; margin: 0 12px; transition: color 0.2s; }
+        footer a:hover { color: #94a3b8; }
     </style>
 </head>
 <body>
 
-    <div style="text-align: center; margin-bottom: 40px;">
+    <div class="hero-section">
         <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png" 
-             alt="Nexus Protocol Logo" style="width: 100px; height: 100px; margin-bottom: 10px;">
-        <h1>NEXUS <span style="color: #6366f1;">PROTOCOL</span></h1>
-        <span class="status-badge">v1.3.1: Hardened Gateway (IoTeX Staged)</span>
+             alt="Nexus Protocol Logo" style="width: 120px; height: 120px; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(99,102,241,0.3));">
+        <h1 style="margin: 0; font-size: 42px; letter-spacing: -1px;">NEXUS <span style="color: #6366f1;">PROTOCOL</span></h1>
+        <div class="status-badge">v1.3.1: Hardened Gateway (IoTeX Staged)</div>
     </div>
 
     <div class="glass-card">
-        <div class="column">
-            <h2 style="font-size: 24px;">Sovereign Infrastructure</h2>
-            <p style="font-size: 14px; color: #cbd5e1;">A local-first gateway bridging decentralized ecosystems. Phase 1.3.1 enforces a "Verify-then-Execute" perimeter.</p>
+        
+        <div class="infra-block">
+            <h2 style="font-size: 28px; margin-bottom: 15px;">Sovereign Infrastructure</h2>
+            <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">
+                A local-first gateway bridging decentralized ecosystems. Phase 1.3.1 enforces a 
+                <span style="color: #a5b4fc;">"Verify-then-Execute"</span> perimeter, ensuring only cryptographically valid intents reach your hardware.
+            </p>
             
             <div class="terminal-box">
-                <p style="color: #818cf8; font-weight: bold; margin-bottom: 10px;">// SYSTEM_HEALTH</p>
-                <div class="arch-step" style="color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3);">🛡️ SENTRY: ACTIVE</div>
-                <div class="arch-step">🧠 BRAIN: DETERMINISTIC</div>
-                <div class="arch-step" style="color: #a5b4fc; border: 1px solid var(--primary);">⛓️ IOTEX: STAGED</div>
+                <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px; color: #64748b;">root@nexus-node:~# ./status.sh</div>
+                <div class="arch-step" style="color: #4ade80; background: rgba(74, 222, 128, 0.05);">
+                    <span>[✓] SENTRY GUARD</span> <span>ACTIVE</span>
+                </div>
+                <div class="arch-step" style="color: #f8fafc;">
+                    <span>[✓] BRAIN LOGIC</span> <span>DETERMINISTIC</span>
+                </div>
+                <div class="arch-step" style="color: #a5b4fc; background: rgba(99, 102, 241, 0.05);">
+                    <span>[i] IOTEX MODULE</span> <span>STAGED (v2.0)</span>
+                </div>
             </div>
         </div>
 
-        <div class="matrix-container">
-            <h2 style="font-size: 24px; color: var(--primary);">Strategic Advantage</h2>
+        <div>
+            <h3 style="text-align: center; color: var(--primary); font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px;">Strategic Architecture</h3>
             <div class="matrix-grid">
                 <div class="matrix-card">
-                    <h4 style="color: #94a3b8;">Standard dApp</h4>
-                    <p style="font-size: 12px;"><span class="cross">✗</span> Slow On-Chain Logic</p>
-                    <p style="font-size: 12px;"><span class="cross">✗</span> High Gas Costs</p>
-                    <p style="font-size: 12px;"><span class="cross">✗</span> No Privacy</p>
+                    <h4 style="color: #94a3b8; margin-top: 0;">Standard dApp</h4>
+                    <p style="font-size: 13px; color: #cbd5e1;"><span class="cross">✗</span> Slow On-Chain Logic</p>
+                    <p style="font-size: 13px; color: #cbd5e1;"><span class="cross">✗</span> High Gas Costs</p>
+                    <p style="font-size: 13px; color: #cbd5e1;"><span class="cross">✗</span> No Privacy</p>
                 </div>
                 <div class="matrix-card">
-                    <h4 style="color: #94a3b8;">Centralized Cloud</h4>
-                    <p style="font-size: 12px;"><span class="cross">✗</span> Opaque Custody</p>
-                    <p style="font-size: 12px;"><span class="cross">✗</span> Server Dependence</p>
-                    <p style="font-size: 12px;"><span class="cross">✗</span> Data Profiling</p>
+                    <h4 style="color: #94a3b8; margin-top: 0;">Centralized Cloud</h4>
+                    <p style="font-size: 13px; color: #cbd5e1;"><span class="cross">✗</span> Opaque Custody</p>
+                    <p style="font-size: 13px; color: #cbd5e1;"><span class="cross">✗</span> Server Dependence</p>
+                    <p style="font-size: 13px; color: #cbd5e1;"><span class="cross">✗</span> Data Profiling</p>
                 </div>
                 <div class="matrix-card nexus">
-                    <h4 style="color: var(--primary);">Nexus Protocol</h4>
-                    <p style="font-size: 12px;"><span class="check">✓</span> Edge Execution</p>
-                    <p style="font-size: 12px;"><span class="check">✓</span> Sovereign Privacy</p>
-                    <p style="font-size: 12px;"><span class="check">✓</span> Merkle Anchoring</p>
+                    <h4 style="color: var(--primary); margin-top: 0;">Nexus Protocol</h4>
+                    <p style="font-size: 13px; color: #e2e8f0;"><span class="check">✓</span> Edge Execution</p>
+                    <p style="font-size: 13px; color: #e2e8f0;"><span class="check">✓</span> Sovereign Privacy</p>
+                    <p style="font-size: 13px; color: #e2e8f0;"><span class="check">✓</span> Merkle Anchoring</p>
                 </div>
             </div>
         </div>
 
-        <div class="column" style="grid-column: 1 / -1;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                <div>
-                    <h3 style="color: #a5b4fc; font-size: 16px;">VTE Isolation</h3>
-                    <p style="font-size: 13px; color: #94a3b8;">Physical separation of Verification and Execution logic to prevent state injection.</p>
-                </div>
-                <div>
-                    <h3 style="color: #a5b4fc; font-size: 16px;">Platform Normalization</h3>
-                    <p style="font-size: 13px; color: #94a3b8;">Unified handling of Social (TON) identities with staged support for Hardware (IoTeX) identity.</p>
-                </div>
-                <div>
-                    <h3 style="color: #a5b4fc; font-size: 16px;">State Anchoring</h3>
-                    <p style="font-size: 13px; color: #94a3b8;">Local-first execution compressed into immutable Merkle Roots for future L1 anchoring.</p>
-                </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; text-align: center; margin-top: 20px;">
+            <div>
+                <h3 style="color: #a5b4fc; font-size: 18px; margin-bottom: 10px;">VTE Isolation</h3>
+                <p style="font-size: 14px; color: #94a3b8; line-height: 1.5;">Physical separation of Verification and Execution logic to prevent state injection.</p>
+            </div>
+            <div>
+                <h3 style="color: #a5b4fc; font-size: 18px; margin-bottom: 10px;">Platform Normalization</h3>
+                <p style="font-size: 14px; color: #94a3b8; line-height: 1.5;">Unified handling of Social (TON) identities with staged support for Hardware (IoTeX).</p>
+            </div>
+            <div>
+                <h3 style="color: #a5b4fc; font-size: 18px; margin-bottom: 10px;">State Anchoring</h3>
+                <p style="font-size: 14px; color: #94a3b8; line-height: 1.5;">Local-first execution compressed into immutable Merkle Roots for future L1 anchoring.</p>
             </div>
         </div>
+
     </div>
 
-    <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-        <a href="https://github.com/arhantbarmate/nexus-core" class="btn btn-primary">Source Code</a>
+    <div style="margin-top: 50px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+        <a href="https://github.com/arhantbarmate/nexus-core" class="btn btn-primary">View Source</a>
         <a href="https://github.com/arhantbarmate/nexus-core/blob/main/docs/ARCHITECTURE.md" class="btn btn-secondary">Architecture</a>
-        <a href="https://github.com/arhantbarmate/nexus-core/blob/main/docs/NOVELTY.md" class="btn btn-outline">Technical Novelty</a>
+        <a href="https://github.com/arhantbarmate/nexus-core/blob/main/docs/NOVELTY.md" class="btn btn-secondary">Technical Novelty</a>
     </div>
 
-    <footer style="margin-top: 50px; text-align: center; color: #64748b;">
-        <p style="font-size: 11px;">© 2026 NEXUS PROTOCOL · MULTICHAIN RESEARCH</p>
-        <div style="margin-top: 10px;">
-            <a href="privacy.html">Privacy</a><span>·</span><a href="terms.html">Terms</a>
+    <footer style="margin-top: 60px; text-align: center; color: #64748b;">
+        <p style="font-size: 11px; letter-spacing: 1px;">© 2026 NEXUS PROTOCOL · MULTICHAIN RESEARCH</p>
+        <div style="margin-top: 15px;">
+            <a href="privacy.html">Privacy</a>•<a href="terms.html">Terms</a>•<a href="INSTALL.md">Deploy Node</a>
         </div>
     </footer>
 
