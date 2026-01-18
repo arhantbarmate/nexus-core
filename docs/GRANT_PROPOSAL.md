@@ -30,7 +30,7 @@ Nexus operates on a **Fail-Closed Sentry Model**:
 
 **Current Status (Phase 1.3.1):**
 * ✅ Repository: [github.com/arhantbarmate/nexus-core](https://github.com/arhantbarmate/nexus-core)
-* ✅ Documentation: [nexus-core/docs](https://arhantbarmate.github.io/nexus-core/)
+* ✅ Documentation: [Live Project Site](https://arhantbarmate.github.io/nexus-core/)
 * ✅ CI/CD: Active & Passing
 
 ---
@@ -69,7 +69,8 @@ Nexus operates on a **Fail-Closed Sentry Model**:
 
 ## 5. Team
 
-* **Arhant Barmate:** Lead Architect (Sovereign Systems, Local-First Execution)
+* **Arhant Barmate:** Lead Architect & Core Developer
+  *(Sovereign Systems, Local-First Execution)*
 
 ---
 

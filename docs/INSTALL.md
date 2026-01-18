@@ -1,10 +1,14 @@
+---
+layout: default
+title: Installation Guide
+permalink: /install/
+---
+
 # 🛠️ Installation & Sovereign Deployment
 
 This guide covers the deployment of the **Nexus Brain (Backend)** and **Nexus Body (Frontend)**. For Phase 1.3.1, the system is optimized for a "Sovereign Node" configuration on Linux.
 
 ## 🏗️ Deployment Architecture
-
-
 
 ```mermaid
 graph LR
@@ -22,7 +26,8 @@ graph LR
 
 * **Hardware:** 1 vCPU, 2GB RAM (Minimum).
 * **OS:** Ubuntu 22.04+ or Debian 11+.
-* **Software:** * Python 3.11+
+* **Software:**
+    * Python 3.11+
     * Flutter SDK (Stable)
     * SQLite3
 
@@ -108,3 +113,9 @@ Restart=always
 ---
 
 © 2026 Nexus Protocol · v1.3.1
+
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: true });
+</script>
