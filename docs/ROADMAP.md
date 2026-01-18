@@ -2,22 +2,24 @@
 
 This document tracks the evolution of the Nexus Sovereign Node. The roadmap is strictly phased to ensure architectural correctness before feature expansion.
 
-**Current Status:** `PHASE 1.3 — HARDENING (ACTIVE)`
-**Primary Focus:** Perimeter Security & Request Legitimacy
+**Current Status:** `PHASE 1.3 — HARDENING (ACTIVE)`  
+**Primary Focus:** Perimeter Security & Multichain Readiness
 
 ---
 
 ## 📅 Roadmap Overview
 
 ```text
-PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)    PHASE 2.0: IDENTITY (Next)
+PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)     PHASE 2.0: IDENTITY (Next)
 +--------------------------+      +--------------------------+      +--------------------------+
-| • Gateway Pattern        |      | • Sentry Guard (HMAC)    |      | • Ed25519 Keypairs       |
-| • Reverse Proxy          | ---> | • Request Legitimacy     | ---> | • Client-Side Signing    |
-| • Unified Namespace      |      | • Fail-Closed Logic      |      | • TON Global Settlement  |
+| • Gateway Pattern        |      | • Sentry Guard (HMAC)    |      | • IoTeX ioID Integration |
+| • Reverse Proxy          | ---> | • Multichain Staging     | ---> | • Client-Side Signing    |
+| • Unified Namespace      |      | • Fail-Closed Logic      |      | • TON / IoTeX Anchoring  |
 +--------------------------+      +--------------------------+      +--------------------------+
-      (Consistency)                      (Perimeter)                      (Ownership)
+      (Consistency)                      (Perimeter)                      (Multichain Identity)
 ```
+
+
 
 ---
 
@@ -36,33 +38,31 @@ PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)    PHASE 2.0: IDENT
 ---
 
 ## 🔵 Phase 1.3 — Hardening & Perimeter (Active)
-**Core Question:** *Is this architecture safe enough to process platform intents?*
+**Core Question:** *Is this architecture safe enough to process multichain intents?*
 
 * [x] **Sentry Guard:** Implementation of `sentry.py` for signature validation.
 * [x] **Request Legitimacy:** Validating Telegram `initData` via HMAC-SHA256.
-* [x] **Fail-Closed Security:** Unauthorized or malformed requests are rejected at the perimeter once Sentry enforcement is enabled.
-* [x] **Refined Economics:** Economic splits framed as deterministic state transitions.
+* [x] **v1.3.1 Multichain Staging:** Defensive framing for TON/IoTeX integration.
+* [x] **Fail-Closed Security:** Unauthorized requests are rejected at the perimeter.
 * [ ] **Observability:** Structured JSON logs for Sentry rejection events (In Progress).
 * [ ] **Replay Awareness:** Preliminary logic for timestamp/freshness checks (Planned).
 
-*Status: Active. This phase moves us from "Architectural Authority" to "Perimeter Security."*
-
 ---
 
-## 🔮 Phase 2.0 — Identity & Cryptography (Future)
-**Core Question:** *Who owns the state, and can we prove it on-chain?*
+## 🔮 Phase 2.0 — Identity & DePIN Readiness (Next)
+**Core Question:** *Who owns the state, and can we verify hardware identity?*
 
-* [ ] **Ed25519 Identity:** Persistent node/user keypairs.
+* [ ] **IoTeX ioID Integration:** Using IoTeX Decentralized Identity (DID) to verify physical gateway hardware.
+* [ ] **Ed25519 Identity:** Persistent node/user keypairs for sovereign ownership.
 * [ ] **Client Signing:** Body signs requests; Brain verifies signatures.
-* [ ] **Verified Personal Auth:** Moving beyond request legitimacy to individual user ownership.
-* [ ] **TON Anchoring:** Committing local Merkle roots to the TON blockchain.
+* [ ] **Network Anchoring:** Committing local Merkle roots to the **TON** and **IoTeX** blockchains for global auditability.
 
 ---
 
 ## 🔮 Phase 3.0 — Mesh & Settlement (Future)
+* [ ] **W3bstream Integration:** Porting Sentry logs to IoTeX W3bstream for off-chain proofs.
 * [ ] **Peer Discovery:** DHT-based node finding.
-* [ ] **Gossip Protocol:** Encrypted event propagation between nodes.
-* [ ] **On-Chain Settlement:** Automated claim logic via TON smart contracts.
+* [ ] **On-Chain Settlement:** Automated claim logic via TON/IoTeX smart contracts.
 
 ---
 
@@ -73,17 +73,8 @@ PHASE 1.2: GATEWAY (Done)      PHASE 1.3: HARDENING (Active)    PHASE 2.0: IDENT
 | **1.1** | Foundation | Can it run locally? | ✅ **Closed** |
 | **1.2** | Gateway | Is it consistent? | ✅ **Closed** |
 | **1.3** | **Hardening** | **Is it secure?** | 🔵 **Active** |
-| **2.0** | Identity | Who owns the data? | 🔮 **Future** |
+| **2.0** | **Identity** | **Who owns the data?** | 🔮 **Grant Target** |
 | **3.0** | Mesh | How to coordinate? | 🔮 **Future** |
-
----
-
-## 🛑 Feature Deferral Log
-*To preserve correctness, the following are explicitly deferred until Phase 2.0+:*
-
-1.  **User-Level Private Keys** (Phase 2.0)
-2.  **On-Chain Settlement** (Phase 3.0)
-3.  **Governance DAO** (Phase 4.0)
 
 ---
 
