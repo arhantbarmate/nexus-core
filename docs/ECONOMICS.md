@@ -1,95 +1,72 @@
-# Nexus Protocol — Economic Model (Phase 1.3)
+# 💰 Nexus Protocol — Economic Engine (v1.3.1)
 
-This document defines the deterministic **60-30-10 state transition** and its enforcement within the Hardened Gateway architecture of Phase 1.3.
-
-The model remains fixed to ensure **Ledger Integrity** while the protocol focuses on **Request Legitimacy**.
+This document defines the deterministic **60-30-10 State Transition Engine**. In Phase 1.3, these ratios are treated as **hardcoded execution invariants** to ensure ledger integrity before cross-chain settlement is enabled.
 
 ---
 
-## 1. Design Goals
+## 1. The Multichain Utility Strategy
 
-The Phase 1.3 economic model is a test harness for protocol correctness, designed around:
+Unlike traditional "Tokenomics," Nexus Economics focuses on **Resource Allocation at the edge**. The 60-30-10 split is designed to support the "Verify-then-Execute" model for future interaction domains, including **TON** (social/user flows) and **IoTeX** (DePIN/hardware flows).
 
-1.  **Primary Actor Allocation** — Deterministic value assignment to the initiating participant.
-2.  **Secondary Allocation Pool** — Reserved ledger partition for future protocol experiments.
-3.  **Network Reserved Fee** — Allocated infrastructure and anchoring overhead.
-4.  **Legitimacy-Gated Execution** — State transitions are only triggered after protocol-level verification.
 
-The numerical ratios are arbitrary placeholders chosen for simplicity and auditability during early-phase validation.
 
 ---
 
-## 2. The 60-30-10 Allocation
+## 2. Deterministic Allocation Invariants
 
-Every economic event executed by the **Sovereign Brain** is split deterministically:
+Every economic event processed by the **Sovereign Brain** follows an atomic split. An **invariant** is defined here as a rule that must hold true for every valid state transition, regardless of the network or client layer.
 
--   **60% — Primary Allocation**
--   **30% — Secondary Pool**
--   **10% — Network Reserved**
+| Allocation | Share | Logic | Ecosystem Utility |
+| :--- | :--- | :--- | :--- |
+| **Primary Actor** | 60% | Local Participant Reward | Incentivizes edge-node uptime and hardware maintenance. |
+| **Secondary Pool** | 30% | Reserved Ecosystem Value | Constrained reserve for future **ioID** identity fees or TON storage. |
+| **Network Fee** | 10% | Protocol Overhead | Reserved for **W3bstream** proof generation and on-chain gas anchoring. |
 
-*Ratios are hardcoded in Phase 1.3 to ensure execution invariants during perimeter hardening.*
-
-### 2.1 Primary Allocation (60%)
-Direct assignment to the primary node-edge participant. This ensures the local-first ledger maintains predictable outcomes for the initiating actor.
-
-### 2.2 Secondary Pool (30%)
-Value is accounted for in the Vault but remains illiquid. **No distribution or claim logic exists in this phase.** This validates ledger correctness and partition isolation before introducing complex distribution mechanics in Phase 2.0.
-
-### 2.3 Network Reserved (10%)
-Tracked reserves for future protocol overhead, including anchoring gas costs, relay settlement, and synchronization logic.
+> [!IMPORTANT]
+> **Value Scope Disclaimer:** In Phase 1.3, all allocations are **internal accounting entries only**. They do not represent transferable tokens, claims, or on-chain balances. No redemption, withdrawal, or settlement is possible in this phase. The Secondary Pool is not a discretionary treasury; it is a constrained reserve with predefined future cost domains.
 
 ---
 
-## 3. Enforcement & Verification (Visualized)
+## 3. Enforcement Architecture (The Economic Firewall)
 
-In Phase 1.3, the ledger state transition is protected by the **Sentry verification gate**.
+The Sentry acts as the "Economic Firewall." It ensures that no state transition—and thus no economic allocation—occurs without cryptographic proof of origin.
+
+
 
 ```mermaid
-graph LR
-    subgraph Client_Environment [Body]
-        A[Intent Payload: 100] --> B[Inject initData]
+graph TD
+    subgraph Client [Edge Device / TMA]
+        A[Intent Payload] --> B{X-Nexus-Auth}
     end
 
-    B --> C{🛡️ SENTRY}
+    B --> C{🛡️ SENTRY GUARD}
 
-    subgraph Brain_Perimeter [Sovereign Brain]
-        C -->|Valid Integrity| D[Deterministic Split]
-        C -->|Invalid/Malformed| E[403 Rejected]
+    subgraph Logic [Sovereign Brain]
+        C -->|Valid HMAC/ioID| D[60-30-10 Engine]
+        C -->|Unverified| E[Reject / Drop]
         
-        D --> F[Primary: 60]
-        D --> G[Secondary: 30]
-        D --> H[Network: 10]
+        D --> F[Primary: 60%]
+        D --> G[Secondary: 30%]
+        D --> H[Network: 10%]
     end
 
-    F & G & H --> I[(Vault DB)]
+    F & G & H --> I[(Sovereign Vault)]
+    I --> J[Future: On-Chain Anchor]
 ```
-
-
-
-### The "Verified Split" Flow
-1.  **Handshake:** The Body submits an intent payload along with the `X-Nexus-TMA` header.
-2.  **Verification:** The Sentry validates the payload's integrity signature.
-3.  **Execution:** Only *after* verification, the Brain calculates the 60-30-10 state transition.
-4.  **Persistence:** The resulting ledger entries are committed as a single atomic transaction.
 
 ---
 
-## 4. Integrity & Governance Roadmap
+## 4. DePIN Grant Alignment (IoTeX/TON)
 
-**In Phase 1.3:**
--   **Hardcoded Invariants:** Prevents unauthorized economic drift.
--   **Perimeter Enforcement:** Sentry ensures only legitimate requests trigger the state machine.
--   **State Isolation:** The Body cannot verify signatures or make trust decisions; all security decisions occur within the Brain’s Sentry layer.
-
-**Future Phases (2.0+):**
--   Cryptographic anchoring of the Vault to the TON blockchain.
--   Governance-driven parameter adjustment via cryptographic consensus.
+To ensure long-term sustainability, the 10% **Network Reserved** fee is specifically earmarked for:
+1. **W3bstream Proofs:** Paying for off-chain verifiable compute to prove "Physical Work" (IoTeX).
+2. **Global Settlement:** Paying for periodic Merkle tree root updates to the TON blockchain.
 
 ---
 
 ## 5. Summary
 
-The 60-30-10 model in Phase 1.3 is an **Enforced Execution Invariant**. By treating economics as a deterministic state machine rather than a social feature, Nexus ensures that the Economic Authority of the Brain is a testable, secure reality.
+The 60-30-10 model in Phase 1.3 is an **Enforced Execution Invariant**. By framing economics as a deterministic state machine, Nexus ensures that local value creation is always ready for global blockchain settlement without premature on-chain coupling.
 
 ---
 
