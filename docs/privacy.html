@@ -3,43 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Protocol – Privacy Policy (Phase 1.3)</title>
+    <title>Nexus Protocol – Privacy Policy (v1.3.1)</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto; line-height: 1.6; color: #333; background-color: #f9f9f9; }
         .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        h1 { color: #6f42c1; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+        h1 { color: #6366f1; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
         h2 { color: #444; margin-top: 1.5rem; }
-        code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
         .footer { margin-top: 2rem; font-size: 0.8em; color: #888; text-align: center; }
-        .badge { display: inline-block; background: #6f42c1; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; vertical-align: middle; margin-bottom: 10px; }
+        .badge { display: inline-block; background: #6366f1; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; vertical-align: middle; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="badge">Sovereign Phase 1.3</div>
+        <div class="badge">v1.3.1 Multichain Staging</div>
         <h1>Privacy Policy</h1>
-        <p><strong>Effective Date:</strong> January 17, 2026</p>
+        <p><strong>Effective Date:</strong> January 18, 2026</p>
         
-        <p>Nexus Protocol operates as a <strong>Local-First Sovereign Node</strong>. We do not collect, transmit, or store your personal data on any central server. Our architecture is designed to enforce privacy through local execution.</p>
+        <p>Nexus Protocol is a <strong>Local-First Sovereign Gateway</strong>. We do not operate centralized servers to collect or store your data. Privacy is enforced through local execution and cryptographic verification.</p>
 
-        <h2>1. Local-First Sovereignty</h2>
-        <p>In Phase 1.3, all economic state transitions, ledger entries, and identifiers are processed by your local <strong>Sovereign Brain</strong> and stored exclusively in the <code>nexus_vault.db</code> file on your local machine. No data is shared with the Nexus developers or any third-party analytics provider.</p>
+        <h2>1. Multichain Identity (TON & IoTeX)</h2>
+        <p>Nexus handles identity metadata exclusively at the edge. 
+            <ul>
+                <li><strong>TON:</strong> Request signatures (HMAC) are parsed locally. Telegram identifiers are ephemeral and not persisted beyond request verification.</li>
+                <li><strong>IoTeX:</strong> In Phase 2.0, device identifiers (ioID) will be used for hardware verification. This data is stored in your local <code>nexus_vault.db</code> and is not accessible by Nexus developers.</li>
+            </ul>
+        </p>
 
-        <h2>2. Perimeter Security (The Sentry)</h2>
-        <p>Phase 1.3 introduces the <strong>Sentry</strong>, a request-legitimacy layer. The Sentry parses Telegram <code>initData</code> signatures to verify that incoming requests are legitimate. This process happens <strong>entirely on your local node</strong>. We do not store or transmit these Telegram signatures to external servers.</p>
+        <h2>2. Off-Chain Compute Readiness</h2>
+        <p>Nexus is architected for <strong>W3bstream</strong> integration. Off-chain compute does not mean cloud storage; any proofs generated remain under your local control until you explicitly authorize an on-chain anchor.</p>
 
-        <h2>3. Stateless Body (UI)</h2>
-        <p>The <strong>Nexus Body</strong> remains a stateless visualization layer. It carries the <code>X-Nexus-TMA</code> integrity payload required to interact with your local Brain but does not persist financial data or ledger history in your browser’s local storage.</p>
-
-        <h2>4. Third-Party Network Bridges</h2>
-        <p>If you utilize external bridges (e.g., Ngrok) to access your node via the Telegram Mini App interface, your data is encrypted in transit. Nexus Protocol does not control these bridges and encourages users to review the privacy policies of any tunneling service they employ.</p>
-
-        <h2>5. Cryptographic Ownership</h2>
-        <p>Nexus Protocol does not currently utilize private keys or blockchain-based identity. Personal data interaction is limited to parsing display-only metadata provided by the Telegram API for local rendering purposes.</p>
+        <h2>3. Data Custody</h2>
+        <p>You are the sole custodian of your node's database file. Nexus does not perform behavioral analytics, centralized profiling, or cloud-sync operations.</p>
     </div>
-
     <div class="footer">
-        &copy; 2026 Nexus Protocol &middot; Hardened Gateway Phase 1.3 &middot; <a href="[https://github.com/nexus-protocol](https://github.com/nexus-protocol)" style="color: #888; text-decoration: none;">GitHub</a>
+        &copy; 2026 Nexus Protocol &middot; v1.3.1 &middot; <a href="https://github.com/arhantbarmate/nexus-core" style="color: #888; text-decoration: none;">GitHub</a>
     </div>
 </body>
 </html>
