@@ -1,9 +1,3 @@
----
-layout: default
-title: Installation & Deployment
-permalink: /install/
----
-
 # 🛠️ Installation & Sovereign Deployment
 
 This guide covers the deployment of the **Nexus Brain (Backend)** and **Nexus Body (Frontend)**. For Phase 1.3.1, the system is optimized for a "Sovereign Node" configuration on Linux.
@@ -30,8 +24,6 @@ graph LR
     * Python 3.11+
     * Flutter SDK (Stable)
     * SQLite3
-
----
 
 ## 2. Backend Deployment (The Brain)
 
@@ -76,14 +68,11 @@ flutter build web --release
 python3 -m http.server 8080 --directory build/web
 ```
 
-### 3.2 Integration Note
-The Brain operates as a hardened gateway and reverse proxy. It dynamically forwards UI requests to the Body on port `8080` while enforcing the Sentry perimeter on all `/api/*` routes. Accessing the UI through port `8000` ensures all traffic is governed by the Sentry.
-
 ---
 
-## 4. Verification (CI/CD Alignment)
+## 4. Verification
 
-To ensure your installation is "Hardened" and matches the protocol spec, run the full test suite:
+To ensure your installation is "Hardened", run the full test suite:
 
 ```bash
 cd ../backend
@@ -91,34 +80,6 @@ pytest tests/test_main.py
 pytest tests/test_gateway.py
 ```
 
-**Expected Outcome:**
-* `test_api_bootstrap`: PASSED
-* `test_sentry_presence`: PASSED (403 on protected routes)
-* `test_ledger_access_unauthorized`: PASSED (403 Forbidden)
-* `test_ledger_access_authorized_ton`: PASSED (200 OK)
-* `test_iotex_staging_denies_execution`: PASSED (403)
-
----
-
-## 5. Production Hardening
-
-For a permanent sovereign node, use **systemd** to ensure the Brain restarts on failure:
-
-```ini
-[Service]
-ExecStart=/home/user/nexus-core/backend/venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000
-Restart=always
-```
-
 ---
 
 © 2026 Nexus Protocol · v1.3.1
-
-<details>
-<summary>⚙️ <strong>System Internals (Click to Expand)</strong></summary>
-<br>
-<script type="module">
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: true });
-</script>
-</details>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Protocol - Installation</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; }
+        h1, h2, h3 { color: #111; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
+        pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .mermaid { margin: 20px 0; text-align: center; }
+        .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Back to Home</a>
+
+<h1>🛠️ Installation & Sovereign Deployment</h1>
+<p>This guide covers the deployment of the <strong>Nexus Brain (Backend)</strong> and <strong>Nexus Body (Frontend)</strong>.</p>
+
+<h2>🏗️ Deployment Architecture</h2>
+<div class="mermaid">
+graph LR
+    User((User)) -->|Port 8000| Sentry[🛡️ Sentry Guard]
+    subgraph Sovereign_Node [Linux Server]
+        Sentry -->|Internal Route| Brain[🧠 Nexus Brain]
+        Brain -->|Query| Vault[(Nexus Vault)]
+        Brain -->|Gateway Proxy| Body[🖥️ Flutter Body :8080]
+    end
+</div>
+
+<h2>1. Prerequisites</h2>
+<ul>
+    <li><strong>Hardware:</strong> 1 vCPU, 2GB RAM.</li>
+    <li><strong>OS:</strong> Ubuntu 22.04+ or Debian 11+.</li>
+    <li><strong>Software:</strong> Python 3.11+, Flutter SDK, SQLite3.</li>
+</ul>
+
+<h2>2. Backend Deployment</h2>
+<h3>2.1 Clone and Setup</h3>
+<pre>git clone https://github.com/arhantbarmate/nexus-core
+cd nexus-core/backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt</pre>
+
+<h3>2.2 Configure Security</h3>
+<pre># .env file
+BOT_TOKEN=your_telegram_bot_token
+NEXUS_ENV=production</pre>
+
+<h3>2.3 Initialize & Start</h3>
+<pre>uvicorn main:app --host 0.0.0.0 --port 8000</pre>
+
+<h2>3. Frontend Deployment</h2>
+<pre>cd ../client
+flutter pub get
+flutter build web --release
+python3 -m http.server 8080 --directory build/web</pre>
+
+<hr>
+<p>© 2026 Nexus Protocol · v1.3.1</p>
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: true });
+</script>
+
+</body>
+</html>
