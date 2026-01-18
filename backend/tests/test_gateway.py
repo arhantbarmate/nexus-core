@@ -8,7 +8,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from main import app
 
-# FIX: Address DeprecationWarning for Python 3.14+ 
 # Using explicit transport ensures stability in high-version Python environments.
 client = TestClient(app, base_url="http://test")
 
@@ -16,18 +15,22 @@ client = TestClient(app, base_url="http://test")
 def mock_sentry_behavior(monkeypatch):
     """
     Deterministically control Sentry behavior for integration tests.
-    Targets the sentry module specifically to override the instance used by Depends.
+    Updates the mock to return a DICT instead of a BOOL to match v1.3.1 requirements.
     """
-    # Mock TON: Forces the Sentry to return True, letting the guard proceed to 'authorized'
-    monkeypatch.setattr("sentry.sentry.verify_ton_request", lambda _: True)
+    # Mock TON: Now returns the dict required by the multichain_guard
+    def mock_verify_ton(auth_data):
+        return {"verified": True, "user_id": 123}
+    
+    monkeypatch.setattr("sentry.sentry.verify_ton_request", mock_verify_ton)
     
     # Mock IoTeX: Simulates presence but ensures it stays in 'staged' mode.
-    # Note: The guard in main.py will see the header and raise the 403.
     def mock_inspect(payload):
         return {
             "present": bool(payload), 
             "verified": False, 
-            "mode": "staged"
+            "mode": "staged",
+            "network": "iotex",
+            "user_id": None
         }
     
     monkeypatch.setattr("sentry.sentry.inspect_iotex_request", mock_inspect)
@@ -41,9 +44,10 @@ def test_health_check():
 
 def test_ledger_access_unauthorized():
     """
-    CRITICAL SECURITY TEST:
     Ensures that a request with NO headers is rejected by the Fail-Closed logic.
     """
+    # We must bypass the monkeypatch for this specific test to see the real fail-closed logic
+    # But since the guard checks headers first, it will fail naturally.
     response = client.get("/api/ledger")
     assert response.status_code == 403
     assert "Sentry" in response.json()["detail"]
@@ -55,17 +59,16 @@ def test_ledger_access_authorized_ton():
     headers = {"X-Nexus-TMA": "valid_mock_signature"}
     response = client.get("/api/ledger", headers=headers)
     
+    # If the AttributeError is fixed, this will be 200 OK
     assert response.status_code == 200
     assert "total_earned" in response.json()
 
 def test_iotex_staging_denies_execution():
     """
     Verify the IoTeX 'Staged' gate is recognized but NOT authorized.
-    This proves that Phase 1.3 handles multichain headers without over-authorizing.
     """
     headers = {"X-Nexus-IOTX": "ioID_mock_data"}
     response = client.get("/api/ledger", headers=headers)
     
-    # This must be 403 because main.py explicitly raises an exception for IoTeX headers
     assert response.status_code == 403
     assert "staged" in response.json()["detail"].lower()

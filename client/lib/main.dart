@@ -89,7 +89,6 @@ class _NexusDashboardState extends State<NexusDashboard> {
       } catch (_) {}
     }
 
-    // DEV FALLBACK: Synchronized with the bypass in sentry.py
     if (authData.isEmpty) {
       authData = "user=%7B%22id%22%3A123%7D&hash=mock_dev_hash";
     }
@@ -105,11 +104,9 @@ class _NexusDashboardState extends State<NexusDashboard> {
       final headers = _getAuthHeaders();
       final healthUri = Uri.parse("$baseUrl/health?t=${DateTime.now().millisecondsSinceEpoch}");
       
-      // 1. Check Health
       final healthRes = await http.get(healthUri).timeout(const Duration(seconds: 3));
       
       if (healthRes.statusCode == 200) {
-        // 2. Fetch Ledger and Transactions
         final ledgerRes = await http.get(Uri.parse("$baseUrl/ledger"), headers: headers);
         final txRes = await http.get(Uri.parse("$baseUrl/transactions"), headers: headers);
 
@@ -124,7 +121,7 @@ class _NexusDashboardState extends State<NexusDashboard> {
             userPoolBalance = (ledgerData['global_user_pool'] ?? 0.0).toDouble();
             protocolFees = (ledgerData['protocol_fees'] ?? 0.0).toDouble();
             transactions = txData;
-            isBackendOnline = true; // 🟢 Backend verified and online
+            isBackendOnline = true; 
             isLoading = false;
           });
           return;
@@ -171,8 +168,6 @@ class _NexusDashboardState extends State<NexusDashboard> {
       setState(() => isLoading = false);
     }
   }
-
-  // --- UI COMPONENTS ---
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +262,7 @@ class _NexusDashboardState extends State<NexusDashboard> {
         const SizedBox(height: 15),
         ElevatedButton(
           onPressed: isBackendOnline ? () {
-            double? val = double.tryParse(_amountController.text);
+            final double? val = double.tryParse(_amountController.text);
             if (val != null && val > 0) executeSplit(val);
           } : null,
           style: ElevatedButton.styleFrom(
@@ -298,7 +293,8 @@ class _NexusDashboardState extends State<NexusDashboard> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: transactions.length,
           itemBuilder: (context, index) {
-            final tx = transactions[index];
+            // FIX: Changed from var to final to pass CI linter (prefer_final_locals)
+            final dynamic tx = transactions[index];
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
               decoration: BoxDecoration(
