@@ -1,131 +1,79 @@
-# 🛠️ Nexus Installation Guide (Phase 1.3)
+# 🏛️ Nexus Protocol — Technical Architecture (v1.3.1)
 
-This guide describes how to deploy a **Nexus Protocol Phase 1.3 Hardened Gateway Node** on a local machine.
+This document describes the **Multichain Hardened Gateway Architecture**. Nexus moves the "Trust Perimeter" from the cloud to user-owned hardware, providing a secure execution environment for decentralized apps on **TON** and **IoTeX**.
 
-Phase 1.3 introduces the **Sentry security layer**. Currently, the Sentry logic is staged in the codebase for auditing and pitch-grade evidence, while the execution remains in its stable "Phase 1.2" configuration for development ease.
+> [!IMPORTANT]
+> **Architectural Scope & Negative Guarantees:** > * Phase 1.3 is **non-executing** on-chain. All blockchain interactions are restricted to identity verification and future state-root anchoring. 
+> * **Explicit Non-Goals:** No cross-node consensus, no trustless global ordering, and no permissionless identity federation in this phase.
 
 ---
 
-## 1. Deployment Visualization
+## 1. Architectural Philosophy: The Modular Sentry
 
-In Phase 1.3, the architecture remains a single-gateway model. The Sentry is present as a dormant perimeter guard (not yet enforced on startup) within the Brain.
+In v1.3.1, Nexus implements a **Modular Sentry Model**. This decouples the verification of "Network Identity" (Origin) from the "Economic Logic" (Execution).
 
 
 
-```text
-       [ WEB BROWSER / TMA ]
-              |
-              | 1. Open http://localhost:8000
-              |
-              v
-+------------------------------+
-|   TERMINAL 1: THE BRAIN 🧠   |
-|   (FastAPI + Sentry Guard)   |  ← HARDENED GATEWAY
-+------------------------------+
-              |
-              | 2. Brain internally proxies UI
-              |    from localhost:8080
-              v
-+------------------------------+
-|   TERMINAL 2: THE BODY 📱    |
-|   (Flutter Web :8080)        |  ← INTERNAL TARGET
-+------------------------------+
+1.  **Pluggable Verification Gates:** The Sentry is architected to support staged modules for **TON (HMAC)** and **IoTeX (ioID)**.
+2.  **Verify-then-Execute (VTE):** A strict gatekeeping pattern where the Economic Engine is isolated from raw internet traffic.
+3.  **Local-First Authority:** The gateway assumes the local environment is the primary source of truth, with global chains reserved for future audit anchoring and settlement.
+
+---
+
+## 2. High-Level Architecture (Multichain)
+
+The system enforces a **Fail-Closed** security posture. Requests are dropped at the edge if they fail network-specific integrity checks.
+
+```mermaid
+graph TD
+    User((User / Device)) -->|:8000| Sentry["🛡️ NEXUS SENTRY (Guard)"]
+    
+    subgraph Sentry_Modules [Verification Gates]
+        Sentry -->|Module A| TON[TON HMAC Check]
+        Sentry -->|Module B| IOTX[IoTeX ioID Staging]
+    end
+
+    TON & IOTX -->|Legit?| Logic{Gatekeeper}
+    
+    Logic -->|NO| Reject[403 Forbidden]
+    Logic -->|YES| Brain["🧠 NEXUS BRAIN (Core)"]
+    
+    subgraph Brain_Internals [Execution & Routing]
+        Brain -->|/api/*| Engine[60-30-10 Engine]
+        Brain -->|/*| Proxy[Reverse Proxy]
+    end
+    
+    Engine -->|Atomic Write| Vault[(Nexus Vault)]
+    Proxy -->|Passive Fetch| Body[Flutter Body :8080]
 ```
 
 ---
 
-## 2. Prerequisites
+## 3. Component Breakdown
 
-Ensure the following are installed:
-* **Python 3.9+** (required for the Brain & Sentry)
-* **Flutter SDK** (3.x stable) (required for the Body)
-* **Git**
+### 3.1 The Sentry — Multichain Guard
+* **TON Module:** Validates `initData` signatures using a secret key derived from the Bot Token.
+* **IoTeX Module (Staged):** Prepared for **ioID** (Decentralized Identity) integration to verify physical hardware ownership (interface-only; not enforced in Phase 1.3).
+* **Timing-Safe Enforcement:** Verification paths are normalized to avoid observable timing variance between accepted and rejected requests.
 
-Verify installations:
-```bash
-python --version
-flutter --version
-git --version
-```
+### 3.2 The Brain — Sovereign Core (FastAPI)
+* **Engine Isolation:** Executes **60-30-10 invariants** only after Sentry approval.
+* **Deterministic State:** Ensures that regardless of the entry network (TON/IoTeX), the ledger outcome remains identical.
 
----
+### 3.3 The Vault — Authoritative Ledger (SQLite)
+* **WAL Mode:** High-concurrency local persistence.
+* **Anchoring-Ready:** Schema is designed to generate Merkle roots for future on-chain commits to TON or IoTeX blockchains.
 
-## 3. Automated Startup (Windows)
-
-For Windows users, use the automation scripts at the repository root for a "One-Click" deployment.
-
-* **`start_nexus.bat`**: Launches the Brain and Body simultaneously.
-* **`stop_nexus.bat`**: Gracefully terminates all Nexus services.
+### 3.4 The Body — Stateless Observer (Flutter)
+* **Passive Fetching:** The UI layer has zero authority to mutate state or verify signatures; it acts as a visualization proxy for the Brain.
 
 ---
 
-## 4. Manual Backend Setup (The Brain)
-
-The Brain serves as the host for the **Sentry (Request Validation)** layer.
-
-1.  **Navigate to the backend directory**
-    ```bash
-    cd backend
-    ```
-2.  **Install dependencies**
-    *No new external libraries are required for the Sentry (uses standard Python hmac/hashlib).*
-    ```bash
-    pip install -r requirements.txt
-    ```
-3.  **Start the Gateway (Terminal 1)**
-    ```bash
-    python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
-    ```
-
-**Note:** In this iteration of Phase 1.3, `sentry.py` is present in the directory but is not yet enforced on public routes to allow for unhindered development testing. Enforcement will be enabled explicitly in a future Phase 1.3 iteration once audit and developer testing is complete.
+## 4. Multichain Roadmap Alignment
+* [x] **Phase 1.2** — Gateway Proxy Authority (Closed)
+* [x] **Phase 1.3** — **Perimeter Hardening & Multichain Staging (Active)**
+* [ ] **Phase 2.0** — **ioID Integration & W3bstream Proofs**
 
 ---
 
-## 5. Manual Frontend Setup (The Body)
-
-The Body operates as a **Stateless Observer**.
-
-1.  **Open Terminal 2 and navigate to the client**
-    ```bash
-    cd client
-    ```
-2.  **Fetch dependencies**
-    ```bash
-    flutter pub get
-    ```
-3.  **Launch the Body**
-    ```bash
-    flutter run -d web-server --web-port 8080 --web-hostname 0.0.0.0 --release
-    ```
-
-> **⚠️ Important:** Always access the application via **`http://localhost:8000`**.
-
----
-
-## 6. Verification Checklist (Phase 1.3 Readiness)
-
-1.  **Directory Check:** Confirm `backend/sentry.py` is present.
-2.  **Proxy Check:** Open `http://localhost:8000` — UI should load.
-3.  **Vault Check:** Execute a split and confirm the **60-30-10** transition persists in `nexus_vault.db`.
-4.  **Header Readiness:** Check Browser DevTools to confirm the Client is ready to inject `X-Nexus-TMA` headers.
-
----
-
-## 7. Bridge Setup (Optional)
-
-To access the node via a Telegram WebApp:
-1.  **Start Ngrok:** `ngrok http 8000`
-2.  **Configure Bot:** Point your Telegram Bot's WebApp URL to the Ngrok HTTPS link.
-3.  **Verification:** The Sentry is now positioned to validate incoming TMA signatures.
-
----
-
-## 8. Troubleshooting
-
-* **Sentry Module Errors:** Ensure `sentry.py` is in the same directory as `main.py`.
-* **Port Conflict:** Ensure no other services are using 8000 or 8080.
-* **Resetting the Vault:** Stop the Brain and delete `backend/nexus_vault.db`.
-
----
-
-© 2026 Nexus Protocol | Apache License 2.0
+© 2026 Nexus Protocol · Licensed under **Apache License 2.0**
