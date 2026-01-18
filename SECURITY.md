@@ -1,6 +1,6 @@
 # 🛡️ Security Policy — Nexus Protocol
 
-This document defines the responsible disclosure process, security scope, and threat assumptions for the **Hardened Gateway Architecture (Phase 1.3)**.
+This document defines the responsible disclosure process, security scope, and threat assumptions for the **Hardened Gateway Architecture (Phase 1.3.1)**.
 
 ---
 
@@ -19,9 +19,11 @@ Please submit private vulnerability reports to:
 
 ---
 
-## 2. Threat Model & Scope (Phase 1.3)
+## 2. Threat Model & Scope (Phase 1.3.1)
 
-Phase 1.3 introduces the **Sentry**, a deterministic verification guard. Security research in this phase should evaluate the integrity of the gateway perimeter.
+Phase 1.3.1 introduces the **Sentry**, a deterministic verification guard. Security research in this phase should evaluate the integrity of the gateway perimeter.
+
+
 
 ### 🎯 In-Scope Vulnerabilities (High Priority)
 * **Sentry Bypass:** Any method to trigger economic logic (60-30-10 split) without a valid HMAC-SHA256 signature.
@@ -32,15 +34,13 @@ Phase 1.3 introduces the **Sentry**, a deterministic verification guard. Securit
 ### 🚫 Out-of-Scope Vulnerabilities (Lower Priority)
 * **Compromised Secrets:** Attacks assuming the attacker already has the `BOT_TOKEN`.
 * **Local Physical Access:** Attacks requiring direct read/write access to the machine's file system or the `nexus_vault.db` file.
-* **Replay Attacks:** Recognized but not yet enforced; freshness and timestamp validation are planned extensions within Phase 1.3 hardening.
-
-
+* **Replay Attacks:** Recognized but not yet enforced; freshness and timestamp validation are planned extensions within Phase 1.3.1 hardening.
 
 ---
 
 ## 3. Hardened Gateway Assumptions
 
-Phase 1.3 operates under a **"Fail-Closed"** security posture:
+Phase 1.3.1 operates under a **"Fail-Closed"** security posture:
 
 1.  **Legitimacy Over Identity:** The system verifies that a request is contextually "real" (via platform signatures) rather than identifying a specific human user (deferred to Phase 2.0).
 2.  **Protocol-Level Trust:** The Brain trusts the Sentry's validation. All economic transitions are gated by this verification.
@@ -63,4 +63,4 @@ Nexus Protocol is currently a **Security Hardening & Architecture Validation** p
 
 ---
 
-**© 2026 Nexus Protocol | Phase 1.3 Hardened Gateway**
+**© 2026 Nexus Protocol | Phase 1.3.1 Hardened Gateway**

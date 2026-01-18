@@ -55,4 +55,4 @@ This Code of Conduct is inspired by the Contributor Covenant (v2.1) and the Mozi
 
 ---
 
-**© 2026 Nexus Protocol | Phase 1.3 Hardened Gateway**
+**© 2026 Nexus Protocol | Phase 1.3.1 Hardened Gateway**

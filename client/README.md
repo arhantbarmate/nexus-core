@@ -1,87 +1,108 @@
-# 📱 Nexus Client (Stateless Body v1.3)
-
-The **Nexus Client (Body)** is a high-performance, stateless user interface for the Nexus Protocol. It serves as the visual interface for the **Sovereign Brain**, operating under a strict "Zero Authority" model.
-
----
-
-## 📌 Phase Status
-
-- **Phase 1.2:** Proxy target & dynamic routing — **Closed**
-- **Phase 1.3:** Sentry alignment & Request Legitimacy — **Current (Active)**
+# 🖥️ NEXUS BODY — STATELESS CLIENT (FLUTTER)
+**Focus:** Presentation · Intent Forwarding · Environment Bridging  
+**Status:** Phase 1.3.1 — Non-Authoritative Body (Active)
 
 ---
 
-## 🏗️ Architecture: The Sentry Handshake (Phase 1.3)
+## 🚀 CLIENT PHILOSOPHY: THIN BODY, SOVEREIGN BRAIN
 
-In Phase 1.3, the Body is "Sentry-Aware." While it still has zero economic authority, it now carries the **Request Legitimacy Payload** required to pass through the Brain's perimeter.
+The Nexus Body is a stateless client layer designed for maximum portability and zero authority. In the Nexus architecture, the Body is "blind" to security and economics; it serves only to visualize the state of the Brain and forward user intent.
+
+### 🏛️ The "Thin-Body" Architecture
+
+
 
 ```mermaid
 graph TD
-    User((User)) -->|Telegram WebApp| Body["📱 Body (Observer)"]
-    Body -->|1. Inject initData| Header["🛡️ X-Nexus-TMA Header"]
-    Header -->|2. Request| Sentry["🧠 Sentry (Guard)"]
-    Sentry -->|3. Verify HMAC| Brain["🧠 Brain (Logic)"]
-    Brain -->|4. Authorized State| Body
+    User([User]) -->|Action| UI[Flutter UI]
+    UI -->|Intent| Bridge{TG Bridge}
+    Bridge -->|Web Context| Web[tg_bridge_web.dart]
+    Bridge -->|Dev Context| Stub[tg_bridge_stub.dart]
+    Web -->|X-Nexus-TMA Header| Brain(Sovereign Brain)
+    Stub -->|Mock Header| Brain
 ```
 
 ---
 
-## ⚡ Phase 1.3 Capabilities
+## 1. ARCHITECTURAL ROLE
 
-### 🛡️ Sentry-Aware Handshaking
-The client is now configured to extract the `initData` provided by the Telegram environment and inject it into the `X-Nexus-TMA` header. This enables the Brain to:
-- Validate that requests originated from a Telegram WebApp context associated with the Mini App.
-- Verify request integrity at the protocol boundary before execution.
+The Body’s responsibilities are intentionally minimal to ensure the integrity of the protocol remains independent of the interface.
 
-### Environment-Aware Routing
-The client automatically adapts its API base path:
-* **Local/Dev:** `http://127.0.0.1:8000/api`
-* **Production/Hosted:** Relative path `/api` (via Gateway Proxy).
+* **UI Rendering:** Presents balances, transactions, and system state returned by the Brain.
+* **Intent Forwarding:** Forwards user actions to the Brain as HTTP requests with environment-provided context headers (e.g., Telegram `initData`).
+* **Environment Bridging:** Detects the runtime environment (Telegram Mini App vs. Local Dev) and adapts the data-bridge accordingly.
 
-### Platform Guarding (TMA Discipline)
-The Client uses conditional imports to ensure it only attempts to access Telegram-specific features when running inside the TMA environment, preventing crashes in desktop browsers.
+> [!CAUTION]
+> **The Body never mutates state directly.** All authority for state changes resides in the Sovereign Brain.
 
 ---
 
-## 🚀 Quick Start
+## 2. TELEGRAM BRIDGE ARCHITECTURE
 
-### Prerequisites
-* Flutter SDK (3.x stable)
-* A running Nexus Brain (v1.3) on port 8000
 
-### Installation & Launch
-```bash
-cd client
-flutter pub get
 
-# Must run on port 8080 for the Brain's Reverse Proxy to find it
-flutter run -d web-server --web-port 8080 --web-hostname 0.0.0.0 --release
+The client uses a platform-abstracted bridge to maintain a clean separation between UI logic and environment-specific APIs.
+
+* **`tg_bridge.dart`**: Defines the abstract interface used by the UI.
+* **`tg_bridge_web.dart`**: Active in Telegram WebApp environments. It reads `window.Telegram.WebApp.initData` and forwards it as the `X-Nexus-TMA` header.
+* **`tg_bridge_stub.dart`**: Used for local development and CI. It provides deterministic mock values to enable UI testing without a Telegram environment.
+
+---
+
+## 3. SECURITY MODEL (INTENTIONAL LIMITATIONS)
+
+The Body provides no security guarantees by itself. This "weak-by-design" approach ensures that even a compromised client cannot manipulate the protocol's economic invariants.
+
+| Capability | Body (Client) | Brain (Backend) |
+| :--- | :---: | :---: |
+| **Identity Verification** | ❌ | ✅ |
+| **Cryptographic Checks** | ❌ | ✅ |
+| **Economic Execution** | ❌ | ✅ |
+| **Ledger Persistence** | ❌ | ✅ |
+
+---
+
+## 4. REQUEST FLOW (INTENT FORWARDING)
+
+
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Flutter as Body (Flutter)
+    participant Bridge as Bridge (Dart/JS)
+    participant Brain as Brain (Backend)
+
+    User->>Flutter: Clicks "Run Execution"
+    Flutter->>Bridge: Request Identity Context
+    Bridge-->>Flutter: Returns initData
+    Flutter->>Brain: POST /api/execute_split (with Headers)
+    Note over Brain: Verification happens here only
+    Brain-->>Flutter: Returns 200 OK + New State
+    Flutter->>User: Update Dashboard UI
 ```
 
 ---
 
-## 🔐 Security & Isolation Model
+## 5. MULTICHAIN POSITIONING
 
-### 1. Zero Authority UI
-The Body remains a **Stateless Observer**. It cannot write to the database or compute economic values. The Client does not verify signatures or make trust decisions; all security decisions occur within the Brain’s Sentry layer.
+In Phase 1.3.1, the Body is **Chain-Agnostic**.
+* It does not store private keys, seeds, or wallet credentials.
+* All multichain logic and header recognition are handled server-side by the Sentry.
 
-### 2. Header Discipline
-The Client does not manage session cookies or passwords. It relies entirely on the **Sentry's HMAC-SHA256 verification** of the Telegram-provided signature.
-
-### 3. Scope Discipline (Phase 1.3)
-- [X] **Legitimacy Check:** Implemented via `X-Nexus-TMA` (Payload Delivery).
-- [ ] **Cryptographic Ownership:** Deferred to Phase 2.0.
-- [ ] **On-Chain Anchoring:** Deferred to Phase 2.0.
+> [!IMPORTANT]
+> **Explicit Non-Goals (Phase 1.3):** The Body does not perform signing, replay protection, identity storage, or cryptographic verification. Authority remains rooted in the Sovereign Brain.
 
 ---
 
-## 🧭 Roadmap Alignment
+## 6. BUILD & DEPENDENCIES
 
-- [x] **Phase 1.2** — Proxy target & dynamic routing (Closed)
-- [x] **Phase 1.3** — **Sentry alignment & Request Legitimacy (Current)**
-- [ ] **Phase 2.0** — Ed25519 Request Signing & TON Anchoring
+* **Framework:** Flutter Web
+* **Bridge:** Custom JS/Dart Telegram Bridge
+* **Secrets:** Zero (No private keys or API secrets stored in client)
+* **Authority:** None (Stateless)
 
----
-
-
-**© 2026 Nexus Protocol** | Licensed under the Apache License 2.0
+----------------------------------------------------
+© 2026 Nexus Protocol · Stateless Client Documentation
+Apache License 2.0
+```
