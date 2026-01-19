@@ -1,79 +1,113 @@
-# 🏛️ Technical Architecture — Nexus Protocol
+# 🏛️ Nexus Protocol Architecture
+**Spec Version:** v1.3.1 (Universal Edge Gateway)
 
-This document describes the **Multichain Hardened Gateway Architecture**. Nexus moves the "Trust Perimeter" from the cloud to user-owned hardware, providing a secure execution environment for decentralized apps on **TON** and **IoTeX**.
-
-> [!IMPORTANT]
-> **Architectural Scope & Negative Guarantees:**
-> * Phase 1.3.1 is **non-executing** on-chain. All blockchain interactions are restricted to identity verification and future state-root anchoring. 
-> * **Explicit Non-Goals:** No cross-node consensus, no trustless global ordering, and no permissionless identity federation in this phase.
+> **Architectural Goal:** Move the "Trust Boundary" from centralized cloud RPCs to the physical device edge using a "Verify-then-Execute" (VTE) pattern.
 
 ---
 
-## 1. Architectural Philosophy: The Modular Sentry
+## 1. High-Level Design
+Nexus is designed as a **Unidirectional Data Pipeline**. It treats the physical node as a "Sovereign Castle" where the `Sentry` acts as the drawbridge.
 
-In v1.3.1, Nexus implements a **Modular Sentry Model**. This decouples the verification of "Network Identity" (Origin) from the "Economic Logic" (Execution).
-
-1.  **Pluggable Verification Gates:** The Sentry is architected to support staged modules for **TON (HMAC)** and **IoTeX (ioID)**.
-2.  **Verify-then-Execute (VTE):** A strict gatekeeping pattern where the Economic Engine is isolated from raw internet traffic.
-3.  **Local-First Authority:** The gateway assumes the local environment is the primary source of truth, with global chains reserved for future audit anchoring and settlement.
-
----
-
-## 2. High-Level Architecture (Multichain)
-
-The system enforces a **Fail-Closed** security posture. Requests are dropped at the edge if they fail network-specific integrity checks.
+### The "Verify-then-Execute" Flow
+Requests are never processed directly. They must pass a cryptographic challenge at the edge before reaching the application state.
 
 ```mermaid
-graph TD
-    User((User / Device)) -->|:8000| Sentry["🛡️ NEXUS SENTRY (Guard)"]
+graph LR
+    User((User / Device)) -->|Signed Payload| Sentry[🛡️ Sentry Guard]
     
-    subgraph Sentry_Modules [Verification Gates]
-        Sentry -->|Module A| TON[TON HMAC Check]
-        Sentry -->|Module B| IOTX[IoTeX ioID Staging]
-    end
-
-    TON & IOTX -->|Verified?| Logic{Gatekeeper}
-    
-    Logic -->|NO| Reject[403 Forbidden]
-    Logic -->|YES| Brain["🧠 NEXUS BRAIN (Core)"]
-    
-    subgraph Brain_Internals [Execution & Routing]
-        Brain -->|/api/*| Engine[60-30-10 Engine]
-        Brain -->|/*| Proxy[Reverse Proxy]
+    subgraph Sovereign_Node [Nexus Protocol Core]
+        Sentry -->|Auth Pass| Brain[🧠 Nexus Brain]
+        Brain -->|State Update| Vault[(💾 Local Vault)]
     end
     
-    Engine -->|Atomic Write| Vault[(Nexus Vault)]
-    Proxy -->|Passive Fetch| Body[Flutter Body :8080]
+    subgraph Adapters [🔌 Universal Chain Interfaces]
+        Vault -.->|Anchor| IOTX[IoTeX Adapter]
+        Vault -.->|Anchor| TON[TON Adapter]
+        Vault -.->|Anchor| PEAQ[✨ peaq Adapter]
+    end
 ```
 
 ---
 
-## 3. Component Breakdown
+## 2. Core Components
 
-### 3.1 The Sentry — Multichain Guard
-* **TON Module:** Validates `initData` signatures using a secret key derived from the Bot Token.
-* **IoTeX Module (Staged):** Prepared for **ioID** (Decentralized Identity) integration to verify physical hardware ownership (interface-only; not enforced in Phase 1.3.1).
-* **Timing-Safe Enforcement:** Verification paths are normalized to avoid observable timing variance between accepted and rejected requests.
+### 2.1 🛡️ The Sentry (Edge Firewall)
+The Sentry is a **Fail-Closed** middleware. It does not know *what* the request does; it only verifies *who* sent it.
+* **Responsibility:** Verifies cryptographic signatures (HMAC, Ed25519, Sr25519).
+* **Behavior:** If signature is invalid → Drop connection immediately (fail-closed). No state is touched.
+* **Pluggability:** Supports hot-swapping auth modules (e.g., switching from Telegram `initData` to **peaq ID** or **ioID**).
 
-### 3.2 The Brain — Sovereign Core (FastAPI)
-* **Engine Isolation:** Executes **60-30-10 invariants** only after Sentry approval.
-* **Deterministic State:** Ensures that regardless of the entry network (TON/IoTeX), the ledger outcome remains identical.
+### 2.2 🧠 The Brain (Logic Engine)
+The Brain is the deterministic state machine. It executes business logic *only* on verified requests.
+* **Isolation:** Has no direct internet access; receives data only from the Sentry.
+* **Reference Policy:** Currently enforces a reference **60-30-10 economic policy** used for deterministic testing. This logic is modular and can be replaced for different protocol needs.
+* **Determinism:** Given the same input sequence, the Brain produces the exact same state change on any architecture.
 
-### 3.3 The Vault — Authoritative Ledger (SQLite)
-* **WAL Mode:** High-concurrency local persistence.
-* **Anchoring-Ready:** Schema is designed to generate Merkle roots for future on-chain anchoring to TON or IoTeX blockchains.
-
-### 3.4 The Body — Stateless Observer (Flutter)
-* **Passive Fetching:** The UI layer has zero authority to mutate state or verify signatures; it acts as a visualization proxy for the Brain.
-
----
-
-## 4. Multichain Roadmap Alignment
-
-* [x] **Phase 1.2** — Gateway Proxy Authority (Closed)
-* [x] **Phase 1.3.1** — **Perimeter Hardening & Multichain Staging (Active)**
-* [ ] **Phase 2.0** — **ioID Integration & W3bstream Proofs**
+### 2.3 💾 The Vault (State & Anchoring)
+The Vault is a local SQLite ledger operating in **WAL (Write-Ahead Log)** mode for high concurrency.
+* **Single Source of Truth:** The local database is authoritative. The blockchain is used for *verification*, not storage.
+* **Merkle Anchoring:** The Vault aggregates state changes into a Merkle Tree. Only the **Root Hash** is sent to the Chain Adapter.
 
 ---
 
-© 2026 Nexus Protocol · Licensed under **Apache License 2.0**
+## 3. The Adapter Pattern (Plug-and-Play)
+Nexus avoids "Vendor Lock-in" by isolating blockchain logic into **Adapters**. 
+
+**Any L1/L2 can be added in under 50 lines of code.**
+
+An Adapter is a simple Python class that implements the `Anchor` interface:
+```python
+class BaseAdapter:
+    def get_latest_block(self):
+        # Connect to specific chain RPC (e.g. peaq, IoTeX)
+        pass
+
+    def anchor_state_root(self, merkle_root):
+        # Send transaction to L1 Smart Contract
+        pass
+```
+
+| Adapter | Status | Function |
+| :--- | :--- | :--- |
+| **TON** | Active | Anchors state via Jetton-compatible messages. |
+| **IoTeX** | Staged | Uses **ioID** for device auth and **W3bstream** for data proofs. |
+| **peaq** | Planned | Will utilize **peaq ID** for native machine identity and verifiable storage. |
+
+---
+
+## 4. Security Model
+
+| Attack Vector | Mitigation Strategy | Component |
+| :--- | :--- | :--- |
+| **RPC Hijacking** | Local-First State (No dependency on external RPCs) | `Vault` |
+| **Spoofed Command** | Cryptographic Signature Enforcement | `Sentry` |
+| **Replay Attack** | Nonce & Timestamp Windows | `Sentry` |
+| **State Bloat** | Merkle Compression (Only roots leave the device) | `Vault` |
+
+---
+
+## 5. Directory Structure
+The codebase reflects this separation of concerns:
+
+```text
+nexus-core/
+├── backend/
+│   ├── sentry.py       # Auth & Signature Verification
+│   ├── brain.py        # Business Logic & Economics
+│   └── vault.py        # Database & Merkle Tree
+├── nexus/
+│   └── adapters/       # Chain-Specific Logic
+│       ├── ton.py
+│       ├── iotex.py
+│       └── peaq.py     # <-- YOUR CHAIN HERE
+└── frontend/           # Optional Visualization
+```
+
+---
+
+<footer>
+  <div align="center">
+    <p>© 2026 Nexus Protocol · Open Standard for DePIN</p>
+    <a href="LICENSE">Apache License 2.0</a>
+  </div>
+</footer>
