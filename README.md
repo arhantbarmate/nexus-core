@@ -32,7 +32,7 @@ The Nexus node enforces a strict unidirectional flow. No command is executed unl
 
 ```mermaid
 graph TD
-    User((User / Orchestrator)) -->|Signed Request| Sentry[🛡️ Sentry Guard]
+    User((User / Device)) -->|Signed Request| Sentry[🛡️ Sentry Guard]
     
     subgraph Sovereign_Node [Nexus Protocol Core]
         Sentry -->|Auth Pass| Brain[🧠 Nexus Brain]
@@ -67,7 +67,7 @@ Deploy a hardened node on any Linux environment (Ubuntu 20.04+ recommended).
 
 ```bash
 # Clone the repository
-git clone [https://github.com/arhantbarmate/nexus-core.git](https://github.com/arhantbarmate/nexus-core.git)
+git clone https://github.com/arhantbarmate/nexus-core.git
 cd nexus-core
 
 # Install dependencies (Virtual Environment recommended)
