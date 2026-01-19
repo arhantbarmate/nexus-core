@@ -8,44 +8,46 @@ This document outlines the architectural breakthroughs and engineering innovatio
 
 Traditional gateways rely on a single authentication provider (like JWT or OAuth). The **Nexus Sentry** is a pluggable, **platform-normalized** verification layer.
 
+* **Normalized Verification:** In Phase 1.3.1, it validates high-entropy platform signatures (Telegram HMAC) without storing session state. 
+* **Universal Identity Support:** The architecture is designed to normalize diverse identity standards into a single stream of verified intents:
+    * **Social:** Telegram/Discord HMAC.
+    * **Machine (DePIN):** peaq ID (Sr25519), IoTeX ioID (Ed25519).
+    * **Web3:** Standard Wallet Signatures (EIP-191, BIP-322).
 
-
-* **Normalized Verification:** In Phase 1.3.1, it validates high-entropy platform signatures (TON HMAC) without storing session state. 
-* **DePIN Readiness:** The architecture is specifically designed to bridge social identity (TON) with physical hardware identity (**IoTeX ioID**) in Phase 2.0, creating a unified, verified execution stream.
+> **Implementation Note:** In Phase 1.3.1, Telegram HMAC is implemented as a reference ingress; additional identity schemes are architecturally supported and will be integrated incrementally.
 
 ---
 
 ## 2. Verify-then-Execute (VTE) Isolation
 
-Most decentralized applications mix networking logic with economic logic. Nexus enforces a strict "Air-Gap" between the **Internet-facing Sentry** and the **Internal Economic Engine (The Brain)**.
-
-
+Most decentralized applications mix networking logic with economic logic. Nexus enforces a strict **Unidirectional Data Pipeline** between the **Internet-facing Sentry** and the **Internal Economic Engine (The Brain)**.
 
 * **The Sentry:** Normalized, timing-safe verification.
 * **The Brain:** Deterministic, network-agnostic execution.
-* **Innovation:** By isolating the 60-30-10 economic split from raw request data, Nexus eliminates a vast class of injection and state-manipulation attacks common in standard web-to-web3 bridges.
+* **Innovation:** By isolating the "Reference Policy" (60-30-10 split) from raw request data, Nexus **significantly reduces** a class of injection and state-manipulation attacks common in standard web-to-web3 bridges.
 
 ---
 
-## 3. Local-First State Anchoring (Research)
+## 3. The Adapter Pattern (Chain Agnosticism)
 
 Nexus treats the blockchain as an **audit layer**, not a compute layer. This flips the traditional dApp model on its head.
 
-
-
 * **Edge Execution:** Instead of executing every transaction on-chain (high cost, low privacy), Nexus executes locally in the **Sovereign Vault**.
-* **Merkle State Anchor:** We provide a **novel integration pattern** for compressing thousands of local sovereign transactions into a single 32-byte hash. This allows for massive scalability while maintaining the ability for the **TON** or **IoTeX** chains to verify the entire history via a single anchor point.
+* **Universal Anchoring:** We utilize a modular **Adapter Interface** (`base.py`) that allows the local state root to be anchored to *any* compatible L1/L2.
+    * **peaq:** Targeted for anchoring machine state for identity verification.
+    * **IoTeX:** Targeted for anchoring data proofs for W3bstream.
+    * **TON:** Targeted for anchoring message roots for user interaction history.
 
 ---
 
 ## 📊 Competitive Landscape
 
-| Feature | Traditional dApp | Centralized Gateway | Nexus Protocol (1.3.1) |
+| Feature | Traditional dApp | Centralized Gateway | Nexus Universal Gateway |
 | :--- | :--- | :--- | :--- |
 | **Trust Perimeter** | On-Chain (Slow/Expensive) | Cloud (Opaque/Centralized) | **Local Edge (Sovereign)** |
-| **Identity** | Wallet-Only | OAuth/JWT | **Pluggable (HMAC/ioID)** |
+| **Identity** | Wallet-Only | OAuth/JWT | **Pluggable (peaq ID, ioID, HMAC)** |
 | **Data Custody** | Public / Mixed | Third-Party | **Sovereign (Local Vault)** |
-| **Scalability** | L1/L2 Limited | High | **Infinite (Local Execution)** |
+| **Chain Support** | Single Chain Lock-in | N/A | **Universal Adapter Interface** |
 
 ---
 
@@ -55,4 +57,4 @@ The technical novelty of Nexus lies in its **hybridity**. It combines the rapid 
 
 ---
 
-© 2026 Nexus Protocol · v1.3.1
+© 2026 Nexus Protocol · Open Standard
