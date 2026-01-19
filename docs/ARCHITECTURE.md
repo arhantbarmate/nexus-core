@@ -6,7 +6,7 @@
 ---
 
 ## 1. High-Level Design
-Nexus is designed as a **Unidirectional Data Pipeline**. It treats the physical node as a "Sovereign Castle" where the `Sentry` acts as the drawbridge.
+Nexus is designed as a **Unidirectional Data Pipeline**. It treats the physical node as a "Sovereign Boundary" where the `Sentry` acts as the drawbridge.
 
 ### The "Verify-then-Execute" Flow
 Requests are never processed directly. They must pass a cryptographic challenge at the edge before reaching the application state.
@@ -33,9 +33,9 @@ graph LR
 
 ### 2.1 🛡️ The Sentry (Edge Firewall)
 The Sentry is a **Fail-Closed** middleware. It does not know *what* the request does; it only verifies *who* sent it.
-* **Responsibility:** Verifies cryptographic signatures (HMAC, Ed25519, Sr25519).
+* **Responsibility:** Verifies cryptographic signatures (HMAC, Ed25519, and support for schemes like sr25519).
 * **Behavior:** If signature is invalid → Drop connection immediately (fail-closed). No state is touched.
-* **Pluggability:** Supports hot-swapping auth modules (e.g., switching from Telegram `initData` to **peaq ID** or **ioID**).
+* **Pluggability:** Supports hot-swapping auth modules, allowing seamless switching from one identity provider to another (e.g., ioID, DID-based schemes).
 
 ### 2.2 🧠 The Brain (Logic Engine)
 The Brain is the deterministic state machine. It executes business logic *only* on verified requests.
@@ -50,16 +50,16 @@ The Vault is a local SQLite ledger operating in **WAL (Write-Ahead Log)** mode f
 
 ---
 
-## 3. The Adapter Pattern (Plug-and-Play)
+## 3. The Adapter Pattern (Extensibility)
 Nexus avoids "Vendor Lock-in" by isolating blockchain logic into **Adapters**. 
 
-**Any L1/L2 can be added in under 50 lines of code.**
+**New L1/L2 integrations can be implemented with minimal code by conforming to the Adapter interface.**
 
 An Adapter is a simple Python class that implements the `Anchor` interface:
 ```python
 class BaseAdapter:
     def get_latest_block(self):
-        # Connect to specific chain RPC (e.g. peaq, IoTeX)
+        # Connect to specific chain RPC
         pass
 
     def anchor_state_root(self, merkle_root):
@@ -67,11 +67,11 @@ class BaseAdapter:
         pass
 ```
 
-| Adapter | Status | Function |
+| Adapter Target | Status | Notes |
 | :--- | :--- | :--- |
-| **TON** | Active | Anchors state via Jetton-compatible messages. |
-| **IoTeX** | Staged | Uses **ioID** for device auth and **W3bstream** for data proofs. |
-| **peaq** | Planned | Will utilize **peaq ID** for native machine identity and verifiable storage. |
+| **TON** | Reference Prototype | Anchoring logic validated externally. |
+| **IoTeX** | Integration Planned | **ioID** + **W3bstream** targeted. |
+| **peaq** | Design Target | **peaq ID**-based machine identity. |
 
 ---
 
@@ -96,10 +96,9 @@ nexus-core/
 │   ├── brain.py        # Business Logic & Economics
 │   └── vault.py        # Database & Merkle Tree
 ├── nexus/
-│   └── adapters/       # Chain-Specific Logic
-│       ├── ton.py
-│       ├── iotex.py
-│       └── peaq.py     # <-- YOUR CHAIN HERE
+│   └── adapters/       # Chain Interaction Layer
+│       ├── base.py     # <-- Adapter Interface (Abstract)
+│       └── README.md   # Integration Guide
 └── frontend/           # Optional Visualization
 ```
 
