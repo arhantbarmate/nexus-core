@@ -1,6 +1,5 @@
 # 🏛️ Nexus Protocol Architecture
 **Spec Version:** v1.3.1 (Universal Edge Gateway)
-**Last Updated:** 2026-01-20 01:25:15
 
 > **Architectural Goal:** Move the "Trust Boundary" from centralized cloud RPCs to the physical device edge using a "Verify-then-Execute" (VTE) pattern.
 
