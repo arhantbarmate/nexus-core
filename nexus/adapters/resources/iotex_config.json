@@ -1,0 +1,28 @@
+{
+      "project_name": "Nexus Protocol",
+    
+      "network": {
+        "chain": "iotex-testnet",
+        "chainId": 4690,
+        "rpcUrl": "https://babel-api.testnet.iotex.io",
+        "execution": "disabled",
+        "purpose": "identity-registry and future anchoring only"
+      },
+    
+      "identity": {
+        "type": "ioID",
+        "status": "declared",
+        "enforcement": "disabled",
+        "registry_contract": "0x...",
+        "version": "v1.3.1-staged",
+        "notes": "Interface-only; no on-chain identity verification enforced in Phase 1.3"
+      },
+    
+      "depin": {
+        "provider": "W3bstream",
+        "status": "staged",
+        "execution": "disabled",
+        "logic_hash": "Qm...",
+        "notes": "Reserved for Phase 2.0 off-chain verifiable compute and proof workflows"
+      }
+    }
