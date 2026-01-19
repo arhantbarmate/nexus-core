@@ -2,21 +2,13 @@
   <h1>NEXUS PROTOCOL</h1>
   <p><b>Phase 1.3.1: The Sovereign Edge Gateway</b></p>
 
-  <a href="[https://github.com/arhantbarmate/nexus-core/actions](https://github.com/arhantbarmate/nexus-core/actions)">
-    <img src="[https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main)" alt="CI Status" />
-  </a>
-
-  <a href="LICENSE">
-    <img src="[https://img.shields.io/badge/License-Apache_2.0-blue.svg](https://img.shields.io/badge/License-Apache_2.0-blue.svg)" alt="License" />
-  </a>
-
-  <a href="docs/ROADMAP.md">
-    <img src="[https://img.shields.io/badge/Status-STABLE_v1.3.1-success.svg](https://img.shields.io/badge/Status-STABLE_v1.3.1-success.svg)" alt="Stable" />
-  </a>
-
-  <a href="docs/ARCHITECTURE.md">
-    <img src="[https://img.shields.io/badge/Architecture-CHAIN_AGNOSTIC-orange.svg](https://img.shields.io/badge/Architecture-CHAIN_AGNOSTIC-orange.svg)" alt="Chain Agnostic" />
-  </a>
+  [![CI Status](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg)](https://github.com/arhantbarmate/nexus-core/actions)
+  &nbsp;
+  [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+  &nbsp;
+  [![Status](https://img.shields.io/badge/Status-STABLE_v1.3.1-success.svg)](docs/ROADMAP.md)
+  &nbsp;
+  [![Architecture](https://img.shields.io/badge/Architecture-CHAIN_AGNOSTIC-orange.svg)](docs/ARCHITECTURE.md)
   
   <p><i>Fail-Closed Security · Local-First Sovereignty · Universal Anchoring</i></p>
 </div>
