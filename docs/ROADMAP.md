@@ -1,12 +1,12 @@
 # 🛣️ Engineering Roadmap — Nexus Protocol
 
-This document tracks the evolution of the Nexus Sovereign Node. The roadmap is strictly phased to ensure architectural correctness before feature expansion.
+This document tracks the evolution of the **Nexus Universal Gateway**. The roadmap is strictly phased to ensure architectural correctness before feature expansion.
 
 > [!NOTE]
-> **Roadmap Disclaimer:** This represents an engineering dependency plan, not a delivery schedule. Later phases are contingent on system correctness, security review, and grant availability.
+> **Roadmap Disclaimer:** This represents an engineering dependency plan. Later phases (specifically Phase 2.0+) are contingent on system correctness, security audits, and ecosystem grant availability.
 
-**Current Status:** `PHASE 1.3.1 — HARDENING (ACTIVE)`  
-**Primary Focus:** Perimeter Security & Multichain Readiness
+**Current Status:** ```PHASE 1.3.1 — UNIVERSAL HARDENING (ACTIVE)```
+**Primary Focus:** Sentry Hardening & Adapter Interface Standardization
 
 ---
 
@@ -16,19 +16,19 @@ This document tracks the evolution of the Nexus Sovereign Node. The roadmap is s
 timeline
     title Nexus Protocol Engineering Phases
     Phase 1.1 : Foundation : FastAPI Brain : SQLite Vault : 60-30-10 Economics
-    Phase 1.2 : Gateway : Reverse Proxy : Unified Namespace : Mobile/Ngrok Tunneling
-    Phase 1.3.1 (ACTIVE) : Hardening : Sentry Guard (HMAC) : Multichain Staging : Fail-Closed Logic
-    Phase 2.0 (NEXT) : Identity : IoTeX ioID Integration : Client-Side Signing : Network Anchoring
-    Phase 3.0 : Mesh : W3bstream Proofs : Peer Discovery : Optional On-Chain Settlement
+    Phase 1.2 : Gateway : Reverse Proxy : Tunneling (ngrok) : Unidirectional Pipeline
+    Phase 1.3.1 (ACTIVE) : Universal Hardening : Sentry Guard (HMAC) : Adapter Interface (base.py) : Fail-Closed Logic
+    Phase 2.0 (NEXT) : Identity & Anchoring : peaq ID Integration : IoTeX ioID : Multi-Chain Merkle Roots
+    Phase 3.0 : Mesh & Settlement : W3bstream Proofs : Peer Discovery : Optional On-Chain Settlement
 ```
 
 ---
 
 ## 🚫 Non-Goals (Explicitly Out of Scope)
 To preserve architectural integrity, the following are **not** objectives of the current development cycle:
-* **On-chain execution** or settlement in Phase 1.x.
-* **Token issuance**, staking, or speculative mechanics.
-* **Permissionless mesh networking** prior to identity hardening.
+* **Live Mainnet Settlement** (Phase 1.x is Local-First only).
+* **Token Issuance** or speculative mechanics.
+* **Permissionless Mesh Networking** (prior to Identity Hardening).
 
 ---
 
@@ -42,38 +42,40 @@ To preserve architectural integrity, the following are **not** objectives of the
 ## ✅ Phase 1.2 — Gateway Architecture (Closed)
 * [x] **Gateway Pattern:** Brain (Port 8000) is the sole public interface.
 * [x] **Reverse Proxy:** Brain routes to Body (Port 8080) internally.
-* [x] **Ngrok Support:** Validated tunneling for mobile/Telegram access.
+* [x] **Ngrok Support:** Validated tunneling for mobile/cloud orchestrators.
 
 ---
 
-## 🔵 Phase 1.3.1 — Hardening & Perimeter (Active)
-**Core Question:** *Is this architecture safe enough to process multichain intents?*
+## 🔵 Phase 1.3.1 — Universal Hardening (Active)
+**Core Question:** *Is the architecture modular enough to support any chain safely?*
 
-> **Scope Clarification:** Phase 1.3.1 introduces no live multichain execution. References to TON and IoTeX reflect interface readiness and threat modeling only.
-
-* [x] **Sentry Guard:** Implementation of `sentry.py` for signature validation.
-* [x] **Request Legitimacy:** Validating Telegram `initData` via HMAC-SHA256.
-* [x] **v1.3.1 Multichain Staging:** Defensive framing for TON/IoTeX integration.
+* [x] **Sentry Guard:** Implementation of ```sentry.py``` for signature validation.
 * [x] **Fail-Closed Security:** Unauthorized requests are rejected at the perimeter.
-* [ ] **Observability:** Structured rejection telemetry for Sentry events (In Progress).
-* [ ] **Replay Awareness:** Preliminary logic for timestamp/freshness checks (Planned).
+* [x] **Universal Adapter Interface:** Creation of ```adapters/base.py``` abstract class.
+* [x] **Reference Adapter (TON):** Validation of the adapter interface using a lightweight, message-oriented chain.
+* [ ] **Observability:** Structured rejection telemetry for Sentry events (local logs, no external export).
+* [ ] **Adapter Specs:** Finalizing interface requirements for **peaq** and **IoTeX**.
 
 ---
 
 ## 🔮 Phase 2.0 — Identity & DePIN Readiness (Next)
 **Core Question:** *Who owns the state, and can we verify hardware identity?*
 
-* [ ] **IoTeX ioID Integration:** Using IoTeX DID to verify physical gateway hardware.
-* [ ] **Ed25519 Identity:** Persistent node/user keypairs for sovereign ownership.
-* [ ] **Client Signing:** Body signs requests; Brain verifies signatures.
-* [ ] **Network Anchoring:** Optional submission of local Merkle roots to the TON and IoTeX blockchains for auditability (**non-executing**).
+* [ ] **peaq Integration:**
+    * Implementation of **peaq ID** (Sr25519) verification in the Sentry.
+    * Anchoring machine state roots to the peaq testnet.
+* [ ] **IoTeX Integration:**
+    * Support for **ioID** (Ed25519) signatures.
+    * Preparation of data schemas for **W3bstream**.
+* [ ] **Client Signing:** Body signs requests; Brain verifies signatures locally.
+* [ ] **Multi-Chain Merkle Anchoring:** submitting local state roots to multiple chains simultaneously.
 
 ---
 
 ## 🔮 Phase 3.0 — Mesh & Settlement (Future)
 * [ ] **W3bstream Integration:** Porting Sentry logs to IoTeX W3bstream for off-chain proofs.
 * [ ] **Peer Discovery:** DHT-based node finding.
-* [ ] **Optional On-Chain Settlement:** Automated claim logic via TON/IoTeX smart contracts.
+* [ ] **Automated Settlement:** Optional claim logic via Smart Contracts (post-audit).
 
 ---
 
@@ -83,7 +85,7 @@ To preserve architectural integrity, the following are **not** objectives of the
 | :--- | :--- | :--- | :--- |
 | **1.1** | Foundation | Can it run locally? | ✅ **Closed** |
 | **1.2** | Gateway | Is it consistent? | ✅ **Closed** |
-| **1.3.1** | **Hardening** | **Is it secure?** | 🔵 **Active** |
+| **1.3.1** | **Universal Hardening** | **Is it modular?** | 🔵 **Active** |
 | **2.0** | **Identity** | **Who owns the data?** | 🔮 **Grant Target** |
 | **3.0** | Mesh | How to coordinate? | 🔮 **Future** |
 
