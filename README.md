@@ -1,101 +1,129 @@
 <div align="center">
   <h1>NEXUS PROTOCOL</h1>
-  <p><b>Phase 1.3.1: Multichain Sovereign Gateway & Sentry</b></p>
+  <p><b>Phase 1.3.1: The Sovereign Edge Gateway</b></p>
 
-  <a href="https://github.com/arhantbarmate/nexus-core/actions">
-    <img src="https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Status" />
+  <a href="[https://github.com/arhantbarmate/nexus-core/actions](https://github.com/arhantbarmate/nexus-core/actions)">
+    <img src="[https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main](https://github.com/arhantbarmate/nexus-core/actions/workflows/ci.yml/badge.svg?branch=main)" alt="CI Status" />
   </a>
 
   <a href="LICENSE">
-    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License" />
+    <img src="[https://img.shields.io/badge/License-Apache_2.0-blue.svg](https://img.shields.io/badge/License-Apache_2.0-blue.svg)" alt="License" />
   </a>
 
   <a href="docs/ROADMAP.md">
-    <img src="https://img.shields.io/badge/Status-PHASE_1.3.1_HARDENING-indigo.svg" alt="Phase 1.3.1" />
+    <img src="[https://img.shields.io/badge/Status-STABLE_v1.3.1-success.svg](https://img.shields.io/badge/Status-STABLE_v1.3.1-success.svg)" alt="Stable" />
   </a>
 
   <a href="docs/ARCHITECTURE.md">
-    <img src="https://img.shields.io/badge/Network-TON_ACTIVE_|_IOTEX_STAGED-orange.svg" alt="Network Support" />
+    <img src="[https://img.shields.io/badge/Architecture-CHAIN_AGNOSTIC-orange.svg](https://img.shields.io/badge/Architecture-CHAIN_AGNOSTIC-orange.svg)" alt="Chain Agnostic" />
   </a>
   
-  <p><i>Sovereign Infrastructure · DePIN-Ready Identity · Perimeter Hardening</i></p>
+  <p><i>Fail-Closed Security · Local-First Sovereignty · Universal Anchoring</i></p>
 </div>
 
 ---
 
-## 🔎 Phase 1.3.1: Hardened Sovereign Node
-**Current Milestone:** `v1.3.1-staged` | **Focus:** Multichain Perimeter Security & DePIN Readiness
+## 🔎 What is Nexus Protocol?
+**Nexus Protocol** is a universal infrastructure layer that hardens the "Trust Boundary" for DePIN (Decentralized Physical Infrastructure Networks). 
 
-Nexus Protocol is a **Local-First Sovereign Gateway** that moves the trust perimeter from the cloud to user-owned hardware. Phase 1.3.1 establishes the **Sentry Guard**, an active perimeter verification engine designed to enforce request legitimacy across heterogeneous networks (TON and IoTeX).
+Most DePIN hardware relies on cloud RPCs to make decisions, creating a massive attack surface. Nexus moves the verification logic **directly onto the device**. It acts as a **"Verify-then-Execute"** gateway that sits between the external world and your hardware's logic.
 
-
-
-> [!IMPORTANT]
-> **Execution Scope Disclaimer:** Phase 1.x performs **no on-chain execution or settlement**. All logic executes locally on user hardware. Blockchain networks (TON / IoTeX) are treated strictly as **future anchoring or identity layers**, not execution environments.
-
----
-
-## 🏛️ Milestone Highlights
-* **🛡️ Sentry Guard (`backend/sentry.py`):** An active perimeter module enforcing HMAC-SHA256 signature validation for TON. Its modular design is staged for **IoTeX ioID** hardware identity integration in Phase 2.0.
-* **🔒 Fail-Closed Perimeter:** Unauthorized requests are rejected at the edge, ensuring that only cryptographically verified intents reach the internal state machine.
-* **🧬 Deterministic Economics:** Every transaction follows a strictly audited 60-30-10 split, maintaining ledger invariants regardless of the eventual settlement chain.
-* **🧠 Modular Authority:** Nexus treats the local **Vault** (SQLite) as the single source of truth; the **Brain** acts as the authoritative logic gate for the sovereign environment.
+* **Fail-Closed:** Unauthorized traffic is rejected at the Sentry layer before reaching application logic.
+* **Chain Agnostic:** The core logic is isolated. Anchoring to a blockchain (IoTeX, TON, Solana, Monad, etc.) is handled via modular **Adapters**.
+* **Local Sovereignty:** State is managed locally in a deterministic SQLite Vault. The node functions even if the internet goes down.
 
 ---
 
-## 📖 Documentation Index
+## 🏛️ Architecture: The "Verify-then-Execute" Model
 
-| 📚 Category | 📄 Document | 🔍 Description |
-| :--- | :--- | :--- |
-| **Start Here** | **[Installation Guide](docs/INSTALL.md)** | ⚡ Deploy a hardened node on Linux |
-| **Deep Dive** | **[Architecture](docs/ARCHITECTURE.md)** | 🏛️ Sentry-Gated "Verify-then-Execute" design |
-| **Logic** | **[Economic Model](docs/ECONOMICS.md)** | 💰 Deterministic 60-30-10 invariants |
-| **Future** | **[Roadmap](docs/ROADMAP.md)** | 🗺️ From TON Gateway to IoTeX DePIN |
-| **Governance**| **[Summary Map](docs/SUMMARY.md)** | 📋 Full repository and policy index |
-
----
-
-## 🛡️ Hardened Architecture
+The Nexus node enforces a strict unidirectional flow. No command is executed unless it passes the cryptographic `Sentry` check.
 
 ```mermaid
 graph TD
-    User((User / Device)) -->|Signed Request| Sentry[🛡️ Sentry Guard]
+    User((User / Orchestrator)) -->|Signed Request| Sentry[🛡️ Sentry Guard]
+    
     subgraph Sovereign_Node [Nexus Protocol Core]
         Sentry -->|Auth Pass| Brain[🧠 Nexus Brain]
-        Brain -->|60-30-10 Logic| Vault[(💾 Nexus Vault)]
+        Brain -->|Execute Logic| Vault[(💾 Local Vault)]
     end
-    Vault -.->|Future Anchor| TON[TON Blockchain]
-    Vault -.->|Future Anchor| IOTX[IoTeX Blockchain]
+    
+    subgraph Adapters [🔌 Chain Adapters]
+        Vault -.->|Anchor State| IOTX[IoTeX Adapter]
+        Vault -.->|Anchor State| TON[TON Adapter]
+        Vault -.->|Anchor State| ANY[Your Chain Adapter]
+    end
 ```
 
 ---
 
-## 🚦 Quick Start
+## 🔌 Multichain & Identity Support
+Nexus Core is designed to be **Universally Deployable**. The core logic (`Sentry`, `Brain`, `Vault`) does not care which blockchain you use.
 
-To deploy and audit the Phase 1.3.1 hardened codebase:
+**Identity is pluggable.** While `ioID` is the first planned implementation, additional hardware or machine identity systems (e.g., peaq ID, DID-based schemes, Solana Mobile Stack) can be integrated without changes to the execution core.
 
-1. **Clone:** `git clone https://github.com/arhantbarmate/nexus-core`
-2. **Setup:** Follow the **[Installation Guide](docs/INSTALL.md)** for Linux/Ubuntu.
-3. **Verify:** Run `pytest tests/test_gateway.py` to confirm the Sentry is actively rejecting unauthorized traffic.
+### Current Adapters
+* **IoTeX:** (Staged) Uses `ioID` for hardware identity and `W3bstream` for data proofs.
+* **TON:** (Active) Lightweight state anchoring via jetton-compatible patterns.
+* **Generic:** You can write your own adapter in `nexus/adapters/` to anchor state to **any L1/L2** in under 50 lines of code.
 
 ---
 
-## 🗺️ Roadmap
+## ⚡ Quick Start
 
-```mermaid
-timeline
-    title Evolution to DePIN Readiness
-    Phase 1.1 : Foundation : Local Logic : Vault Initialization
-    Phase 1.2 : Gateway : Reverse Proxy : Unified Port 8000
-    Phase 1.3.1 (ACTIVE) : Hardening : Sentry Guard (HMAC) : Fail-Closed Perimeter
-    Phase 2.0 (GRANT TARGET) : Identity : IoTeX ioID : Client-Side Signing : W3bstream Proofs
+### 1. Installation
+Deploy a hardened node on any Linux environment (Ubuntu 20.04+ recommended).
+
+```bash
+# Clone the repository
+git clone [https://github.com/arhantbarmate/nexus-core.git](https://github.com/arhantbarmate/nexus-core.git)
+cd nexus-core
+
+# Install dependencies (Virtual Environment recommended)
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
+
+### 2. Configuration
+Create your environment file to select your chain adapter.
+```bash
+cp .env.example .env
+# Edit .env and set CHAIN_ADAPTER="iotex" (or "ton", "dummy", "solana")
+```
+
+### 3. Run the Sentry
+Start the gateway. By default, it runs on port `8000`.
+```bash
+python main.py
+```
+
+---
+
+## 🛡️ Security Model
+Nexus operates on a **Zero-Trust** basis for incoming traffic.
+
+| Component | Responsibility | Failure Mode |
+| :--- | :--- | :--- |
+| **Sentry** | Verifies Signatures (HMAC/Ed25519) | **Fail-Closed** (Drop packet) |
+| **Brain** | Validates Business Logic | **Reject** (Return Error) |
+| **Vault** | Commits State to Disk | **Rollback** (Atomic Write) |
+
+> **Note:** This software is strictly **Infrastructure Research**. It does not perform on-chain settlement directly; it prepares verifiable proofs for anchoring.
+
+---
+
+## 🤝 Contributing (Add Your Chain)
+We welcome contributions for new **Chain Adapters**! If you want to bring Nexus architecture to your ecosystem (Solana, Base, Monad, etc.):
+1. Fork the repo.
+2. Duplicate `nexus/adapters/template_adapter.py`.
+3. Implement the `anchor_state()` method for your chain's SDK.
+4. Submit a PR.
 
 ---
 
 <footer>
   <div align="center">
-    <p>© 2026 Nexus Protocol · Licensed under <b>Apache License 2.0</b></p>
-    <a href="docs/privacy.html">Privacy Policy</a> · <a href="docs/terms.html">Terms of Use</a>
+    <p>© 2026 Nexus Protocol · Open Source under <b>Apache License 2.0</b></p>
+    <a href="docs/INSTALL.md">Installation</a> · <a href="docs/ARCHITECTURE.md">Deep Dive</a>
   </div>
 </footer>
