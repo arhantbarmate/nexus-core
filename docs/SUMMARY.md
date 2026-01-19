@@ -1,28 +1,29 @@
 # 🗺️ Summary — Nexus Protocol (Phase 1.3.1)
 
-### 🛡️ The Hardened Gateway
-* [Introduction](../README.md) — The high-level vision and "why."
-* [Technical Novelty](NOVELTY.md) — The "Sovereign Advantage" and differentiation.
-* [Technical Architecture](architecture.html) — The "Verify-then-Execute" model.
-* [Economic Invariants](economics.html) — Deterministic 60-30-10 state transitions.
-* [Installation Guide](INSTALL.md) — Sovereign Node deployment steps.
-* [Frequently Asked Questions](faq.html) — Strategic and technical clarifications.
-* [Perimeter Guard (Sentry)](../backend/sentry.py) — The active signature enforcement logic.
+### 🚀 Developer Portal
+* [**🌐 View Live Portal**](portal/index.html) — Visual landing page and legal documents.
+
+### 🛡️ The Hardened Gateway (Source)
+* [Introduction](../README.md)
+* [Technical Novelty](NOVELTY.md)
+* [Technical Architecture](ARCHITECTURE.md)
+* [Economic Invariants](ECONOMICS.md)
+* [Installation Guide](INSTALL.md)
+* [Frequently Asked Questions](FAQ.md)
 
 ### 🏗️ Protocol Infrastructure
-* [Engineering Roadmap](ROADMAP.md) — From Hardening (1.3.1) to Identity (2.0).
-* [Universal Adapter Interface](../nexus/adapters/base.py) — The abstract base class for chain integrations.
-* [Test Harness (Dummy)](../nexus/adapters/dummy.py) — Local development adapter.
+* [Engineering Roadmap](ROADMAP.md)
+* [Universal Adapter Interface](../nexus/adapters/base.py)
+* [Test Harness (Dummy)](../nexus/adapters/dummy.py)
 
 ### ⚖️ Governance & Security
-* [Security Policy](../SECURITY.md) — Vulnerability disclosure and threat modeling.
-* [Contributing Guidelines](../CONTRIBUTING.md) — Standards for architectural integrity.
-* [Code of Conduct](../CODE_OF_CONDUCT.md) — Professional and technical pledge.
+* [Security Policy](../SECURITY.md)
+* [Contributing Guidelines](../CONTRIBUTING.md)
+* [Code of Conduct](../CODE_OF_CONDUCT.md)
 
-### 📋 Legal & Privacy
-* [Privacy Policy](privacy.html) — Local-first data custody and transparency.
-* [Terms of Use](terms.html) — Sovereign operator liability and staging notice.
+### 📋 Legal & Compliance
+* [Privacy Standards](portal/privacy.html)
+* [Terms of Operation](portal/terms.html)
 
 ---
-
-**© 2026 Nexus Protocol | Phase 1.3.1 Hardened Gateway**
+**© 2026 Nexus Protocol | Phase 1.3.1**
