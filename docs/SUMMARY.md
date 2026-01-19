@@ -12,8 +12,6 @@
 ### 🏗️ Protocol Infrastructure
 * [Engineering Roadmap](docs/ROADMAP.md) — From Hardening (1.3.1) to Identity (2.0).
 * [Merkle Anchor Utility](research/merkle_anchor.py) — Cryptographic ledger compression research.
-* [TON Connect Manifest](tonconnect-manifest.json) — Official multichain identity metadata.
-* [IoTeX Config](iotex_config.json) — DePIN staging and ioID declaration.
 
 ### ⚖️ Governance & Security
 * [Security Policy](SECURITY.md) — Vulnerability disclosure and threat modeling.
