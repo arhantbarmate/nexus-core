@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture - Nexus Universal Gateway</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; background-color: #fff; }
+        h1, h2, h3 { color: #111; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 30px; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #d63384; }
+        pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: 'Consolas', 'Monaco', monospace; }
+        .mermaid { margin: 20px 0; text-align: center; background: #f9f9f9; padding: 10px; border-radius: 5px; }
+        .back-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        .back-link:hover { text-decoration: underline; }
+        .note { background-color: #e7f3fe; border-left: 6px solid #2196F3; margin-bottom: 15px; padding: 4px 12px; }
+        
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.95rem; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f8f9fa; font-weight: 600; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Back to Home</a>
+
+<h1>🏛️ Nexus Protocol Architecture</h1>
+<p><b>Spec Version:</b> v1.3.1 (Universal Edge Gateway)</p>
+
+<div class="note">
+  <p><strong>Architectural Goal:</strong> Move the "Trust Boundary" from centralized cloud RPCs to the physical device edge using a <strong>"Verify-then-Execute" (VTE)</strong> pattern.</p>
+</div>
+
+<h2>1. High-Level Design</h2>
+<p>Nexus is designed as a <b>Unidirectional Data Pipeline</b>. It treats the physical node as a "Sovereign Boundary" where the <code>Sentry</code> acts as the drawbridge.</p>
+
+<div class="mermaid">
+graph LR
+    User((User / Device)) -->|Signed Payload| Sentry[🛡️ Sentry Guard]
+    
+    subgraph Sovereign_Node [Nexus Protocol Core]
+        Sentry -->|Auth Pass| Brain[🧠 Nexus Brain]
+        Brain -->|State Update| Vault[(💾 Local Vault)]
+    end
+    
+    subgraph Adapters [🔌 Universal Chain Interfaces]
+        Vault -.->|Anchor| IOTX[IoTeX Adapter]
+        Vault -.->|Anchor| TON[TON Adapter]
+        Vault -.->|Anchor| PEAQ[✨ peaq Adapter]
+    end
+</div>
+
+<h2>2. Core Components</h2>
+
+<h3>2.1 🛡️ The Sentry (Edge Firewall)</h3>
+<p>The Sentry is a <b>Fail-Closed</b> middleware. It does not know <i>what</i> the request does; it only verifies <i>who</i> sent it.</p>
+<ul>
+    <li><b>Responsibility:</b> Verifies cryptographic signatures (HMAC, Ed25519, Sr25519).</li>
+    <li><b>Behavior:</b> If signature is invalid → Drop connection immediately. No state is touched.</li>
+    <li><b>Pluggability:</b> Supports hot-swapping auth modules (ioID, peaq ID, Telegram).</li>
+</ul>
+
+<h3>2.2 🧠 The Brain (Logic Engine)</h3>
+<p>The Brain is the deterministic state machine. It executes business logic <i>only</i> on verified requests.</p>
+<ul>
+    <li><b>Isolation:</b> Has no direct internet access; receives data only from the Sentry.</li>
+    <li><b>Reference Policy:</b> Enforces the <b>60-30-10 economic split</b> for deterministic testing.</li>
+</ul>
+
+<h3>2.3 💾 The Vault (State & Anchoring)</h3>
+<p>The Vault is a local SQLite ledger operating in <b>WAL (Write-Ahead Log)</b> mode.</p>
+<ul>
+    <li><b>Single Source of Truth:</b> The local database is authoritative.</li>
+    <li><b>Merkle Anchoring:</b> The Vault aggregates state changes into a Merkle Tree. Only the Root Hash is sent to the Chain Adapter.</li>
+</ul>
+
+<h2>3. The Adapter Pattern</h2>
+<p>Nexus avoids "Vendor Lock-in" by isolating blockchain logic into <b>Adapters</b>. New L1/L2 integrations can be implemented with minimal code.</p>
+
+<pre>class BaseAdapter:
+    def get_latest_block(self):
+        # Connect to specific chain RPC
+        pass
+
+    def anchor_state_root(self, merkle_root):
+        # Send transaction to L1 Smart Contract
+        pass</pre>
+
+<table>
+    <thead>
+        <tr>
+            <th>Adapter Target</th>
+            <th>Status</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>TON</b></td>
+            <td>Reference Prototype</td>
+            <td>Anchoring logic validated externally.</td>
+        </tr>
+        <tr>
+            <td><b>IoTeX</b></td>
+            <td>Integration Planned</td>
+            <td>ioID + W3bstream targeted.</td>
+        </tr>
+        <tr>
+            <td><b>peaq</b></td>
+            <td>Design Target</td>
+            <td>peaq ID-based machine identity.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>4. Security Model</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Attack Vector</th>
+            <th>Mitigation Strategy</th>
+            <th>Component</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>RPC Hijacking</b></td>
+            <td>Local-First State (No dependency on external RPCs)</td>
+            <td><code>Vault</code></td>
+        </tr>
+        <tr>
+            <td><b>Spoofed Command</b></td>
+            <td>Cryptographic Signature Enforcement</td>
+            <td><code>Sentry</code></td>
+        </tr>
+        <tr>
+            <td><b>Replay Attack</b></td>
+            <td>Nonce & Timestamp Windows</td>
+            <td><code>Sentry</code></td>
+        </tr>
+        <tr>
+            <td><b>State Bloat</b></td>
+            <td>Merkle Compression (Only roots leave device)</td>
+            <td><code>Vault</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>5. Directory Structure</h2>
+<pre>nexus-core/
+├── backend/
+│   ├── sentry.py       # Auth & Signature Verification
+│   ├── brain.py        # Business Logic & Economics
+│   └── vault.py        # Database & Merkle Tree
+├── nexus/
+│   └── adapters/       # Chain Interaction Layer
+│       ├── base.py     # <-- Adapter Interface (Abstract)
+│       └── README.md   # Integration Guide
+└── frontend/           # Optional Visualization</pre>
+
+<hr>
+<p>© 2026 Nexus Protocol · Open Standard</p>
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: true });
+</script>
+
+</body>
+</html>
