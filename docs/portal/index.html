@@ -6,13 +6,13 @@
     <title>Nexus Protocol | Sovereign Node</title>
     <style>
         :root {
-            --bg-deep: #020617; /* Darker Slate */
-            --glass-surface: rgba(30, 41, 59, 0.4); /* Translucent Slate */
+            --bg-deep: #020617;
+            --glass-surface: rgba(30, 41, 59, 0.4);
             --glass-border: rgba(255, 255, 255, 0.08);
-            --primary-glow: rgba(99, 102, 241, 0.4); /* Indigo glow */
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent: #6366f1;
+            --danger: #fb7185; /* Rose 400 for Hardening Warning */
         }
 
         body {
@@ -22,229 +22,113 @@
             margin: 0;
             min-height: 100vh;
             overflow-x: hidden;
-            /* 1. The Background Gradients (The "Light") */
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
         }
 
-        /* Nav Glass Bar */
+        /* Nav */
         .nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            /* Frosted Glass Effect */
-            background: rgba(2, 6, 23, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            position: fixed; top: 0; left: 0; right: 0;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 100;
+            background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--glass-border);
         }
-
-        .nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: color 0.3s ease;
-        }
+        .nav a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.3s; }
         .nav a:hover { color: var(--text-main); }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 8rem 2rem 4rem; /* Top padding clears fixed nav */
-            position: relative;
-        }
+        .container { max-width: 900px; margin: 0 auto; padding: 8rem 2rem 4rem; position: relative; }
 
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            margin-bottom: 4rem;
-            animation: fadeUp 0.8s ease-out;
-        }
+        /* Hero */
+        .hero { text-align: center; margin-bottom: 4rem; animation: fadeUp 0.8s ease-out; }
+        .logo-glow { width: 100px; margin-bottom: 1.5rem; filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.3)); }
+        h1 { font-size: 3rem; margin: 0 0 1rem; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
+        .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem; }
 
-        .logo-glow {
-            width: 100px; 
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.3)); /* Glowing Logo */
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin: 0 0 1rem;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-        }
-
-        /* The Warning Glass */
-        .disclaimer {
-            display: inline-block;
+        /* 🛡️ STATUS BADGE (The "Smartly Placed" Progress Indicator) */
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
             background: rgba(251, 113, 133, 0.1);
-            border: 1px solid rgba(251, 113, 133, 0.2);
-            color: #fda4af;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            border: 1px solid rgba(251, 113, 133, 0.3);
+            color: #fda4af; /* Soft Red */
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
             font-weight: 500;
             backdrop-filter: blur(4px);
+            box-shadow: 0 0 15px rgba(251, 113, 133, 0.1);
+        }
+        .pulse-dot {
+            width: 8px; height: 8px; background-color: #fda4af; border-radius: 50%;
+            animation: pulse 2s infinite;
         }
 
-        /* Grid Layout */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            perspective: 1000px; /* For 3D feel */
-        }
-
-        /* 💎 The Glass Cards */
+        /* Grid & Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
         .card {
-            background: var(--glass-surface);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 2rem;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background: var(--glass-surface); border: 1px solid var(--glass-border); border-radius: 16px; padding: 2rem;
+            text-decoration: none; transition: all 0.3s ease; display: flex; flex-direction: column; justify-content: space-between;
         }
-
-        /* The Glow Effect on Hover */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            background: rgba(30, 41, 59, 0.6);
-            border-color: rgba(99, 102, 241, 0.3);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3); /* Deep Shadow */
-        }
-        
-        .card:hover::before { opacity: 1; }
-
-        .card h3 {
-            color: var(--text-main);
-            margin: 0 0 0.5rem;
-            font-size: 1.25rem;
-        }
-
-        .card p {
-            color: var(--text-muted);
-            margin: 0;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        /* "Learn More" Arrow */
-        .arrow {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: var(--accent);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            opacity: 0.8;
-        }
+        .card:hover { transform: translateY(-5px); background: rgba(30, 41, 59, 0.6); border-color: rgba(99, 102, 241, 0.3); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3); }
+        .card h3 { color: var(--text-main); margin: 0 0 0.5rem; font-size: 1.25rem; }
+        .card p { color: var(--text-muted); margin: 0; font-size: 0.95rem; line-height: 1.5; }
+        .arrow { margin-top: 1.5rem; font-size: 0.9rem; color: var(--accent); font-weight: 600; opacity: 0.8; }
         .card:hover .arrow { opacity: 1; }
 
-        footer {
-            text-align: center;
-            margin-top: 6rem;
-            padding: 2rem;
-            color: rgba(148, 163, 184, 0.5);
-            font-size: 0.8rem;
-            border-top: 1px solid var(--glass-border);
-        }
+        footer { text-align: center; margin-top: 6rem; padding: 2rem; color: rgba(148, 163, 184, 0.5); font-size: 0.8rem; border-top: 1px solid var(--glass-border); }
+        .footer-links a { margin: 0 10px; color: inherit; text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--text-main); }
 
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 600px) {
-            h1 { font-size: 2rem; }
-            .grid { grid-template-columns: 1fr; }
-        }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        @media (max-width: 600px) { h1 { font-size: 2rem; } .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <nav class="nav">
     <div style="font-weight:700; color:#fff; letter-spacing:1px;">NEXUS PROTOCOL</div>
-    <div>
-        <a href="https://github.com/arhantbarmate/nexus-core" target="_blank">GITHUB</a>
-    </div>
+    <div><a href="https://github.com/arhantbarmate/nexus-core" target="_blank">GITHUB</a></div>
 </nav>
 
 <div class="container">
     <div class="hero">
         <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png" alt="Nexus" class="logo-glow">
+        
         <h1>Sovereign Edge Gateway</h1>
-        <p class="subtitle">Universal DePIN Infrastructure with Verify-then-Execute Logic</p>
-        <div class="disclaimer">Phase 1.3.1 &middot; Local Execution Environment</div>
+        <p class="subtitle">Universal DePIN Infrastructure &middot; Verify-then-Execute</p>
+        
+        <div class="status-pill">
+            <div class="pulse-dot"></div>
+            Phase 1.3.1: Hardening &middot; Sentry Active (No On-Chain Settlement)
+        </div>
     </div>
 
     <div class="grid">
         <a href="architecture.html" class="card">
-            <div>
-                <h3>Architecture</h3>
-                <p>Explore the Sentry Node security model and the VTE flow.</p>
-            </div>
+            <div><h3>Architecture</h3><p>Verify-then-Execute model and Sentry security logic.</p></div>
             <div class="arrow">View Specs &rarr;</div>
         </a>
-
         <a href="install.html" class="card">
-            <div>
-                <h3>Node Setup</h3>
-                <p>Deploy the hardened gateway stack on your local machine.</p>
-            </div>
+            <div><h3>Node Setup</h3><p>Deploy the hardened gateway stack on local hardware.</p></div>
             <div class="arrow">Start Guide &rarr;</div>
         </a>
-
         <a href="economics.html" class="card">
-            <div>
-                <h3>Economics</h3>
-                <p>The 60-30-10 reference model and deterministic transitions.</p>
-            </div>
+            <div><h3>Economics</h3><p>60-30-10 Model: Deterministic state transitions.</p></div>
             <div class="arrow">Analyze Model &rarr;</div>
         </a>
-
         <a href="faq.html" class="card">
-            <div>
-                <h3>Technical FAQ</h3>
-                <p>Deep dive into multichain anchoring and compute limitations.</p>
-            </div>
+            <div><h3>Technical FAQ</h3><p>Why we use "Sovereign Settlement" instead of direct anchoring.</p></div>
             <div class="arrow">Read More &rarr;</div>
         </a>
     </div>
 
     <footer>
-        &copy; 2026 Nexus Protocol &middot; Sovereign Edge Systems<br>
-        <br>
-        <a href="#" style="color:inherit; text-decoration:none;">Documentation</a> &middot; 
-        <a href="#" style="color:inherit; text-decoration:none;">Privacy</a>
+        &copy; 2026 Nexus Protocol &middot; Sovereign Edge Systems<br><br>
+        <div class="footer-links">
+            <a href="terms.html">Terms of Service</a> &middot; 
+            <a href="privacy.html">Data Sovereignty</a>
+        </div>
     </footer>
 </div>
 
