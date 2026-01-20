@@ -1,55 +1,82 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'tg_bridge.dart';
+import 'package:telegram_web_app/telegram_web_app.dart';
 import 'screens/dashboard.dart';
 
-// --- 1. ENVIRONMENT AUTHORITY ---
-// Use this to toggle between local mock logic and production Sentry logic
-// Command: flutter run --dart-define=NEXUS_DEV=true
-const bool isDevMode = bool.fromEnvironment('NEXUS_DEV', defaultValue: false);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
   bool isTelegramReady = false;
+  bool isDevMode = false;
+  String bootError = "";
 
-  // --- 2. SOVEREIGN BOOT SEQUENCE ---
-  if (kIsWeb) {
-    try {
-      if (TelegramBridge.isSupported) {
-        TelegramBridge.ready();
-        TelegramBridge.expand();
-        isTelegramReady = true;
-      }
-    } catch (e) {
-      if (isDevMode) {
-        debugPrint("🛡️ Nexus: Sovereign Mock Mode active (Dev Only)");
+  // 1. Capture Dev Intent First (Short-Circuit Logic)
+  const String nexusDev = String.fromEnvironment('NEXUS_DEV', defaultValue: 'false');
+  isDevMode = nexusDev.toLowerCase() == 'true';
+
+  // 2. Identity Initialization Gate
+  if (!isDevMode) {
+    if (TelegramWebApp.instance.isSupported) {
+      try {
+        TelegramWebApp.instance.ready();
+        
+        // 🛡️ Double-Guard Null Safety:
+        // 1. Capture the nullable object
+        final initData = TelegramWebApp.instance.initDataUnsafe;
+        
+        // 2. Check if the object and the nested user exist
+        if (initData != null && initData.user != null) {
+          final userId = initData.user!.id; // ! tells Dart we are sure it's not null now
+          
+          if (userId != 0) {
+            isTelegramReady = true;
+            TelegramWebApp.instance.expand();
+          }
+        }
+      } catch (e) {
+        print("Nexus Sentry: Telegram Handshake failed -> $e");
+        bootError = e.toString();
       }
     }
+  } else {
+    print("🛡️ Nexus: Dev Mode Active - Bypassing Identity Handshake.");
   }
-  
-  runApp(NexusApp(telegramReady: isTelegramReady));
+
+  runApp(NexusApp(
+    telegramReady: isTelegramReady,
+    devMode: isDevMode,
+    bootError: bootError,
+  ));
 }
 
 class NexusApp extends StatelessWidget {
   final bool telegramReady;
+  final bool devMode;
+  final String bootError;
 
-  const NexusApp({super.key, required this.telegramReady});
+  const NexusApp({
+    super.key, 
+    required this.telegramReady, 
+    required this.devMode,
+    required this.bootError,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Nexus Protocol',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: const Color(0xFF00D1FF),
-        scaffoldBackgroundColor: const Color(0xFF0A0E14),
-        fontFamily: 'monospace',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF111111),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF00FF9D), // Cyber Green
+          surface: Color(0xFF222222),
+        ),
       ),
-      // --- 3. IDENTITY-AWARE ENTRY ---
-      // We pass the flag to the dashboard so it can show appropriate states
+      // Improvement 2: Passing diagnostics downstream
       home: NexusDashboard(
         telegramReady: telegramReady,
-        devMode: isDevMode,
+        devMode: devMode,
+        bootError: bootError,
       ),
     );
   }

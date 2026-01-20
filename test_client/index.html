@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Sentry Node</title>
+
+  <!-- Telegram SDK (single load) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: system-ui, sans-serif;
+      background: #0e0e0e;
+      color: #00ff9d;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    .box {
+      margin-top: 20px;
+      padding: 14px;
+      background: #1c1c1c;
+      border-radius: 8px;
+      color: #ffffff;
+      font-family: monospace;
+      word-break: break-word;
+    }
+
+    button {
+      margin-top: 24px;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: #00ff9d;
+      color: #000;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🛡️ Nexus Sentry Node</h1>
+  <div class="status" id="status">Booting…</div>
+
+  <div class="box" id="info">
+    Awaiting execution context.
+  </div>
+
+  <button id="execBtn" disabled>Execute (Manual)</button>
+
+  <script>
+    (function () {
+      // Prevent double execution
+      if (window.__NEXUS_BOOTED__) return;
+      window.__NEXUS_BOOTED__ = true;
+
+      const statusEl = document.getElementById("status");
+      const infoEl = document.getElementById("info");
+      const btn = document.getElementById("execBtn");
+
+      let rawInitData = "";
+
+      try {
+        if (window.Telegram && Telegram.WebApp) {
+          const tg = Telegram.WebApp;
+
+          tg.ready();
+          tg.expand();
+
+          rawInitData = tg.initData || "";
+          const user = tg.initDataUnsafe?.user;
+
+          if (user) {
+            statusEl.textContent = "Telegram Context Detected ✓";
+            infoEl.innerHTML =
+              "User ID: " + user.id + "<br>" +
+              "Username: @" + (user.username || "—") + "<br><br>" +
+              "InitData present (hash hidden)";
+            btn.disabled = false;
+          } else {
+            statusEl.textContent = "Telegram Loaded (No User)";
+            infoEl.textContent =
+              "Open this page from inside the Telegram bot.";
+          }
+        } else {
+          statusEl.textContent = "Standalone Mode";
+          infoEl.textContent =
+            "Telegram SDK not present. No identity context.";
+        }
+      } catch (e) {
+        statusEl.textContent = "Boot Error";
+        infoEl.textContent = String(e);
+      }
+
+      // Manual, single-shot backend call
+      btn.onclick = async function () {
+        btn.disabled = true;
+        btn.textContent = "Executed";
+
+        alert(
+          "Verify-Then-Execute triggered.\n\nInitData prefix:\n" +
+          rawInitData.slice(0, 32) +
+          "…"
+        );
+
+        // IMPORTANT:
+        // No automatic fetch.
+        // No retries.
+        // Backend call should be explicitly added later.
+      };
+    })();
+  </script>
+</body>
+</html>

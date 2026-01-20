@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import '../services/nexus_api.dart';
 import '../models/vault_transaction.dart';
 
 class NexusDashboard extends StatefulWidget {
   final bool telegramReady;
   final bool devMode;
+  final String bootError;
 
   const NexusDashboard({
     super.key,
     required this.telegramReady,
     required this.devMode,
+    required this.bootError, 
   });
 
   @override
@@ -21,24 +22,21 @@ class _NexusDashboardState extends State<NexusDashboard> {
   final TextEditingController _amountController = TextEditingController(text: "100.0");
   List<VaultTransaction> _transactions = [];
   bool _isLoading = true;
-  String _statusMessage = "SYSTEM IDLE";
+  String _statusMessage = "READY";
   String _activeAdapter = "NONE";
 
-  // --- Visual Sync Variables from index.html ---
-  static const Color _colorBg = Color(0xFF0f172a);
-  static const Color _colorCard = Color(0xFF1e293b);
-  static const Color _colorPrimary = Color(0xFF6366f1);
-  static const Color _colorText = Color(0xFFf8fafc);
-  static const Color _colorMuted = Color(0xFF94a3b8);
-
+  // --- 🎨 THEME: Sovereign Slate (Matches index.html) ---
+  static const Color _bg = Color(0xFF0F172A);        // Slate 900
+  static const Color _card = Color(0xFF1E293B);      // Slate 800
+  static const Color _primary = Color(0xFF6366F1);   // Indigo 500
+  static const Color _text = Color(0xFFF8FAFC);      // Slate 50
+  static const Color _subText = Color(0xFF94A3B8);   // Slate 400
+  static const Color _border = Color(0x1AFFFFFF);    // White 10%
+  static const Color _danger = Color(0xFFFB7185);    // Rose 400 (For Disclaimer/Errors)
+  
   @override
   void initState() {
     super.initState();
-    // 🛡️ Guard: Ensure environment flags match logic state
-    assert(
-      !(widget.devMode && !const bool.fromEnvironment('NEXUS_DEV')),
-      'DEV MODE active without NEXUS_DEV flag'
-    );
     _refreshVault();
   }
 
@@ -55,255 +53,292 @@ class _NexusDashboardState extends State<NexusDashboard> {
       final txs = await NexusApi.fetchTransactions(devMode: widget.devMode);
       if (mounted) {
         setState(() {
-          _transactions = txs;
+          _transactions = txs.take(10).toList(); 
           _isLoading = false;
         });
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _statusMessage = "VAULT SYNC ERROR";
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _executeVaultSplit() async {
     final double? amount = double.tryParse(_amountController.text);
-    if (amount == null || amount <= 0) {
-      setState(() => _statusMessage = "INVALID AMOUNT");
-      return;
-    }
-    setState(() => _statusMessage = "EXECUTING SPLIT...");
+    if (amount == null || amount <= 0) return;
+    
+    setState(() => _statusMessage = "PROCESSING...");
     try {
       final response = await NexusApi.executeSplit(amount, devMode: widget.devMode);
       if (mounted) {
         setState(() {
-          _statusMessage = "EXECUTION SUCCESS";
+          _statusMessage = "SUCCESS";
           _activeAdapter = response['adapter']?.toString().toUpperCase() ?? "UNKNOWN";
         });
         _refreshVault();
       }
     } catch (e) {
-      if (mounted) {
-        setState(() => _statusMessage = e.toString().toUpperCase());
-      }
+      if (mounted) setState(() => _statusMessage = "ERROR");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _colorBg,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [_buildNavBar(), _buildContentContainer()],
-        ),
-      ),
-    );
-  }
+    final bool isOperational = widget.devMode || widget.telegramReady;
+    final bool canExecute = isOperational && !_statusMessage.contains("PROCESSING");
 
-  Widget _buildContentContainer() {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 800),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-      child: Column(
-        children: [
-          _buildBrandHeader(),
-          const SizedBox(height: 32),
-          _buildStatusCard(),
-          const SizedBox(height: 32),
-          _buildExecutionControl(),
-          const SizedBox(height: 48),
-          _buildLedgerSection(),
-          _buildFooter(),
+    return Scaffold(
+      backgroundColor: _bg,
+      // Custom "Nav" bar to match HTML
+      appBar: AppBar(
+        backgroundColor: _bg,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(color: _border, height: 1.0),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.hub, color: _primary, size: 20), // Placeholder for Logo
+            const SizedBox(width: 12),
+            const Text(
+              "NEXUS PROTOCOL",
+              style: TextStyle(
+                color: _text, 
+                fontSize: 14, 
+                fontWeight: FontWeight.w600, 
+                letterSpacing: 1.0
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: Text(
+                widget.devMode ? "DEV_MODE" : "LIVE NODE",
+                style: TextStyle(
+                  color: widget.devMode ? _danger : _primary, 
+                  fontWeight: FontWeight.bold, 
+                  fontSize: 10
+                ),
+              ),
+            ),
+          )
         ],
       ),
+      body: Center(
+        // Constrain width for desktop/web look (Matches HTML container)
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeroSection(),
+                const SizedBox(height: 32),
+                _buildDisclaimerPanel(isOperational),
+                const SizedBox(height: 32),
+                _buildControlCard(canExecute),
+                const SizedBox(height: 32),
+                _buildLedgerHeader(),
+                const SizedBox(height: 16),
+                _buildLedgerList(),
+                const SizedBox(height: 40),
+                _buildFooter(),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildBrandHeader() {
+  Widget _buildHeroSection() {
     return Column(
       children: [
-        // 🛡️ Replaced generic icon with your official asset
-        Image.asset(
-          'assets/nexus-logo.png',
-          width: 100,
-          height: 100,
-          errorBuilder: (context, error, stackTrace) {
-            // Silence "weird" icons - just show text if asset is missing in build
-            return const SizedBox(height: 100);
-          },
+        // Using Icon instead of Image to avoid asset loading issues for now
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _card,
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: _border),
+          ),
+          child: const Icon(Icons.shield_moon, size: 48, color: _primary),
         ),
-        const SizedBox(height: 16),
-        const Text("NEXUS PROTOCOL",
-            style: TextStyle(color: _colorPrimary, fontSize: 28, fontWeight: FontWeight.bold)),
-        const Text("Universal Sovereign Edge Gateway",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: _colorMuted, fontSize: 16)),
+        const SizedBox(height: 24),
+        const Text(
+          "Universal Sovereign Gateway",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: _text, fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          "Verify-then-Execute logic for DePIN Infrastructure",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: _subText, fontSize: 16),
+        ),
       ],
     );
   }
 
-  // --- UI Components (NavBar, StatusCard, etc. remain visually synced to index.html) ---
-
-  Widget _buildNavBar() {
+  Widget _buildDisclaimerPanel(bool isOperational) {
+    // Matches the .disclaimer class in HTML
     return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.white10)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text("NEXUS PROTOCOL",
-              style: TextStyle(color: _colorText, fontWeight: FontWeight.bold, fontSize: 14)),
-          Text(widget.devMode ? "DEV_BYPASS" : "SOVEREIGN_NODE",
-              style: const TextStyle(color: _colorMuted, fontSize: 12, fontWeight: FontWeight.w600)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusCard() {
-    final bool isOperational = widget.devMode || widget.telegramReady;
-    final bool isStaged = _statusMessage.contains("STAGED");
-    final bool isError = _statusMessage.contains("ERROR") || _statusMessage.contains("FAILED");
-    final Color stateColor = isStaged ? Colors.orangeAccent : (isError ? Colors.redAccent : _colorPrimary);
-
-    return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _colorCard,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: stateColor.withOpacity(0.3)),
+        color: _danger.withOpacity(0.1), // 10% opacity background
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: _danger.withOpacity(0.5)),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Icon(isError ? Icons.error_outline : Icons.security, color: stateColor),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_statusMessage,
-                    style: TextStyle(color: stateColor, fontWeight: FontWeight.bold, fontSize: 14)),
-                Text(
-                    widget.devMode
-                        ? "DEV-BYPASS ACTIVE (LOGIC TEST)"
-                        : (widget.telegramReady ? "Identity Linked via Sentry" : "Unauthenticated Session"),
-                    style: const TextStyle(color: _colorMuted, fontSize: 12)),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(isOperational ? Icons.check_circle : Icons.warning_amber, color: _danger, size: 16),
+              const SizedBox(width: 8),
+              Text(
+                "Phase 1.3.1 — ${_statusMessage}",
+                style: const TextStyle(color: _danger, fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+            ],
           ),
-          if (_activeAdapter != "NONE") _buildBadge(_activeAdapter, stateColor),
+          if (widget.bootError.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                "DIAGNOSTIC: ${widget.bootError}",
+                style: const TextStyle(color: _danger, fontSize: 11, fontFamily: 'Courier'),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildExecutionControl() {
-    final bool canExecute = (widget.devMode || widget.telegramReady) && !_statusMessage.contains("STAGED");
+  Widget _buildControlCard(bool canExecute) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: _colorCard,
+        color: _card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: _border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("EXECUTION GATE", style: TextStyle(color: _colorPrimary, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _amountController,
-            style: const TextStyle(color: _colorText),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.black26,
-              labelText: "Amount (USD)",
-              labelStyle: const TextStyle(color: _colorMuted),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: canExecute ? _executeVaultSplit : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _colorPrimary,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Colors.white10,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          const Text("EXECUTION ENGINE", style: TextStyle(color: _primary, fontSize: 14, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          const Text("Initiate sovereign split transaction", style: TextStyle(color: _subText, fontSize: 12)),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: _text, fontFamily: 'Courier'),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: _bg,
+                    labelText: "AMOUNT (USD)",
+                    labelStyle: const TextStyle(color: _subText, fontSize: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: _primary),
+                    ),
+                  ),
+                ),
               ),
-              child: const Text("EXECUTE 60/30/10 SPLIT", style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
+              const SizedBox(width: 16),
+              SizedBox(
+                height: 56,
+                child: ElevatedButton.icon(
+                  onPressed: canExecute ? _executeVaultSplit : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                  ),
+                  icon: const Icon(Icons.bolt, size: 18),
+                  label: const Text("EXECUTE", style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLedgerSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("VAULT LEDGER", style: TextStyle(color: _colorPrimary, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
-        if (_isLoading)
-          const Center(child: CircularProgressIndicator(color: _colorPrimary))
-        else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _transactions.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final tx = _transactions[index];
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: _colorCard,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.white10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("TXN #${tx.id}",
-                        style: const TextStyle(color: _colorText, fontWeight: FontWeight.bold)),
-                    Text("\$${tx.amount.toStringAsFixed(2)}",
-                        style: const TextStyle(color: _colorPrimary, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              );
-            },
+  Widget _buildLedgerHeader() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4.0),
+      child: Text(
+        "RECENT ACTIVITY",
+        style: TextStyle(color: _primary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+      ),
+    );
+  }
+
+  Widget _buildLedgerList() {
+    if (_isLoading) return const LinearProgressIndicator(color: _primary, backgroundColor: _card);
+    
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _transactions.length,
+      separatorBuilder: (c, i) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final tx = _transactions[index];
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _card,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: _border),
           ),
-      ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("TX_${tx.id}", style: const TextStyle(color: _danger, fontSize: 12, fontFamily: 'Courier')),
+                  const SizedBox(height: 4),
+                  Text("Success", style: TextStyle(color: _subText.withOpacity(0.5), fontSize: 10)),
+                ],
+              ),
+              Text(
+                "\$${tx.amount.toStringAsFixed(2)}",
+                style: const TextStyle(color: _text, fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _buildFooter() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 64),
-      child: Text("© 2026 Nexus Protocol · Phase 1.3.1 Universal Gateway",
-          textAlign: TextAlign.center, style: TextStyle(color: _colorMuted, fontSize: 12)),
-    );
-  }
-
-  Widget _buildBadge(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        border: Border.all(color: color.withOpacity(0.5)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
+    return Column(
+      children: [
+        Divider(color: _border),
+        const SizedBox(height: 20),
+        const Text(
+          "© 2026 Nexus Protocol · Phase 1.3.1 Universal Gateway",
+          style: TextStyle(color: _subText, fontSize: 12),
+        ),
+      ],
     );
   }
 }
