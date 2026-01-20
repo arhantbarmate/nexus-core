@@ -2,51 +2,106 @@
 title NEXUS PROTOCOL - Master Launcher (Hardened)
 color 0b
 
+:: Ensure we are working from the project root
+cd /d "%~dp0"
+
 echo ====================================================
-echo        NEXUS PROTOCOL: SOVEREIGN NODE V1.3.1
+echo          NEXUS PROTOCOL: SOVEREIGN NODE V1.3.1
 echo ====================================================
 echo.
 
-:: 0. CRITICAL REPAIR: Install Required Libraries
-echo [0/3] 🛠️  Hardening Dependencies...
-:: python-multipart resolves the PendingDeprecationWarning
-pip install httpx uvicorn fastapi python-dotenv python-multipart pytest > nul 2>&1
+:: 1. CREDENTIAL LOADER
+set "PYTHONPATH=%~dp0"
 
-:: 1. Start the Brain (The Gateway)
-echo [1/3] 🧠 Starting Hardened Nexus Brain on Port 8000...
-:: Injecting PYTHONPATH allows the app to find 'sentry.py' correctly
-start "NEXUS_BRAIN" cmd /k "set PYTHONPATH=%CD%\backend&& cd backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+if exist "backend\.env" (
+    echo ✅ .env detected. Loading Sovereign Credentials...
+    for /f "usebackq tokens=*" %%i in ("backend\.env") do set "%%i"
+) else (
+    echo ⚠️ WARNING: No .env found. Sentry Guard may fail.
+)
 
-:: Give the Brain time to initialize the SQLite Vault
+:: 2. IDENTITY SWITCHBOARD (Hardened)
+echo [Step 1] Identity Switchboard Configuration
+echo ----------------------------------------------------
+echo OPTIONS:
+echo [ton]   - Enforce Telegram HMAC Security (Fail-Closed)
+echo [dummy] - Allow Mock Signatures (Dev/Test Only)
+echo [skip]  - Use adapter defined in .env (Default)
+echo ----------------------------------------------------
+set /p mode="Select Active Adapter: "
+
+:: Logic Processor
+if /i "%mode%"=="skip" (
+    echo 🧹 Reverting to .env defaults...
+    set "CHAIN_ADAPTER="
+) else if /i "%mode%"=="ton" (
+    set "CHAIN_ADAPTER=ton"
+) else if /i "%mode%"=="dummy" (
+    set "CHAIN_ADAPTER=dummy"
+) else (
+    echo ℹ️ No selection made. Falling back to .env...
+    set "CHAIN_ADAPTER="
+)
+
+:: FAIL-FAST IDENTITY GUARD
+if /i "%CHAIN_ADAPTER%"=="ton" (
+    if "%TELEGRAM_BOT_TOKEN%"=="" (
+        echo.
+        echo ❌ FATAL ERROR: Adapter set to 'ton' but TELEGRAM_BOT_TOKEN is missing.
+        echo.
+        pause
+        exit /b 1
+    )
+)
+
+:: Echo final state for auditor visibility
+if "%CHAIN_ADAPTER%"=="" (
+    echo 🔐 Active Adapter: .env DEFAULT
+) else (
+    echo 🔐 Active Adapter: %CHAIN_ADAPTER%
+)
+
+if "%NEXUS_ENV%"=="" set "NEXUS_ENV=dev"
+
+:: 3. BRAIN IGNITION (Gateway)
+echo.
+echo [Step 2] 🧠 Igniting Hardened Nexus Brain...
+start "NEXUS_BRAIN" cmd /k "set "PYTHONPATH=%~dp0" && uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload"
+
 timeout /t 5 /nobreak > nul
 
-:: 2. Start the Body (Flutter Web Server)
-echo [2/3] 👕 Starting Nexus Body on Port 8080...
-:: FIX: Removed --web-renderer to ensure compatibility with all Flutter versions
-start "NEXUS_BODY" cmd /k "cd client && flutter run -d web-server --web-port 8080 --release --web-hostname 0.0.0.0"
+:: 4. BODY IGNITION (Flutter - Force Chrome & Dev Sync)
+echo [Step 3] 👕 Attaching Nexus Body...
+
+:: 🛡️ HARD-SYNC: We force the flag here to ensure the UI sends 'valid_mock_signature'
+:: This is the ONLY way to bypass "Unauthorised Session" in local Chrome tests.
+set "FORCE_DEV=--dart-define=NEXUS_DEV=true"
+
+echo 🚀 Launching Chrome with Gateway Handshake Armed...
+
+:: We pass the flag directly into the command string to prevent expansion lag
+start "NEXUS_BODY" cmd /k "cd client && flutter run -d chrome --web-port 8080 %FORCE_DEV%"
 
 echo ⏳ Synchronizing Multichain Handshake...
 timeout /t 10 /nobreak > nul
 
-:: 3. LAUNCH CHROME (Targeting the Gateway Proxy)
-:: We target Port 8000 because the Brain proxies the UI from Port 8080
-start chrome http://localhost:8000
-
+:: 5. EXTERNAL BRIDGE (Optional)
 echo.
 echo ----------------------------------------------------
-echo [3/3] 📡 OPTIONAL: EXTERNAL BRIDGE (ngrok)
+echo [Step 4] 📡 EXTERNAL BRIDGE (ngrok)
 echo ----------------------------------------------------
 set /p tunnel="Launch ngrok tunnel for Telegram Mobile access? (y/n): "
 
-if /i "%tunnel%"=="y" goto LAUNCH_NGROK
-goto END
+if /i "%tunnel%"=="y" (
+    :: Point ngrok to 8080 (The Body) so Telegram can see the UI
+    start "NEXUS_BRIDGE" cmd /k "ngrok http 8080"
+    timeout /t 3 /nobreak > nul
+    :: Open Inspector for fast URL retrieval
+    start chrome http://127.0.0.1:4040
+)
 
-:LAUNCH_NGROK
-echo 🔗 Initializing Multichain Bridge (Brain-First Mode)...
-start "NEXUS_BRIDGE" cmd /k "ngrok http 8000 || echo ❌ NGROK ERROR: Check PATH. && pause"
-
-:END
+echo.
 echo ====================================================
-echo ✅ SYSTEM HARDENED (v1.3.1 - Fail-Closed Active)
+echo ✅ SYSTEM ONLINE (Phase 1.3.1 Hardened)
 echo ====================================================
 pause

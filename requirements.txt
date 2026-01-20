@@ -1,0 +1,10 @@
+# Core Web Server & Gateway
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+httpx
+
+# Testing & Security Auditing
+pytest
+pytest-asyncio

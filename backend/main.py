@@ -2,34 +2,67 @@ import os
 import sqlite3
 import httpx
 import asyncio
+import json
 from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-# Import the corrected Sentry with Dynamic ID support
-from sentry import sentry
-
+# --- 1. BOOTSTRAP: Load environment & constants ---
 load_dotenv()
 NODE_ID = "nexus_local_v1.3.1"
-
-# --- DATABASE SETUP ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "nexus_vault.db")
 
+# --- 2. LIFESPAN: Database Perimeter Initialization ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Ensures the Vault is ready and structured before accepting traffic."""
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS transactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                user_id TEXT, 
+                amount REAL, 
+                creator_share REAL, 
+                user_pool_share REAL, 
+                network_fee REAL, 
+                timestamp TEXT
+            )
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+    print(f"🛡️ Nexus Hardened Gateway Active: {NODE_ID}")
+    yield
+
+# --- 3. INITIALIZE APP (CRITICAL: Must be defined before any @app routes) ---
+app = FastAPI(title="Nexus Sovereign Brain", version="1.3.1", lifespan=lifespan)
+
+# --- 4. SENTRY ATTACHMENT ---
+# Importing from backend.sentry ensures the Switchboard is armed
+from backend.sentry import sentry
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- 5. UTILITIES & DATABASE ---
 def get_db_connection():
+    """Provides a thread-safe connection to the Nexus Vault."""
     conn = sqlite3.connect(DB_PATH, timeout=5.0, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
-# --- ASYNC NOTIFICATION HOOK (Dynamic Routing) ---
 async def send_nexus_notification(chat_id, amount, c, p, f):
-    """
-    Sends a formatted Telegram DM to the specific user who triggered the split.
-    """
+    """Sends a formatted Telegram DM to the verified user_id (Side-Effect)."""
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    
     if not bot_token or not chat_id:
         return
 
@@ -52,125 +85,130 @@ async def send_nexus_notification(chat_id, amount, c, p, f):
         except Exception as e:
             print(f"⚠️ Notification Hook Failed: {e}")
 
-# --- MULTICHAIN GUARD (Identity Extractor) ---
+# --- 6. MULTICHAIN GUARD (Identity Enforcement) ---
 async def multichain_guard(request: Request):
     """
-    Identifies and verifies the user. 
-    Returns a dict containing 'verified' and 'user_id'.
+    Identifies and verifies the user via the Nexus Sentry Switchboard.
+    Phase 1.3.1 Strategy: Priority TON | Staged IoTeX | Conflict Rejection.
     """
     ton_data = request.headers.get("X-Nexus-TMA")
+    iotex_data = request.headers.get("X-Nexus-IOTX")
+
+    # DEFENSIVE: Reject ambiguous multichain identities
+    if ton_data and iotex_data:
+        raise HTTPException(
+            status_code=400, 
+            detail="Nexus Sentry: Multiple identity headers detected (Ambiguous Origin)"
+        )
+
+    # 1. TON/Telegram Header (ACTIVE)
     if ton_data:
-        # Returns {'verified': bool, 'user_id': int}
-        auth_status = sentry.verify_ton_request(ton_data)
+        auth_status = await sentry.verify_request(ton_data)
         if auth_status.get("verified"):
             return auth_status
         raise HTTPException(status_code=403, detail="Nexus Sentry: TON Signature Failed")
 
-    iotex_data = request.headers.get("X-Nexus-IOTX")
+    # 2. IoTeX Header (STAGED GATE)
     if iotex_data:
-        status = sentry.inspect_iotex_request(iotex_data)
-        if status.get("verified"):
-            return status
-        raise HTTPException(status_code=403, detail="Nexus Sentry: IoTeX Staged - Execution Locked")
-
-    raise HTTPException(status_code=403, detail="Nexus Sentry: No Verified Identity Found")
-
-# --- LIFESPAN ---
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    conn = get_db_connection()
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            user_id TEXT, 
-            amount REAL, 
-            creator_share REAL, 
-            user_pool_share REAL, 
-            network_fee REAL, 
-            timestamp TEXT
+        raise HTTPException(
+            status_code=403, 
+            detail="Nexus Sentry: IoTeX Integration is currently STAGED (Phase 1.3.1)"
         )
-    """)
-    conn.close()
-    print(f"🛡️ Nexus Hardened Gateway Active: {NODE_ID}")
-    yield
 
-app = FastAPI(title="Nexus Sovereign Brain", version="1.3.1", lifespan=lifespan)
+    # 3. Fail-Closed Logic: Reject anything without a Nexus identity
+    raise HTTPException(status_code=403, detail="Nexus Sentry: No valid identity header found")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# --- 7. SECURE API ROUTES ---
 
-# --- SECURE API ROUTES ---
+@app.get("/api/health")
+def health():
+    """Public health endpoint for system monitoring."""
+    return {"status": "ok", "vault": "active", "perimeter": "hardened", "phase": "1.3.1"}
 
 @app.get("/api/ledger", dependencies=[Depends(multichain_guard)])
 def get_ledger():
+    """Provides an aggregated view of the Vault's economic state."""
     conn = get_db_connection()
-    row = conn.execute("SELECT SUM(creator_share) as c, SUM(user_pool_share) as p, SUM(network_fee) as f FROM transactions").fetchone()
-    conn.close()
-    return {
-        "total_earned": round(row['c'] or 0.0, 2),
-        "global_user_pool": round(row['p'] or 0.0, 2),
-        "protocol_fees": round(row['f'] or 0.0, 2),
-        "status": "verified"
-    }
+    try:
+        row = conn.execute("""
+            SELECT SUM(creator_share) as c, SUM(user_pool_share) as p, SUM(network_fee) as f 
+            FROM transactions
+        """).fetchone()
+        return {
+            "total_earned": round(row['c'] or 0.0, 2),
+            "global_user_pool": round(row['p'] or 0.0, 2),
+            "protocol_fees": round(row['f'] or 0.0, 2),
+            "status": "verified"
+        }
+    finally:
+        conn.close()
 
 @app.get("/api/transactions", dependencies=[Depends(multichain_guard)])
 def get_transactions():
+    """Returns the last 10 verified vault executions."""
     conn = get_db_connection()
-    rows = conn.execute("SELECT id, amount, timestamp FROM transactions ORDER BY id DESC LIMIT 10").fetchall()
-    conn.close()
-    return [dict(row) for row in rows]
+    try:
+        rows = conn.execute("SELECT id, amount, timestamp FROM transactions ORDER BY id DESC LIMIT 10").fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
 
 @app.post("/api/execute_split/{amount}")
 async def execute_split(amount: float, auth: dict = Depends(multichain_guard)):
-    """
-    Executes split and sends DM to the verified user_id from the 'auth' dependency.
-    """
-    if amount <= 0:
-        raise HTTPException(status_code=400, detail="Invalid amount")
+    """Executes 60-30-10 split and commits to Vault with Audit Logging."""
+    if amount <= 0 or amount > 1_000_000:
+        raise HTTPException(status_code=400, detail="Nexus Vault: Invalid execution amount")
     
-    # Extract dynamic user_id from the Multichain Guard
-    dynamic_user_id = auth.get("user_id")
+    uid = auth.get("user_id")
+    adapter = auth.get("adapter", "unknown")
     
-    c_share = round(amount * 0.60, 2)
-    p_share = round(amount * 0.30, 2)
-    f_share = round(amount * 0.10, 2)
+    # Deterministic Split Calculation
+    c, p, f = round(amount * 0.6, 2), round(amount * 0.3, 2), round(amount * 0.1, 2)
     
     conn = get_db_connection()
     try:
         conn.execute(
             "INSERT INTO transactions (user_id, amount, creator_share, user_pool_share, network_fee, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
-            (str(dynamic_user_id), amount, c_share, p_share, f_share, datetime.utcnow().isoformat())
+            (str(uid), amount, c, p, f, datetime.utcnow().isoformat())
         )
         conn.commit()
         
-        # 🔔 Notify the specific user who triggered the event
-        if dynamic_user_id:
-            asyncio.create_task(send_nexus_notification(dynamic_user_id, amount, c_share, p_share, f_share))
+        # Structured Audit Log (Machine Readable)
+        audit = {"event": "VAULT_EXEC", "user": uid, "amt": amount, "adapter": adapter, "ts": datetime.utcnow().isoformat()}
+        print(f"📄 AUDIT_LOG: {json.dumps(audit)}")
         
-        return {"status": "success", "split": {"creator": c_share, "pool": p_share, "fee": f_share}}
+        # Async Notification (Non-Critical)
+        if uid:
+            asyncio.create_task(send_nexus_notification(uid, amount, c, p, f))
+        
+        return {
+            "status": "success", 
+            "adapter": adapter,
+            "split": {"creator": c, "pool": p, "fee": f}
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
 
-@app.get("/api/health")
-def health():
-    return {"status": "ok", "vault": "active", "perimeter": "hardened"}
-
-# --- PROXY (Body Link) ---
+# --- 8. PROXY GATEWAY (Body Link) ---
 @app.api_route("/{path_name:path}", methods=["GET", "POST", "OPTIONS"])
 async def gateway_proxy(request: Request, path_name: str):
-    flutter_url = f"http://127.0.0.1:8080/{path_name}"
+    """Bridges the Sovereign Brain to the Flutter Body (UI Surface)."""
+    flutter_url = f"http://localhost:8080/{path_name}"
     async with httpx.AsyncClient(timeout=10.0) as client:
         try:
+            # Identity Strip: Body never sees internal Nexus headers
             proxy_headers = {k: v for k, v in request.headers.items() if not k.lower().startswith("x-nexus-")}
             proxy_headers.pop("host", None)
-            resp = await client.request(request.method, flutter_url, headers=proxy_headers, content=await request.body(), params=request.query_params)
+            
+            resp = await client.request(
+                request.method, 
+                flutter_url, 
+                headers=proxy_headers, 
+                content=await request.body(), 
+                params=request.query_params
+            )
             return Response(content=resp.content, status_code=resp.status_code)
-        except Exception as e:
+        except Exception:
             return Response(f"⏳ Nexus Gateway: Connecting to Body...", status_code=503)
