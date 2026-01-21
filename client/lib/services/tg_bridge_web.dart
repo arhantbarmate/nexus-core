@@ -6,8 +6,7 @@ class TelegramBridge {
   /// AUTHENTICATION PERIMETER
   static String get initData {
     try {
-      // FIXED: Removed redundant '?? ""' (Line 10) 
-      // The compiler knows 'raw' is non-nullable here.
+      // Logic: Only access raw if it exists, otherwise return empty
       return TelegramWebApp.instance.initData.raw;
     } catch (_) {
       return "";
@@ -15,12 +14,18 @@ class TelegramBridge {
   }
 
   /// IDENTITY RESCUE LOGIC
-  /// Hardened for Phase 1.3.1 - Resolves the Null-Safety error
+  /// Hardened for Phase 1.3.1 - Resolves the Unconditional Access error
   static String get userId {
     try {
-      final user = TelegramWebApp.instance.initDataUnsafe.user;
-      if (user != null && user.id != 0) {
-        return user.id.toString();
+      // 1. Capture the instance in a local variable to help the compiler with type promotion
+      final initDataUnsafe = TelegramWebApp.instance.initDataUnsafe;
+      
+      // 2. Explicit null check before accessing .user
+      if (initDataUnsafe != null && initDataUnsafe.user != null) {
+        final uid = initDataUnsafe.user!.id;
+        if (uid != 0) {
+          return uid.toString();
+        }
       }
     } catch (e) {
       debugPrint("🏛️ [Bridge] Identity_Extraction_Failure: $e");
@@ -29,7 +34,6 @@ class TelegramBridge {
   }
 
   /// HAPTIC FEEDBACK BRIDGE
-  /// Logic: Uses the 0.3.3 compliant enum naming
   static void triggerHaptic() {
     try {
       (TelegramWebApp.instance.hapticFeedback as dynamic).notificationOccurred('success');
