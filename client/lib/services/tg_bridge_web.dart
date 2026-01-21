@@ -6,11 +6,25 @@ class TelegramBridge {
   /// AUTHENTICATION PERIMETER
   static String get initData {
     try {
-      // Logic: Only access raw if it exists, otherwise return empty
-      return TelegramWebApp.instance.initData.raw;
+      // In 0.3.3, we access the WebApp interface safely
+      final raw = TelegramWebApp.instance.initData; 
+      return raw.isNotEmpty ? raw : "";
     } catch (_) {
       return "";
     }
+  }
+
+  static String get userId {
+    try {
+      final user = TelegramWebApp.instance.initDataUnsafe.user;
+      // Safeguard against ID 0 or null user objects in dev environments
+      if (user != null && user.id != 0) {
+        return user.id.toString();
+      }
+    } catch (e) {
+      debugPrint("🏛️ [Bridge] Identity_Extraction_Failure: $e");
+    }
+    return "LOCAL_HOST"; 
   }
 
   /// IDENTITY RESCUE LOGIC

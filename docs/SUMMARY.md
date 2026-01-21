@@ -5,23 +5,23 @@ This is the central index for the Nexus Protocol technical specifications. These
 ---
 
 ### 🏛️ 1. Foundational Specifications
-* **[architecture.md](./architecture.md)** — The Brain-Body-Sentry structural blueprint.
-* **[economics.md](./economics.md)** — The 60/30/10 Deterministic Split Invariant.
-* **[novelty.md](./novelty.md)** — Architectural correction vs. custodial fragility.
+* **[ARCHITECTURE.md](./ARCHITECTURE.md)** — The Brain-Body-Sentry structural blueprint.
+* **[ECONOMICS.md](./ECONOMICS.md)** — The 60/30/10 Deterministic Split Invariant.
+* **[NOVELTY.md](./NOVELTY.md)** — Architectural correction vs. custodial fragility.
 
 ### ⚡ 2. Operational Guides
-* **[install.md](./install.md)** — Sovereign Node deployment on local hardware.
-* **[roadmap.md](./roadmap.md)** — Exploratory roadmap (Non-binding Epochs I-III).
-* **[faq.md](./faq.md)** — Technical rationale and infrastructure defense.
+* **[INSTALL.md](./INSTALL.md)** — Sovereign Node deployment on local hardware.
+* **[ROADMAP.md](./ROADMAP.md)** — Exploratory roadmap (Non-binding Epochs I-III).
+* **[FAQ.md](./FAQ.md)** — Technical rationale and infrastructure defense.
 
 ### 🛡️ 3. Governance & Security
-* **[security.md](./security.md)** — Fail-Closed security and disclosure protocols.
+* **[SECURITY.md](./SECURITY.md)** — Fail-Closed security and disclosure protocols.
 * **[privacy.md](./privacy.md)** — Local-First persistence and non-custodial policy.
 * **[terms.md](./terms.md)** — Operator liability and responsibility boundaries.
 
 ### 🤝 4. Community Standards
 * **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** — Technical and ethical participation pillars.
-* **[CONTRIBUTING.md](./CONTRIBUTING.md)** — PR standards and ```test_concurrency.py``` requirements.
+* **[CONTRIBUTING.md](./CONTRIBUTING.md)** — PR standards and `test_concurrency.py` requirements.
 
 ---
 

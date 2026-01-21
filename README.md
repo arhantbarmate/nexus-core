@@ -6,7 +6,7 @@ Nexus is an architectural correction to the custodial fragility of modern infras
 
 ## 🏛️ Project Portal
 For high-fidelity technical specifications and interactive operational guides:
-👉 **[Launch Sovereign Portal](https://arhantbarmate.github.io/nexus-core/docs/index.html)**
+👉 **[Launch Sovereign Portal](https://arhantbarmate.github.io/nexus-core/)**
 
 ---
 
@@ -22,9 +22,9 @@ Nexus operates as a **Sovereign Gateway** between identity providers and persist
 ## 📑 Technical Documentation
 | Foundational | Operational | Governance |
 | :--- | :--- | :--- |
-| [Architecture](./docs/architecture.md) | [Installation](./docs/install.md) | [Security Policy](./SECURITY.md) |
-| [Economics](./docs/economics.md) | [Roadmap](./docs/roadmap.md) | [Privacy Policy](./docs/privacy.md) |
-| [Novelty](./docs/novelty.md) | [Technical FAQ](./docs/faq.md) | [Terms of Service](./docs/terms.md) |
+| [Architecture](./docs/ARCHITECTURE.md) | [Installation](./docs/INSTALL.md) | [Security Policy](./SECURITY.md) |
+| [Economics](./docs/ECONOMICS.md) | [Roadmap](./docs/ROADMAP.md) | [Privacy Policy](./docs/privacy.md) |
+| [Novelty](./docs/NOVELTY.md) | [Technical FAQ](./docs/FAQ.md) | [Terms of Service](./docs/terms.md) |
 
 ---
 
