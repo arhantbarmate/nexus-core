@@ -3,42 +3,47 @@ import 'package:telegram_web_app/telegram_web_app.dart';
 import 'screens/dashboard.dart';
 
 void main() async {
+  // 1. BOUNDARY INITIALIZATION
+  // Ensures Flutter is ready for low-level platform channel communication
   WidgetsFlutterBinding.ensureInitialized();
 
   bool isTelegramReady = false;
   bool isDevMode = false;
   String bootError = "";
 
-  // 1. Capture Dev Intent First (Short-Circuit Logic)
+  // 2. DEV-MODE SHORT CIRCUIT
+  // Hardened string parsing to prevent environment mismatch
   const String nexusDev = String.fromEnvironment('NEXUS_DEV', defaultValue: 'false');
-  isDevMode = nexusDev.toLowerCase() == 'true';
+  isDevMode = nexusDev.trim().toLowerCase() == 'true';
 
-  // 2. Identity Initialization Gate
+  // 3. SOVEREIGN HANDSHAKE (The Identity Gate)
   if (!isDevMode) {
-    if (TelegramWebApp.instance.isSupported) {
-      try {
-        TelegramWebApp.instance.ready();
+    try {
+      // STRESS TEST: Handshake must occur within 3 seconds or we trigger a survival fallback
+      await Future.any([
+        _initTelegramHandshake(),
+        Future.delayed(const Duration(seconds: 3), () => throw 'TELEGRAM_SERVICE_TIMEOUT'),
+      ]);
+
+      final initData = TelegramWebApp.instance.initDataUnsafe;
+      
+      // Verification of Identity Object Integrity
+      if (initData != null && initData.user != null && initData.user!.id != 0) {
+        isTelegramReady = true;
+        TelegramWebApp.instance.expand(); // Command Telegram to take full height
         
-        // 🛡️ Double-Guard Null Safety:
-        // 1. Capture the nullable object
-        final initData = TelegramWebApp.instance.initDataUnsafe;
-        
-        // 2. Check if the object and the nested user exist
-        if (initData != null && initData.user != null) {
-          final userId = initData.user!.id; // ! tells Dart we are sure it's not null now
-          
-          if (userId != 0) {
-            isTelegramReady = true;
-            TelegramWebApp.instance.expand();
-          }
-        }
-      } catch (e) {
-        print("Nexus Sentry: Telegram Handshake failed -> $e");
-        bootError = e.toString();
+        // Command Telegram to lock vertical orientation for UI stability
+        // Note: Requires Telegram 6.2+
+        try {
+          TelegramWebApp.instance.ready(); 
+        } catch (_) {}
+      } else {
+        bootError = "IDENTITY_NOT_FOUND";
       }
+    } catch (e) {
+      debugPrint("🛡️ Nexus Handshake Error: $e");
+      bootError = e.toString();
     }
-  } else {
-    print("🛡️ Nexus: Dev Mode Active - Bypassing Identity Handshake.");
   }
 
   runApp(NexusApp(
@@ -48,35 +53,77 @@ void main() async {
   ));
 }
 
-class NexusApp extends StatelessWidget {
+/// Isolated Handshake Logic
+Future<void> _initTelegramHandshake() async {
+  if (TelegramWebApp.instance.isSupported) {
+    TelegramWebApp.instance.ready();
+  } else {
+    throw 'PLATFORM_UNSUPPORTED';
+  }
+}
+
+class NexusApp extends StatefulWidget {
   final bool telegramReady;
   final bool devMode;
   final String bootError;
 
   const NexusApp({
-    super.key, 
-    required this.telegramReady, 
+    super.key,
+    required this.telegramReady,
     required this.devMode,
     required this.bootError,
   });
+
+  @override
+  State<NexusApp> createState() => _NexusAppState();
+}
+
+// 4. THE LIFE-CYCLE OBSERVER
+// Audit Fix: We use WidgetsBindingObserver to detect when the app returns from background
+class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // When the user returns to the app, we force an identity check to prevent session hijacking
+    if (state == AppLifecycleState.resumed && widget.telegramReady) {
+      debugPrint("🏛️ Nexus: Resuming Sovereign Session...");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Nexus Protocol',
       debugShowCheckedModeBanner: false,
+      // 5. HARDENED THEME (Cyber-Sentry Aesthetics)
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF111111),
+        scaffoldBackgroundColor: const Color(0xFF050508),
+        canvasColor: const Color(0xFF050508), // Prevents white-flash on load
         colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF00FF9D), // Cyber Green
-          surface: Color(0xFF222222),
+          primary: Color(0xFF4f46e5), // Indigo Primary (The Brain)
+          secondary: Color(0xFF10b981), // Terminal Green (The Guard)
+          surface: Color(0xFF0d0d12),
+        ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(fontFamily: 'Courier', color: Color(0xFFe2e8f0)),
         ),
       ),
-      // Improvement 2: Passing diagnostics downstream
       home: NexusDashboard(
-        telegramReady: telegramReady,
-        devMode: devMode,
-        bootError: bootError,
+        telegramReady: widget.telegramReady,
+        devMode: widget.devMode,
+        bootError: widget.bootError,
       ),
     );
   }

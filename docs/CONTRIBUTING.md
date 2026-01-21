@@ -1,18 +1,18 @@
-# Contributing to Nexus Protocol
+# 🛠️ Contributing to Nexus Protocol — (v1.3.1)
 
-Nexus Protocol enforces **strict architectural boundaries** to preserve protocol integrity.
+Nexus is an open-source Sovereign Gateway. We welcome contributions that maintain our core technical invariants.
 
-## 1. Project Focus (Phase 1.3.1)
-* **Perimeter Hardening:** Ensuring the Sentry correctly validates signatures before requests reach the Brain.
-* **Adapter Standardization:** Building modular interfaces for chains like peaq, IoTeX, and TON.
-* **Stateless UI Discipline:** Maintaining clear separation between visualization and economic authority.
+## 🚀 Standards of Execution
+* **Atomic Partitions:** Maintain the 60/30/10 Split Invariant.
+* **Verification:** PRs must pass the stress test (```python scripts/test_concurrency.py```).
 
-## 2. Pull Requests
-* **Atomic Scope:** One fix or one improvement per PR.
-* **Sentry-Compliant:** Logic must not bypass the Sentry verification gate.
-* **Phase Discipline:** Changes must align with the current Roadmap.
+## 📧 Get in Touch
+For security vulnerabilities, grant inquiries, or private collaboration:
 
-> **Note:** Non-conforming PRs may be closed without review to preserve architectural integrity.
+* **Primary:** arhantbarmate@gmail.com
+* **Secondary:** arhant6armate@outlook.com
+
 
 ---
-**© 2026 Nexus Protocol | Universal Edge Gateway**
+
+© 2026 Nexus Protocol · Contribution Specification v1.3.1

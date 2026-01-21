@@ -1,14 +1,16 @@
 # ==============================================================================
-# Nexus Protocol — Line Ending & Binary Policy (Hardened Phase 1.2)
+# Nexus Protocol — Line Ending & Binary Policy (Hardened Phase 1.3.1)
 # ==============================================================================
 
-# 1. Default: normalize text files to LF in repo for cross-platform consistency
+# 1. Default: Global normalization to LF (Linux/Unix standard)
 * text=auto
 
 # 2. Python (The Brain)
 *.py text eol=lf
 requirements.txt text eol=lf
 *.ini text eol=lf
+# NEW: Micro-Refinement for environment templates
+*.env.example text eol=lf
 
 # 3. Dart / Flutter (The Body)
 *.dart text eol=lf
@@ -16,11 +18,15 @@ requirements.txt text eol=lf
 *.yml text eol=lf
 *.json text eol=lf
 *.lock text eol=lf
+# Protect WebAssembly binaries for Flutter Web
+*.wasm binary
+*.js text eol=lf
 
 # 4. Shell & Automation
 *.sh text eol=lf
-# Mandatory CRLF for Windows Batch execution
+# Mandatory CRLF for Windows Batch execution (Critical for your .bat files)
 *.bat text eol=crlf
+*.cmd text eol=crlf
 
 # 5. Markdown / Documentation
 *.md text eol=lf
@@ -28,10 +34,12 @@ requirements.txt text eol=lf
 LICENSE text eol=lf
 
 # 6. Database & Binary (CRITICAL)
-# Treat SQLite vaults as binary to prevent corruption
+# Treat SQLite vaults as binary to prevent line-ending corruption of the ledger
 *.db binary
 *.db-wal binary
 *.db-shm binary
+*.sqlite binary
+*.sqlite3 binary
 
 # 7. Images & Assets
 *.png binary
@@ -41,7 +49,6 @@ LICENSE text eol=lf
 *.svg text eol=lf
 
 # 8. Executables (Safety Net)
-# Ensure accidental commits of tools are treated as binary
 *.exe binary
 *.dll binary
 *.so binary
@@ -55,4 +62,6 @@ LICENSE text eol=lf
 *.cmake text eol=lf
 
 # 10. Generated Artifacts
+# Logic: Do not normalize generated files to save CPU during Git diffs
 client/**/generated_* -text
+pubspec.lock -text

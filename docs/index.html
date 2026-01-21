@@ -2,11 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=./portal/index.html">
-    <title>Redirecting to Nexus Protocol...</title>
-    <script>window.location.href = "./portal/index.html";</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Sovereign Portal | Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-black: #050505;
+            --accent-blue: #6366f1;
+            --panel-bg: rgba(15, 15, 20, 0.85);
+            --border-panel: rgba(255, 255, 255, 0.05);
+            --text-dim: #94a3b8;
+        }
+        body { margin: 0; background: var(--bg-black); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%); }
+        .nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-panel); }
+        .nav-brand { font-family: 'JetBrains Mono'; font-weight: 800; color: var(--accent-blue); letter-spacing: 2px; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 10rem 2rem 5rem; text-align: center; }
+        h1 { font-size: 4rem; font-weight: 800; margin: 0; letter-spacing: -3px; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tagline { color: var(--text-dim); font-size: 1.1rem; margin: 1.5rem 0 4rem; font-family: 'JetBrains Mono'; letter-spacing: 1px; }
+
+        /* 🔳 SYSTEMATIC GRID */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; text-align: left; }
+        .module { background: var(--panel-bg); border: 1px solid var(--border-panel); padding: 2rem; border-radius: 4px; text-decoration: none; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; justify-content: space-between; }
+        .module:hover { border-color: var(--accent-blue); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1); }
+        .mod-cat { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; }
+        .mod-title { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+        .mod-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+
+        .footer { margin-top: 8rem; border-top: 1px solid var(--border-panel); padding: 4rem 0; color: var(--text-dim); font-family: 'JetBrains Mono'; font-size: 0.7rem; letter-spacing: 1px; }
+        @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 2.5rem; } }
+    </style>
 </head>
 <body>
-    <p>Loading Nexus Protocol... <a href="./portal/index.html">Click here</a></p>
+    <div id="particles-js"></div>
+    <nav class="nav"><div class="nav-brand">NEXUS_CORE_v1.3.1</div></nav>
+    <div class="container">
+        <h1>Sovereign Gateway</h1>
+        <div class="tagline">The Blueprint for Local-First Economic Execution</div>
+        
+        <div class="grid">
+            <a href="portal/architecture.html" class="module">
+                <div class="mod-cat">Foundations</div><div class="mod-title">Architecture</div>
+                <div class="mod-desc">The Verify-then-Execute blueprint for the Brain-Body-Sentry model.</div>
+            </a>
+            <a href="portal/economics.html" class="module">
+                <div class="mod-cat">Foundations</div><div class="mod-title">Economics</div>
+                <div class="mod-desc">Deterministic 60/30/10 split invariants and local settlement logic.</div>
+            </a>
+            <a href="portal/novelty.html" class="module">
+                <div class="mod-cat">Foundations</div><div class="mod-title">Novelty</div>
+                <div class="mod-desc">Comparative analysis of edge-execution vs custodial cloud fragility.</div>
+            </a>
+
+            <a href="portal/install.html" class="module">
+                <div class="mod-cat">Operations</div><div class="mod-title">Setup Guide</div>
+                <div class="mod-desc">Deployment requirements and node initialization for local hardware.</div>
+            </a>
+            <a href="portal/roadmap.html" class="module">
+                <div class="mod-cat">Operations</div><div class="mod-title">Roadmap</div>
+                <div class="mod-desc">The non-binding evolutionary trajectory from Epoch I to Epoch III.</div>
+            </a>
+            <a href="portal/faq.html" class="module">
+                <div class="mod-cat">Operations</div><div class="mod-title">Technical FAQ</div>
+                <div class="mod-desc">Architectural defense and infrastructure rationale.</div>
+            </a>
+
+            <a href="portal/security.html" class="module">
+                <div class="mod-cat">Governance</div><div class="mod-title">Security</div>
+                <div class="mod-desc">The Fail-Closed model and responsible disclosure protocols.</div>
+            </a>
+            <a href="portal/privacy.html" class="module">
+                <div class="mod-cat">Governance</div><div class="mod-title">Privacy Policy</div>
+                <div class="mod-desc">Non-custodial data policy and local-first persistence.</div>
+            </a>
+            <a href="portal/terms.html" class="module">
+                <div class="mod-cat">Governance</div><div class="mod-title">Terms of Service</div>
+                <div class="mod-desc">Operational liability boundaries and node operator duties.</div>
+            </a>
+        </div>
+
+        <div class="footer">// SYSTEM_LOCKED // NEXUS_PROTOCOL_2026 // <a href="portal/summary.html" style="color:inherit">SUMMARY</a></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: { number: { value: 60 }, color: { value: '#6366f1' }, opacity: { value: 0.2 }, size: { value: 2 }, line_linked: { enable: true, distance: 150, color: '#6366f1', opacity: 0.1, width: 1 }, move: { enable: true, speed: 1 } }
+        });
+    </script>
 </body>
 </html>

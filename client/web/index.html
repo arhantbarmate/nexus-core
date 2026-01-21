@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Nexus Protocol - Local-First DePIN Economic Execution Engine.">
+  <meta name="description" content="Nexus Protocol - Sovereign DePIN Economic Execution Engine.">
 
   <base href="$FLUTTER_BASE_HREF">
 
@@ -12,36 +12,62 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Nexus Protocol">
-  <meta name="format-detection" content="telephone=no">
+  
+  <title>Nexus Protocol | Sovereign Node</title>
   
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>Nexus Protocol | Sovereign Node</title>
   <link rel="manifest" href="manifest.json">
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
-  <script async src="https://tganalytics.xyz/index.js" onload="initAnalytics()"></script>
   <script>
-    function initAnalytics() {
-      if (window.telegramAnalytics && window.Telegram && window.Telegram.WebApp) {
-        window.telegramAnalytics.init({
-          token: 'eyJhcHBfbmFtZSI6Im5leHVzX3Byb3RvY29sX3Byb2QiLCJhcHBfdXJsIjoiaHR0cHM6Ly90Lm1lL05leHVzUHJvdG9jb2xfQXBwX2JvdCIsImFwcF9kb21haW4iOiJodHRwczovL2FyaGFudGJhcm1hdGUuZ2l0aHViLmlvL25leHVzLWNvcmUvIn0=!L+IqaEPyZdEnCe0ulp+IxVB/3eko056YMQf036ZDXLw=', 
-          appName: 'nexus_protocol_prod'
-        });
-        console.log("🛡️ Nexus: Sovereign Analytics Initialized");
-      }
+    // 2. LOGIC LOCK: Initializing Telegram Interface immediately
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+      // Visual Audit: Set header color to match our Cyber-Midnight theme
+      window.Telegram.WebApp.setHeaderColor('#0A0E14');
+      window.Telegram.WebApp.setBackgroundColor('#0A0E14');
     }
   </script>
 
   <style>
-    /* Prevent gray highlight on tap in mobile browsers */
-    * { -webkit-tap-highlight-color: transparent; }
-    body { background-color: #0A0E14; margin: 0; padding: 0; overflow: hidden; }
+    /* 3. VISUAL STRESS TEST: Eliminating the 'White Flash' Bug */
+    /* By setting the background here, we prevent the browser from flashing white 
+       during the 2-second Flutter engine download. */
+    :root { background-color: #0A0E14; }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body { 
+      background-color: #0A0E14; 
+      margin: 0; padding: 0; 
+      overflow: hidden; 
+      position: fixed; /* Prevents elastic scrolling on iOS */
+      width: 100%; height: 100%;
+    }
+    /* Loading Indicator for Sovereign feel */
+    #loading-indicator {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #4F46E5; font-family: monospace; font-size: 10px;
+      letter-spacing: 2px;
+    }
   </style>
 </head>
 <body>
+  <div id="loading-indicator">INITIALIZING_SOVEREIGN_NODE...</div>
+
+  <script async src="https://tganalytics.xyz/index.js"></script>
+  
+  <script>
+    // 5. ENGINE BOOTSTRAP
+    // We defer the loading indicator removal until the Flutter engine is active
+    window.addEventListener('flutter-first-frame', function() {
+      var indicator = document.getElementById('loading-indicator');
+      if (indicator) indicator.remove();
+    });
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

@@ -1,16 +1,19 @@
-# ⚖️ Code of Conduct — Nexus Protocol
+# 🤝 Code of Conduct — Nexus Protocol (v1.3.1)
 
-## 1. Our Pledge
-As members, contributors, and leaders of the Nexus Protocol project, we pledge to make participation in our community a professional and harassment-free experience for everyone. We are committed to fostering an environment of **Technical Integrity** and **Sovereign Responsibility**.
+Nexus is a professional DePIN ecosystem. We value technical integrity and sovereign principles.
 
-## 2. Our Standards
-### ✅ Positive Behavior
-* **Technical Objectivity:** Focusing on architectural correctness and protocol security over personal preference.
-* **Graceful Feedback:** Giving and gracefully accepting constructive peer reviews.
+## 🛡️ Sovereign Principles
+1. **Sovereignty First:** User right to local execution.
+2. **Integrity of the Split:** Respect the 60/30/10 invariant.
+3. **Resilience over Hype:** Verified engineering over speculative claims.
 
-### ❌ Unacceptable Behavior
-* **Malicious Contributions:** Intentional introduction of vulnerabilities or "backdoors" into the sovereign architecture.
-* **Privacy Violations:** Publishing others' private information without explicit permission.
+## 📧 Reporting
+Report violations of this code to:
+
+* **Primary:** arhantbarmate@gmail.com
+* **Secondary:** arhant6armate@outlook.com
+
 
 ---
-**© 2026 Nexus Protocol | Universal Edge Gateway**
+
+© 2026 Nexus Protocol · Community Specification v1.3.1

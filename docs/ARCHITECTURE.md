@@ -1,112 +1,53 @@
-# 🏛️ Nexus Protocol Architecture
-**Spec Version:** v1.3.1 (Universal Edge Gateway)
+# 🏛️ System Architecture — Nexus Protocol (v1.3.1)
 
-> **Architectural Goal:** Move the "Trust Boundary" from centralized cloud RPCs to the physical device edge using a "Verify-then-Execute" (VTE) pattern.
+The Nexus Protocol is a **Sovereign Edge Gateway** architected for the DePIN ecosystem. It operates on a **Verify-then-Execute** model, ensuring that economic state transitions are only committed after identity validation through the Sentry Bridge.
 
 ---
 
-## 1. High-Level Design
-Nexus is designed as a **Unidirectional Data Pipeline**. It treats the physical node as a "Sovereign Boundary" where the `Sentry` acts as the drawbridge.
-
-### The "Verify-then-Execute" Flow
-Requests are never processed directly. They must pass a cryptographic challenge at the edge before reaching the application state.
+## 🛰️ High-Level Logic Flow
+The following sequence defines the "Fail-Closed" lifecycle of a Nexus transaction:
 
 ```mermaid
-graph LR
-    User((User / Device)) -->|Signed Payload| Sentry[🛡️ Sentry Guard]
-    
-    subgraph Sovereign_Node [Nexus Protocol Core]
-        Sentry -->|Auth Pass| Brain[🧠 Nexus Brain]
-        Brain -->|State Update| Vault[(💾 Local Vault)]
+sequenceDiagram
+    participant U as UI (Execution Surface)
+    participant S as Sentry (Bridge)
+    participant B as Brain (FastAPI)
+    participant V as Vault (SQLite)
+
+    U->>S: Action Trigger (e.g., Execute Split)
+    S->>S: Sign Context (HMAC/Signed Context)
+    S->>B: POST /api/execute_split (Signed)
+    B->>B: Verify Identity Integrity
+    alt Verified
+        B->>V: Commit 60/30/10 Ledger Entry
+        V-->>B: Success
+        B-->>U: State Updated (JSON)
+    else Rejected
+        B-->>U: 403 Forbidden
     end
-    
-    subgraph Adapters [🔌 Universal Chain Interfaces]
-        Vault -.->|Anchor| IOTX[IoTeX Adapter]
-        Vault -.->|Anchor| TON[TON Adapter]
-        Vault -.->|Anchor| PEAQ[✨ peaq Adapter]
-    end
 ```
 
 ---
 
-## 2. Core Components
+## 🧠 The Brain (Persistence & Logic)
+The backend is a **Unidirectional State Machine** built with FastAPI and SQLite.
+* **Concurrency:** Utilizes **Write-Ahead Logging (WAL)** mode. Successfully verified under a **50-user concurrent identity surge** without lock contention.
+* **Ledger Invariant:** Every incoming credit is strictly bifurcated via the **60/30/10 Protocol**:
+    * **60% Creator:** Direct node/content settlement.
+    * **30% User Pool:** Community redistribution.
+    * **10% Network Fee:** Protocol maintenance.
 
-### 2.1 🛡️ The Sentry (Edge Firewall)
-The Sentry is a **Fail-Closed** middleware. It does not know *what* the request does; it only verifies *who* sent it.
-* **Responsibility:** Verifies cryptographic signatures (HMAC, Ed25519, and support for schemes like sr25519).
-* **Behavior:** If signature is invalid → Drop connection immediately (fail-closed). No state is touched.
-* **Pluggability:** Supports hot-swapping auth modules, allowing seamless switching from one identity provider to another (e.g., ioID, DID-based schemes).
-
-### 2.2 🧠 The Brain (Logic Engine)
-The Brain is the deterministic state machine. It executes business logic *only* on verified requests.
-* **Isolation:** Has no direct internet access; receives data only from the Sentry.
-* **Reference Policy:** Currently enforces a reference **60-30-10 economic policy** used for deterministic testing. This logic is modular and can be replaced for different protocol needs.
-* **Determinism:** Given the same input sequence, the Brain produces the exact same state change on any architecture.
-
-### 2.3 💾 The Vault (State & Anchoring)
-The Vault is a local SQLite ledger operating in **WAL (Write-Ahead Log)** mode for high concurrency.
-* **Single Source of Truth:** The local database is authoritative. The blockchain is used for *verification*, not storage.
-* **Merkle Anchoring:** The Vault aggregates state changes into a Merkle Tree. Only the **Root Hash** is sent to the Chain Adapter.
+## 📱 The Body (Interface & Sentry)
+The frontend is a Flutter-based **Execution Surface** that interacts with the Brain through the **Sentry Bridge (Fail-Closed Identity Perimeter)**.
+* **Identity Rails:** Abstracted adapter pattern currently supporting TON Connect 2.0 and the Sovereign Backup-ID Bridge.
+* **Structural Isolation:** Compiled with ```base-href /nexus-core/app/``` to ensure operational separation from the documentation portal.
 
 ---
 
-## 3. The Adapter Pattern (Extensibility)
-Nexus avoids "Vendor Lock-in" by isolating blockchain logic into **Adapters**. 
-
-**New L1/L2 integrations can be implemented with minimal code by conforming to the Adapter interface.**
-
-An Adapter is a simple Python class that implements the `Anchor` interface:
-```python
-class BaseAdapter:
-    def get_latest_block(self):
-        # Connect to specific chain RPC
-        pass
-
-    def anchor_state_root(self, merkle_root):
-        # Send transaction to L1 Smart Contract
-        pass
-```
-
-| Adapter Target | Status | Notes |
-| :--- | :--- | :--- |
-| **TON** | Reference Prototype | Anchoring logic validated externally. |
-| **IoTeX** | Integration Planned | **ioID** + **W3bstream** targeted. |
-| **peaq** | Design Target | **peaq ID**-based machine identity. |
+## 🛡️ Infrastructure Sovereignty
+* **Ngrok Bypass:** Implements a **Sovereign Sentry Page** to handle Ngrok's free-tier interstitial, ensuring seamless headless handshakes for Telegram Mini Apps.
+* **Local-First:** Designed to run on low-power edge hardware (Raspberry Pi/Local PC) to maintain data ownership.
 
 ---
 
-## 4. Security Model
-
-| Attack Vector | Mitigation Strategy | Component |
-| :--- | :--- | :--- |
-| **RPC Hijacking** | Local-First State (No dependency on external RPCs) | `Vault` |
-| **Spoofed Command** | Cryptographic Signature Enforcement | `Sentry` |
-| **Replay Attack** | Nonce & Timestamp Windows | `Sentry` |
-| **State Bloat** | Merkle Compression (Only roots leave the device) | `Vault` |
-
----
-
-## 5. Directory Structure
-The codebase reflects this separation of concerns:
-
-```text
-nexus-core/
-├── backend/
-│   ├── sentry.py       # Auth & Signature Verification
-│   ├── brain.py        # Business Logic & Economics
-│   └── vault.py        # Database & Merkle Tree
-├── nexus/
-│   └── adapters/       # Chain Interaction Layer
-│       ├── base.py     # <-- Adapter Interface (Abstract)
-│       └── README.md   # Integration Guide
-└── frontend/           # Optional Visualization
-```
-
----
-
-<footer>
-  <div align="center">
-    <p>© 2026 Nexus Protocol · Open Standard for DePIN</p>
-    <a href="LICENSE">Apache License 2.0</a>
-  </div>
-</footer>
+© 2026 Nexus Protocol · Architecture Specification v1.3.1

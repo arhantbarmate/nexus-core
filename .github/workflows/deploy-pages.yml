@@ -27,31 +27,46 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: '3.19.0'
 
       - name: Build Flutter Web
         run: |
           cd client
           flutter pub get
-          # Note: base-href is set to /app/ because we are moving the app files there
+          # Mapping to /app/ subfolder
           flutter build web --release --base-href /nexus-core/app/
 
       - name: Prepare Deployment Directory
         run: |
           mkdir -p staging
           
-          # 1. ROOT LEVEL: Documentation Portal
-          # We copy the CONTENTS of docs/ into staging/ so index.html is at the root
-          cp -r docs/* staging/
+          # 1. ROOT LEVEL: Portal Files (From docs/portal/)
+          # We copy the CONTENTS so terms.html and index.html sit at the root
+          if [ -d "docs/portal" ]; then
+            cp -r docs/portal/* staging/
+            echo "✅ Portal files moved to root."
+          else
+            echo "❌ ERROR: docs/portal not found."
+            exit 1
+          fi
 
           # 2. SUBFOLDER LEVEL: Flutter Web App
-          # We move the app to /app to prevent it from overwriting the portal index
           mkdir -p staging/app
-          cp -r client/build/web/* staging/app/
+          if [ -d "client/build/web" ]; then
+            cp -r client/build/web/* staging/app/
+            echo "✅ Flutter Body moved to /app/."
+          fi
 
           # 3. GLOBAL ASSETS: TON Manifest & Logo
-          # Placed at root for discovery by wallets and metadata scrapers
-          cp tonconnect-manifest.json staging/ || echo "Manifest not found"
-          cp client/assets/nexus-logo.png staging/ || echo "Logo not found"
+          # Logic: Pulling from root and assets folder to the staging root
+          cp tonconnect-manifest.json staging/ || echo "⚠️ Manifest not found"
+          
+          if [ -f "client/assets/nexus-logo.png" ]; then
+            cp client/assets/nexus-logo.png staging/
+            echo "✅ Logo moved to root."
+          else
+            echo "⚠️ Warning: Logo not found in client/assets/"
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

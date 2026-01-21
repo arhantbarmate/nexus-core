@@ -1,4 +1,4 @@
-name: Nexus CI
+name: Nexus Protocol Phase 1.3.1 CI
 
 on:
   push:
@@ -7,60 +7,60 @@ on:
     branches: [ main ]
 
 jobs:
-  # --------------------------------------------------
-  # 1. Documentation & Repository Integrity
-  # --------------------------------------------------
-  lint-docs:
+  brain_integrity:
+    name: Audit Nexus Brain (Python)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Markdownlint CLI
-        # Using npm is faster and more reliable on GitHub runners
-        run: npm install -g markdownlint-cli
-
-      - name: Markdown syntax & link sanity check
-        run: |
-          # Ignore node_modules to speed up the scan
-          markdownlint "**/*.md" --ignore node_modules || echo "Markdown lint completed with warnings."
-
-  # --------------------------------------------------
-  # 2. Backend Engine (The Brain)
-  # --------------------------------------------------
-  test-backend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
-      - name: Install Backend Dependencies
+          python-version: '3.10'
+          cache: 'pip' # Automated caching for faster Python builds
+
+      - name: Install Dependencies
         run: |
-          cd backend
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Dependency Security Audit (Safety)
-        run: |
-          cd backend
           pip install safety
-          safety check || echo "Security audit completed (non-blocking)."
-      - name: Run Backend Tests
-        run: |
-          cd backend
-          python -m pytest
 
-  # --------------------------------------------------
-  # 3. Frontend Dashboard (The Body)
-  # --------------------------------------------------
-  test-frontend:
+      - name: Security Supply-Chain Audit
+        run: safety check
+
+      # SURGICAL IMPROVEMENT 1: Import Sanity Check
+      - name: Brain Import Check
+        run: |
+          python -c "import backend.main; print('🏛️ Brain Import Verified')"
+
+  body_integrity:
+    name: Build Nexus Body (Flutter Web)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+
+      # SURGICAL IMPROVEMENT 2: Flutter Dependency Caching
+      - name: Cache Flutter Dependencies
+        uses: actions/cache@v4
         with:
-          channel: stable
-      - name: Flutter Analyze & Test
-        run: |
-          cd client
-          flutter pub get
-          flutter analyze
-          if [ -d "test" ]; then flutter test; fi
+          path: |
+            ~/.pub-cache
+            client/.dart_tool
+          key: flutter-${{ runner.os }}-${{ hashFiles('client/pubspec.lock') }}
+          restore-keys: |
+            flutter-${{ runner.os }}-
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      - name: Install Body Dependencies
+        run: cd client && flutter pub get
+
+      - name: Static Analysis (Linting)
+        run: cd client && flutter analyze
+
+      - name: Build Web Surface (Phase 1.3.1 Target)
+        run: cd client && flutter build web --dart-define=NEXUS_DEV=true

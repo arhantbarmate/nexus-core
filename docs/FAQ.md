@@ -1,61 +1,42 @@
-# ❓ Frequently Asked Questions — Nexus Protocol
+# ❓ Technical FAQ — Nexus Protocol (v1.3.1)
 
-This document provides a technical and strategic FAQ for the **Nexus Sovereign Gateway**. It addresses architectural, economic, and multichain integration questions for Phase 1.3.1.
-
----
-
-## 🏛️ Architecture & Perimeter Security
-
-### Q: What is the "Sentry" and why is it mandatory?
-**A:** The Sentry is a **Modular Verification Guard** that sits at the gateway boundary. Its role is to validate request integrity before the Economic Brain processes any state transitions. By making the Sentry mandatory, we ensure that the system follows a **Fail-Closed** security model—unauthorized traffic never touches the application logic.
-
-### Q: Which Identity Standards does Nexus support?
-**A:** Nexus is identity-agnostic. The Sentry allows you to "plug in" verification modules for your specific use case:
-* **Social/App:** HMAC-SHA256 (e.g., Telegram Mini Apps).
-* **Machine/DePIN:** Ed25519 (with support for additional schemes such as **Sr25519** for peaq or Solana).
-* **Federated:** OIDC or DID-based resolvers.
+This document addresses the architectural rationale and infrastructure choices behind the Nexus Sovereign Gateway.
 
 ---
 
-## 💰 Economics & the Reference Policy
+## 🌐 Infrastructure & Connectivity
 
-### Q: Why 60-30-10? Is it hardcoded?
-**A:** The 60-30-10 split is a **Reference Policy** included in v1.3.1 to demonstrate deterministic ledger integrity. It acts as a "default setting" for testing.
-* **60% (Participant):** Edge-node incentive.
-* **30% (Ecosystem):** Reserve for identity/storage fees.
-* **10% (Network):** Proof generation & anchoring costs.
+### Q: Why does the Gateway use a custom HTML proxy for Ngrok?
+**A:** To maintain a **$0-cost Sovereign Stack**. Ngrok's free tier includes a mandatory "Browser Warning" interstitial that breaks headless handshakes for Telegram Mini Apps (TMA). 
 
-**It is NOT hardcoded in the protocol core.** Developers can swap this logic module for custom models (e.g., Linear Bonding Curves, DAO-managed splits) via the Brain's policy interface.
+We implement a **Sovereign Sentry Bridge (HTML/JS Interface)** that:
+1. **Detection:** Checks for the ```ngrok-skip-browser-warning``` header or interstitial presence.
+2. **Auto-Bypass:** Executes a client-side "Proceed" command via a lightweight, zero-latency HTML UI.
+3. **Handshake Integrity:** Ensures the Sentry Bridge in the Flutter "Body" receives a clean connection, allowing the TMA to authenticate without manual user intervention during development and demos.
 
-### Q: Does the 10% "Network Reserved" share represent a fee?
-**A:** It represents the **Cost of Truth**. In a DePIN network, this allocation covers:
-* **peaq:** Storage and machine identity verification on the peaq layer.
-* **IoTeX:** W3bstream proof generation.
-* **TON:** State archiving and Jetton-compatible message forwarding.
-It is an internal accounting allocation reserved for these future infrastructure costs.
-
----
-
-## 🔌 Multichain & DePIN Integration
-
-### Q: How does Nexus fit into ecosystems like peaq or IoTeX?
-**A:** Nexus acts as a **Sovereign Gateway**.
-* **For peaq:** It serves as a local "Logic Boundary" that verifies a machine's **peaq ID** signature locally before anchoring the data to the chain.
-* **For IoTeX:** It pre-validates device intents before sending them to **W3bstream**, reducing on-chain noise and compute costs.
-* **For TON/Solana:** It manages high-frequency user interactions off-chain, settling only the final state roots.
+### Q: Why use SQLite instead of a distributed database?
+**A:** Local-first sovereignty and high performance on edge hardware. 
+* **Write-Ahead Logging (WAL):** Utilized to manage concurrent identity surges.
+* **Verification:** Successfully handles a **50-user concurrent settlement load** with 100% split accuracy.
+* **Sovereignty:** Keeping the ledger local ensures the operator maintains state ownership before anchoring to an external chain.
 
 ---
 
-## 🔍 Operational & Legal Status
+## 💰 Economic & State Logic
 
-### Q: Is there any live on-chain execution in Phase 1.3.1?
-**A:** **No.** Phase 1.3.1 is strictly focused on **local-first hardening**. All blockchain references (peaq, IoTeX, TON) reflect architectural interfaces and threat modeling. No tokens are issued, and no smart contracts are invoked in this phase.
+### Q: Is the 60/30/10 split hardcoded?
+**A:** In Phase 1.3.1, yes. This ensures **Economic Determinism**. Hardcoding the split in the "Brain" prevents UI-level tampering. The architecture allows future anchoring layers (peaq/IoTeX) to parameterize these values via governance adapters.
 
-### Q: Is Nexus a Bridge or an Oracle?
-**A:** Neither. Nexus is a **Sovereign Gateway**. It does not move assets between chains; it manages local state transitions and prepares them for global auditability via the **Adapter Pattern**.
-
-> **Phase 1.3.1 Scope Summary:** Nexus v1.3.1 provides a hardened, local-first execution gateway with deterministic economics and verified identity extraction. It does not execute on-chain logic, issue tokens, or provide global consensus.
+### Q: What happens if a transaction fails the Sentry Guard?
+**A:** The system follows a **Fail-Closed** logic. Requests failing HMAC or Signed Context validation are rejected (403 Forbidden) at the edge. No state changes are committed to the Vault.
 
 ---
 
-© 2026 Nexus Protocol · v1.3.1
+## 🛰️ Identity & Adapters
+
+### Q: Why frame the UI as an "Execution Surface"?
+**A:** To maintain **Chain-Agnosticism**. The UI merely renders the state of the Sovereign Brain. This separation ensures Nexus remains compatible with future machine, device, or DID-based identity systems without altering core execution logic.
+
+---
+
+© 2026 Nexus Protocol · Technical FAQ v1.3.1

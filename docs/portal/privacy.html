@@ -3,28 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Sovereignty | Nexus Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; line-height: 1.6; }
-        .nav { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .nav a { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-        .container { max-width: 800px; margin: 0 auto; padding: 4rem 2rem; }
-        .card { background: var(--card); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
-        h1, h2, h3 { color: var(--primary); }
-        code { background: rgba(0,0,0,0.3); padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; color: #fb7185; }
-        pre { background: #000; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid #334155; }
-        footer { text-align: center; padding: 4rem; color: #64748b; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.1); }
-        .back-btn { display: inline-block; margin-bottom: 2rem; color: var(--primary); text-decoration: none; font-weight: bold; }
-        .disclaimer { background: rgba(251, 113, 133, 0.1); border: 1px solid #fb7185; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; font-size: 0.9rem; color: #fda4af; }
+        :root {
+            --bg-black: #050505;
+            --accent-blue: #6366f1;
+            --panel-bg: rgba(15, 15, 20, 0.8);
+            --border-panel: rgba(255, 255, 255, 0.05);
+            --text-dim: #94a3b8;
+        }
+        body { margin: 0; background: var(--bg-black); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%); }
+        .nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-panel); }
+        .nav a { color: var(--text-dim); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        .container { max-width: 800px; margin: 0 auto; padding: 10rem 2rem 5rem; }
+        h1 { font-size: 3rem; font-weight: 800; margin: 0; letter-spacing: -2px; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .badge { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.8rem; margin: 1rem 0 4rem; text-transform: uppercase; letter-spacing: 4px; }
+        .legal-block { background: var(--panel-bg); border: 1px solid var(--border-panel); padding: 2.5rem; border-radius: 4px; margin-bottom: 1.5rem; position: relative; }
+        .legal-block::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: var(--accent-blue); }
+        h3 { font-family: 'JetBrains Mono', monospace; color: #fff; font-size: 1.2rem; margin: 0 0 1rem; }
+        p { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; margin: 0; }
+        .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
     </style>
 </head>
 <body>
-<div class="nav"><a href="index.html">NEXUS PROTOCOL</a> <a href="../SUMMARY.md">DOCS INDEX</a></div>
-<div class="container">
-<a href="index.html" class="back-btn">← Home</a><h1>🛡️ Privacy</h1><p>No centralized data collection. Local-first only.</p></div>
-<footer>
-    &copy; 2026 Nexus Protocol &middot; Phase 1.3.1 Universal Gateway<br>
-    <a href="privacy.html" style="color:#64748b">Privacy</a> | <a href="terms.html" style="color:#64748b">Terms</a>
-</footer>
+    <div id="particles-js"></div>
+    <nav class="nav">
+        <a href="../index.html">// RETURN_TO_TERMINAL</a>
+        <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">PROTOCOL_v1.3.1</div>
+    </nav>
+    <div class="container">
+        <h1>Data Sovereignty</h1>
+        <div class="badge">Absolute Ownership Principles</div>
+        
+<div class="legal-block">
+    <h3>01. Local-First Persistence</h3>
+    <p>All ledger entries and identity hashes are stored in the <code>nexus_vault.db</code> on your local hardware. No sensitive data is transmitted to centralized cloud servers.</p>
+</div>
+<div class="legal-block">
+    <h3>02. Sentry Integrity</h3>
+    <p>The Sentry Bridge extracts only necessary context for authentication. We implement a Sovereign Sentry Page to bypass third-party interstitials while maintaining handshake security.</p>
+</div>
+
+        <div class="footer">// END_OF_LEGAL_SPEC // NEXUS_PROTOCOL_2026</div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: { number: { value: 60 }, color: { value: '#6366f1' }, opacity: { value: 0.2 }, size: { value: 2 }, line_linked: { enable: true, distance: 150, color: '#6366f1', opacity: 0.1, width: 1 }, move: { enable: true, speed: 1 } }
+        });
+    </script>
 </body>
 </html>

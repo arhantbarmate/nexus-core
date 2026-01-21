@@ -1,90 +1,57 @@
-# 🏛️ Nexus Protocol: Universal Edge Gateway
-**The Sovereign Verification Layer for DePIN and DApps.**
+# 🛰️ Nexus Protocol — Sovereign Edge Gateway (v1.3.1)
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Spec](https://img.shields.io/badge/Spec-v1.3.1_(Universal)-violet)](docs/ARCHITECTURE.md)
-[![Status](https://img.shields.io/badge/Status-Local_Hardening-green)](docs/ROADMAP.md)
-
-> **Architectural Goal:** Move the "Trust Boundary" from centralized cloud RPCs to the physical device edge using a **"Verify-then-Execute" (VTE)** pattern.
+Nexus is an architectural correction to the custodial fragility of modern infrastructure. It decouples **Economic Determinism** from **Global Consensus** by executing high-integrity 60/30/10 splits at the edge.
 
 ---
 
-## 🌍 The Universal Mission
-Nexus is a **Local-First Sovereign Gateway** that sits between the chaotic internet and your critical logic. It acts as a firewall that verifies identity (Social, Machine, or Web3) *before* any state change occurs.
-
-**Why?** Because decentralized apps (DePIN, Social, Compute) need a way to execute logic locally without relying on centralized API keys or constant on-chain gas fees.
-
-[**🌐 View Visual Landing Page**](docs/index.html)
+## 🏛️ Project Portal
+For high-fidelity technical specifications and interactive operational guides:
+👉 **[Launch Sovereign Portal](https://arhantbarmate.github.io/nexus-core/docs/index.html)**
 
 ---
 
-## 🏗️ High-Level Architecture
+## 🏗️ System Architecture
+Nexus operates as a **Sovereign Gateway** between identity providers and persistent storage, enforcing local economic invariants before anchoring to external chains.
 
-Nexus enforces a **Unidirectional Data Pipeline**. External traffic is treated as "Untrusted" until it passes the Sentry Guard.
-
-```mermaid
-graph LR
-    User((User / Device)) -->|Signed Payload| Sentry[🛡️ Sentry Guard]
-    
-    subgraph Sovereign_Node [Nexus Protocol Core]
-        Sentry -->|Auth Pass| Brain[🧠 Nexus Brain]
-        Brain -->|State Update| Vault[(💾 Local Vault)]
-    end
-    
-    subgraph Adapters [🔌 Universal Chain Interfaces]
-        Vault -.->|Anchor| IOTX[IoTeX Adapter]
-        Vault -.->|Anchor| TON[TON Adapter]
-        Vault -.->|Anchor| PEAQ[✨ peaq Adapter]
-    end
-```
+* **The Brain (Backend):** FastAPI/SQLite WAL engine executing deterministic logic.
+* **The Body (Frontend):** Flutter-based surface for authenticated interaction.
+* **The Sentry (Edge):** Custom HMAC-validated bridge for $0-cost tunneling.
 
 ---
 
-## ⚡ Key Features
-
-| Component | Function | Status |
+## 📑 Technical Documentation
+| Foundational | Operational | Governance |
 | :--- | :--- | :--- |
-| **🛡️ Sentry Guard** | Validates signatures (HMAC, Ed25519) before execution. | **Active** |
-| **🧠 Nexus Brain** | Deterministic state machine (e.g., 60-30-10 Reference Policy). | **Active** |
-| **💾 Local Vault** | SQLite ledger with Merkle Root aggregation. | **Active** |
-| **🔌 Adapters** | Plug-and-play interfaces for **peaq**, **IoTeX**, **TON**. | **Interface Ready** |
+| [Architecture](./docs/architecture.md) | [Installation](./docs/install.md) | [Security Policy](./SECURITY.md) |
+| [Economics](./docs/economics.md) | [Roadmap](./docs/roadmap.md) | [Privacy Policy](./docs/privacy.md) |
+| [Novelty](./docs/novelty.md) | [Technical FAQ](./docs/faq.md) | [Terms of Service](./docs/terms.md) |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
+Initialize a Sovereign Node on local hardware:
 
-### 1. [Installation Guide](docs/INSTALL.md)
-Deploy a Sovereign Node on your local machine using our **Tunnel-Ready** setup (ngrok).
+1. **Clone & Setup:**
+   ```bash
+   git clone https://github.com/arhantbarmate/nexus-core.git
+   cd nexus-core
+   pip install -r requirements.txt
+   ```
 
-### 2. [Architecture Deep Dive](docs/ARCHITECTURE.md)
-Understand the "Verify-then-Execute" pattern and the Sentry design.
+2. **Launch Node:**
+   Execute ```./start_nexus.bat``` to initialize the Brain, Sentry, and Tunnel layers.
 
-### 3. [Economic Reference Model](docs/ECONOMICS.md)
-Learn about the "60-30-10" Reference Policy and how we handle value deterministically.
-
----
-
-## 🔌 Ecosystem Compatibility
-
-Nexus is **Chain-Agnostic** by design. We utilize an **Adapter Pattern** to anchor local state to the chain of your choice.
-
-* **✨ peaq:** Targeted for Machine Identity (peaq ID) and storage.
-* **🤖 IoTeX:** Targeted for W3bstream data proofs and ioID.
-* **💎 TON:** Reference implementation for Social/User interaction history.
-* **⚡ Solana:** Architecturally supported for high-frequency settlement.
+3. **Verify Integrity:**
+   Ensure the node passes the local stress test:
+   ```python scripts/test_concurrency.py --users 50```
 
 ---
 
-## 📚 Documentation Index
-* [**Installation**](docs/INSTALL.md)
-* [**Architecture**](docs/ARCHITECTURE.md)
-* [**Economics**](docs/ECONOMICS.md)
-* [**Technical Novelty**](docs/NOVELTY.md)
-* [**FAQ**](docs/FAQ.md)
+## 🛡️ Responsible Disclosure
+Nexus implements a **Fail-Closed** security model. Responsible disclosure is encouraged via:
+* **Primary:** arhantbarmate@gmail.com
+* **Secondary:** arhant6armate@outlook.com
 
 ---
 
-## ⚖️ License
-Nexus Protocol is open-source software licensed under the **Apache 2.0 License**.
-
-**© 2026 Nexus Protocol · Open Standard**
+© 2026 Nexus Protocol · Phase 1.3.1 Specification

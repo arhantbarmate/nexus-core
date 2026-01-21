@@ -3,28 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Architecture | Sovereign Specs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; line-height: 1.6; }
-        .nav { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .nav a { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-        .container { max-width: 800px; margin: 0 auto; padding: 4rem 2rem; }
-        .card { background: var(--card); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
-        h1, h2, h3 { color: var(--primary); }
-        code { background: rgba(0,0,0,0.3); padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; color: #fb7185; }
-        pre { background: #000; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid #334155; }
-        footer { text-align: center; padding: 4rem; color: #64748b; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.1); }
-        .back-btn { display: inline-block; margin-bottom: 2rem; color: var(--primary); text-decoration: none; font-weight: bold; }
-        .disclaimer { background: rgba(251, 113, 133, 0.1); border: 1px solid #fb7185; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; font-size: 0.9rem; color: #fda4af; }
+        :root {
+            --bg-black: #050505;
+            --accent-blue: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --panel-bg: rgba(15, 15, 20, 0.8);
+            --border-panel: rgba(255, 255, 255, 0.05);
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            margin: 0; background: var(--bg-black); color: #fff;
+            font-family: 'Inter', sans-serif; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Dynamic Particle Layer synchronized with index.html */
+        #particles-js {
+            position: fixed; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
+        }
+
+        /* Machine Nav */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-panel);
+        }
+        .nav a { color: var(--text-dim); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; transition: 0.3s; }
+        .nav a:hover { color: var(--accent-blue); text-shadow: 0 0 10px var(--accent-glow); }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 10rem 2rem 5rem; }
+
+        h1 {
+            font-size: 3.5rem; font-weight: 800; margin: 0; letter-spacing: -2px;
+            background: linear-gradient(180deg, #fff 0%, #444 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .badge {
+            font-family: 'JetBrains Mono', monospace; color: var(--accent-blue);
+            font-size: 0.8rem; margin: 1rem 0 4rem; text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        /* Spec Panel - Hardware Style */
+        .spec-block {
+            background: var(--panel-bg); border: 1px solid var(--border-panel);
+            padding: 3rem; margin-bottom: 2rem; border-radius: 4px;
+            position: relative; overflow: hidden; transition: 0.4s;
+        }
+        .spec-block:hover { border-color: var(--accent-blue); background: rgba(99, 102, 241, 0.02); }
+        
+        /* Machine Scanning Line */
+        .spec-block::after {
+            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: var(--accent-blue);
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
+
+        .mod-id { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.7rem; margin-bottom: 1rem; }
+        h3 { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; margin: 0 0 1rem; color: #fff; }
+        p { color: var(--text-dim); line-height: 1.8; font-size: 1rem; margin: 0; }
+        code { font-family: 'JetBrains Mono', monospace; color: #fff; background: rgba(99, 102, 241, 0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
+
+        .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .nav { padding: 1rem 1.5rem; }
+        }
     </style>
 </head>
 <body>
-<div class="nav"><a href="index.html">NEXUS PROTOCOL</a> <a href="../SUMMARY.md">DOCS INDEX</a></div>
+
+<div id="particles-js"></div>
+
+<nav class="nav">
+    <a href="../index.html">// RETURN_TO_TERMINAL</a>
+    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">SPEC_ID: ARCH_1.3.1</div>
+</nav>
+
 <div class="container">
-<a href="index.html" class="back-btn">← Home</a><h1>🏛️ Architecture</h1><p>Nexus moves the trust boundary to the edge...</p><h2>VTE Pattern</h2><pre>Verify -> Execute -> Vault</pre></div>
-<footer>
-    &copy; 2026 Nexus Protocol &middot; Phase 1.3.1 Universal Gateway<br>
-    <a href="privacy.html" style="color:#64748b">Privacy</a> | <a href="terms.html" style="color:#64748b">Terms</a>
-</footer>
+    <h1>Architecture</h1>
+    <div class="badge">Sovereign Gateway &middot; Verify-then-Execute</div>
+
+    <div class="spec-block">
+        <div class="mod-id">MOD_01 // IDENTITY_PERIMETER</div>
+        <h3>The Sentry Bridge</h3>
+        <p>Nexus utilizes a <code>Fail-Closed</code> identity perimeter. All state transitions are anchored via HMAC or Signed Context. Requests failing the <strong>Sentry Guard</strong> validation are rejected at the edge, protecting the 60/30/10 ledger integrity.</p>
+    </div>
+
+    <div class="spec-block">
+        <div class="mod-id">MOD_02 // PERSISTENCE_LOGIC</div>
+        <h3>Deterministic Brain</h3>
+        <p>A unidirectional state machine built on <strong>FastAPI</strong> and <strong>SQLite (WAL Mode)</strong>. Successfully stress-tested with 50 concurrent sovereign identities executing atomic 60/30/10 settlements without lock contention.</p>
+    </div>
+
+    <div class="spec-block">
+        <div class="mod-id">MOD_03 // INTERFACE_SURFACE</div>
+        <h3>The Execution Surface</h3>
+        <p>The Flutter-based "Body" communicates via an abstracted adapter pattern. Compiled with <code>base-href /nexus-core/app/</code> for structural isolation, ensuring protocol logic and documentation remain operationally distinct.</p>
+    </div>
+
+    <div class="footer">
+        // END OF SPECIFICATION // NEXUS_PROTOCOL_2026
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    particlesJS('particles-js', {
+        particles: {
+            number: { value: 60 },
+            color: { value: '#6366f1' },
+            shape: { type: 'circle' },
+            opacity: { value: 0.2 },
+            size: { value: 2 },
+            line_linked: { enable: true, distance: 150, color: '#6366f1', opacity: 0.1, width: 1 },
+            move: { enable: true, speed: 1 }
+        }
+    });
+</script>
+
 </body>
 </html>

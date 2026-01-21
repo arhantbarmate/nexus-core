@@ -17,6 +17,7 @@ dependencies:
   http: ^1.1.0
   
   # Identity Ingress (Bridge Only)
+  intl: ^0.20.2
   telegram_web_app: ^0.3.3
 
 dev_dependencies:

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Security | Sovereign Specs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-black: #050505;
+            --accent-blue: #6366f1;
+            --accent-red: #ef4444;
+            --panel-bg: rgba(15, 15, 20, 0.8);
+            --border-panel: rgba(255, 255, 255, 0.05);
+            --text-dim: #94a3b8;
+        }
+        body { margin: 0; background: var(--bg-black); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%); }
+        .nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-panel); }
+        .nav a { color: var(--text-dim); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        .container { max-width: 800px; margin: 0 auto; padding: 10rem 2rem 5rem; }
+        h1 { font-size: 3.5rem; font-weight: 800; margin: 0; letter-spacing: -2px; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .badge { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.8rem; margin: 1rem 0 4rem; text-transform: uppercase; letter-spacing: 4px; }
+
+        /* 🛡️ SECURITY MODULES */
+        .sec-block { background: var(--panel-bg); border: 1px solid var(--border-panel); padding: 2.5rem; border-radius: 4px; margin-bottom: 1.5rem; position: relative; }
+        .sec-block::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); }
+        .sec-title { font-family: 'JetBrains Mono', monospace; color: #fff; font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+        .sec-desc { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; }
+        
+        .contact-card { border: 1px solid var(--accent-blue); padding: 2rem; border-radius: 4px; margin-top: 3rem; background: rgba(99, 102, 241, 0.05); }
+        .contact-card h3 { margin: 0 0 1rem; font-family: 'JetBrains Mono'; font-size: 1rem; color: #fff; }
+        .email-list { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--accent-blue); list-style: none; padding: 0; }
+
+        .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<nav class="nav">
+    <a href="../index.html">// RETURN_TO_TERMINAL</a>
+    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-red);">SEC_LEVEL_1.3.1</div>
+</nav>
+
+<div class="container">
+    <h1>Security Integrity</h1>
+    <div class="badge">Hardened Gateway &middot; Fail-Closed Logic</div>
+
+    <div class="sec-block">
+        <div class="sec-title">The Fail-Closed Invariant</div>
+        <p class="sec-desc">Nexus operates on a <strong>Verify-then-Execute</strong> model. If the Sentry Bridge detects an invalid HMAC or corrupted identity context, the system defaults to a <code>403 Forbidden</code> state, terminating the handshake to protect the Sovereign Vault.</p>
+    </div>
+
+    <div class="sec-block">
+        <div class="sec-title">Local-First Isolation</div>
+        <p class="sec-desc">By design, the Nexus Brain is isolated from the public internet. Connectivity is mediated through a single-purpose Sentry Bridge, preventing direct exposure of the <code>nexus_vault.db</code> to public indexing or automated exploits.</p>
+    </div>
+
+    <div class="sec-block">
+        <div class="sec-title">Deterministic Economics</div>
+        <p class="sec-desc">The 60/30/10 split is hardcoded within the Brain's core logic. This prevents UI-level manipulation or man-in-the-middle attacks from altering the economic settlement of the node.</p>
+    </div>
+
+    <div class="contact-card">
+        <h3>Responsible Disclosure</h3>
+        <p class="sec-desc" style="margin-bottom: 1rem;">We value adversarial research. Please report vulnerabilities privately to:</p>
+        <ul class="email-list">
+            <li>• arhantbarmate@gmail.com (Primary)</li>
+            <li>• arhant6armate@outlook.com (Secondary)</li>
+        </ul>
+    </div>
+
+    <div class="footer">// END_OF_SECURITY_SPEC // NEXUS_PROTOCOL_2026</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    particlesJS('particles-js', {
+        particles: { number: { value: 60 }, color: { value: '#ef4444' }, opacity: { value: 0.2 }, size: { value: 2 }, line_linked: { enable: true, distance: 150, color: '#ef4444', opacity: 0.1, width: 1 }, move: { enable: true, speed: 1 } }
+    });
+</script>
+</body>
+</html>

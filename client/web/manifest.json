@@ -3,21 +3,24 @@
     "short_name": "Nexus",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0A0E14",
-    "theme_color": "#00D1FF",
-    "description": "Nexus Protocol - Sovereign Economic Execution Engine.",
+    "background_color": "#050508",
+    "theme_color": "#4F46E5",
+    "description": "Nexus Protocol - Sovereign DePIN Economic Execution Engine.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "categories": ["finance", "productivity"],
     "icons": [
         {
             "src": "icons/Icon-192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "icons/Icon-512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         }
     ]
 }
