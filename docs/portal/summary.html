@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Protocol | Documentation Index</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        /* 🎨 SHARED LAUNCHPAD THEME */
+        :root {
+            --bg-black: #050505;
+            --accent-blue: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --panel-bg: rgba(15, 15, 20, 0.7);
+            --border-panel: rgba(255, 255, 255, 0.05);
+            --text-dim: #94a3b8;
+            --status-red: #fb7185;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--bg-black);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 🌌 BACKGROUND */
+        #particles-js {
+            position: fixed; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
+        }
+
+        /* 🛠️ NAVIGATION */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-panel);
+        }
+        .nav-brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; letter-spacing: 2px; }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-size: 0.8rem; transition: 0.3s; }
+        .nav-link:hover { color: var(--accent-blue); text-shadow: 0 0 10px var(--accent-glow); }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 10rem 2rem 5rem; }
+
+        /* ⚡ HEADER */
+        .hero { text-align: center; position: relative; margin-bottom: 4rem; }
+        h1 {
+            font-size: 3rem; font-weight: 800; margin: 0; letter-spacing: -2px;
+            background: linear-gradient(180deg, #fff 0%, #444 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { 
+            font-family: 'JetBrains Mono', monospace; 
+            color: var(--accent-blue); 
+            font-size: 0.9rem; 
+            margin: 1rem 0 0; 
+            text-transform: uppercase; 
+            letter-spacing: 4px; 
+        }
+
+        /* 📟 DOCS GRID */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        
+        .machine-card {
+            background: var(--panel-bg); border: 1px solid var(--border-panel);
+            padding: 2.5rem; border-radius: 4px; position: relative;
+            overflow: hidden; transition: 0.4s cubic-bezier(0.2, 1, 0.2, 1);
+        }
+        .machine-card:hover {
+            border-color: var(--accent-blue); background: rgba(99, 102, 241, 0.03);
+            transform: scale(1.01);
+        }
+        
+        /* Category Header */
+        .card-num { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.7rem; margin-bottom: 1rem; }
+        .machine-card h3 { font-size: 1.5rem; margin: 0 0 1.5rem; color: #fff; border-bottom: 1px solid var(--border-panel); padding-bottom: 1rem; }
+
+        /* File Links List */
+        .file-list { list-style: none; padding: 0; margin: 0; }
+        .file-list li { margin-bottom: 1rem; display: flex; flex-direction: column; }
+        
+        .file-link {
+            font-family: 'JetBrains Mono', monospace;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .file-link::before { content: '>'; margin-right: 8px; color: var(--text-dim); transition: 0.2s; }
+        .file-link:hover { color: var(--accent-blue); }
+        .file-link:hover::before { color: var(--accent-blue); transform: translateX(3px); }
+
+        .file-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+            margin-left: 20px;
+            line-height: 1.4;
+        }
+
+        /* Back Button */
+        .launch-btn {
+            display: block; margin: 4rem auto; padding: 1rem 2rem;
+            border: 1px solid var(--border-panel); color: var(--text-dim); 
+            text-decoration: none; font-weight: 700; border-radius: 4px; width: fit-content;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .launch-btn:hover { border-color: var(--accent-blue); color: #fff; background: rgba(99,102,241,0.1); }
+
+        footer { text-align: center; margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--border-panel); }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .nav { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<nav class="nav">
+    <div class="nav-brand">NEXUS_CORE v1.3.1</div>
+    <a href="index.html" class="nav-link">// BACK TO HUB</a>
+</nav>
+
+<div class="container">
+    <div class="hero">
+        <h1>Protocol Index</h1>
+        <p class="subtitle">Complete Technical Specification Suite</p>
+    </div>
+
+    <div class="grid">
+        <div class="machine-card">
+            <div class="card-num">SECT_01 // FOUNDATION</div>
+            <h3>Core Specifications</h3>
+            <ul class="file-list">
+                <li>
+                    <a href="../architecture.md" class="file-link">architecture.md</a>
+                    <span class="file-desc">The Brain-Body-Sentry structural blueprint.</span>
+                </li>
+                <li>
+                    <a href="../economics.md" class="file-link">economics.md</a>
+                    <span class="file-desc">The 60/30/10 Deterministic Split Invariant.</span>
+                </li>
+                <li>
+                    <a href="../novelty.md" class="file-link">novelty.md</a>
+                    <span class="file-desc">Architectural correction vs. custodial fragility.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="machine-card">
+            <div class="card-num">SECT_02 // OPERATIONS</div>
+            <h3>Deployment Guides</h3>
+            <ul class="file-list">
+                <li>
+                    <a href="../install.md" class="file-link">install.md</a>
+                    <span class="file-desc">Sovereign Node deployment on local hardware.</span>
+                </li>
+                <li>
+                    <a href="../roadmap.md" class="file-link">roadmap.md</a>
+                    <span class="file-desc">Exploratory roadmap (Non-binding Epochs I-III).</span>
+                </li>
+                <li>
+                    <a href="../faq.md" class="file-link">faq.md</a>
+                    <span class="file-desc">Technical rationale and infrastructure defense.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="machine-card">
+            <div class="card-num">SECT_03 // SECURITY</div>
+            <h3>Governance & Liability</h3>
+            <ul class="file-list">
+                <li>
+                    <a href="../security.md" class="file-link">security.md</a>
+                    <span class="file-desc">Fail-Closed security and disclosure protocols.</span>
+                </li>
+                <li>
+                    <a href="../privacy.md" class="file-link">privacy.md</a>
+                    <span class="file-desc">Local-First persistence and non-custodial policy.</span>
+                </li>
+                <li>
+                    <a href="../terms.md" class="file-link">terms.md</a>
+                    <span class="file-desc">Operator liability and responsibility boundaries.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="machine-card">
+            <div class="card-num">SECT_04 // COMMUNITY</div>
+            <h3>Contribution Standards</h3>
+            <ul class="file-list">
+                <li>
+                    <a href="../CODE_OF_CONDUCT.md" class="file-link">CODE_OF_CONDUCT.md</a>
+                    <span class="file-desc">Technical and ethical participation pillars.</span>
+                </li>
+                <li>
+                    <a href="../CONTRIBUTING.md" class="file-link">CONTRIBUTING.md</a>
+                    <span class="file-desc">PR standards and test_concurrency.py requirements.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <a href="index.html" class="launch-btn">&lt; RETURN TO LAUNCHPAD</a>
+
+    <footer>
+        <p style="color:var(--text-dim); font-size: 0.7rem; letter-spacing: 2px;">© 2026 NEXUS PROTOCOL SYSTEMS</p>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    particlesJS('particles-js', {
+        particles: {
+            number: { value: 60 },
+            color: { value: '#6366f1' },
+            shape: { type: 'circle' },
+            opacity: { value: 0.2 },
+            size: { value: 2 },
+            line_linked: { enable: true, distance: 150, color: '#6366f1', opacity: 0.1, width: 1 },
+            move: { enable: true, speed: 1 }
+        }
+    });
+</script>
+
+</body>
+</html>

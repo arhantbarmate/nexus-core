@@ -1,78 +1,49 @@
-name: Deploy Nexus UI & Docs
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          # PINNED: Matches your local environment exactly
           flutter-version: '3.19.0'
+          channel: 'stable'
 
-      - name: Build Flutter Web
+      - name: Install Dependencies
         run: |
           cd client
           flutter pub get
-          # Mapping to /app/ subfolder
-          flutter build web --release --base-href /nexus-core/app/
 
-      - name: Prepare Deployment Directory
+      - name: Build Web
         run: |
-          mkdir -p staging
-          
-          # 1. ROOT LEVEL: Portal Files (From docs/portal/)
-          # We copy the CONTENTS so terms.html and index.html sit at the root
-          if [ -d "docs/portal" ]; then
-            cp -r docs/portal/* staging/
-            echo "✅ Portal files moved to root."
-          else
-            echo "❌ ERROR: docs/portal not found."
-            exit 1
-          fi
-
-          # 2. SUBFOLDER LEVEL: Flutter Web App
-          mkdir -p staging/app
-          if [ -d "client/build/web" ]; then
-            cp -r client/build/web/* staging/app/
-            echo "✅ Flutter Body moved to /app/."
-          fi
-
-          # 3. GLOBAL ASSETS: TON Manifest & Logo
-          # Logic: Pulling from root and assets folder to the staging root
-          cp tonconnect-manifest.json staging/ || echo "⚠️ Manifest not found"
-          
-          if [ -f "client/assets/nexus-logo.png" ]; then
-            cp client/assets/nexus-logo.png staging/
-            echo "✅ Logo moved to root."
-          else
-            echo "⚠️ Warning: Logo not found in client/assets/"
-          fi
+          cd client
+          flutter build web --release --base-href "/nexus-core/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./staging
+          path: client/build/web
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

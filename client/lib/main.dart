@@ -26,16 +26,16 @@ void main() async {
       ]);
 
       final initData = TelegramWebApp.instance.initDataUnsafe;
-      
+
       // Verification of Identity Object Integrity
       if (initData != null && initData.user != null && initData.user!.id != 0) {
         isTelegramReady = true;
         TelegramWebApp.instance.expand(); // Command Telegram to take full height
-        
+
         // Command Telegram to lock vertical orientation for UI stability
         // Note: Requires Telegram 6.2+
         try {
-          TelegramWebApp.instance.ready(); 
+          TelegramWebApp.instance.ready();
         } catch (_) {}
       } else {
         bootError = "IDENTITY_NOT_FOUND";
@@ -81,7 +81,6 @@ class NexusApp extends StatefulWidget {
 // 4. THE LIFE-CYCLE OBSERVER
 // Audit Fix: We use WidgetsBindingObserver to detect when the app returns from background
 class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
-  
   @override
   void initState() {
     super.initState();
@@ -120,10 +119,45 @@ class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
           bodyMedium: TextStyle(fontFamily: 'Courier', color: Color(0xFFe2e8f0)),
         ),
       ),
-      home: NexusDashboard(
-        telegramReady: widget.telegramReady,
-        devMode: widget.devMode,
-        bootError: widget.bootError,
+      // 6. ROUTING LOGIC (With Logo Injection)
+      home: widget.telegramReady || widget.bootError.isNotEmpty
+          ? NexusDashboard(
+              telegramReady: widget.telegramReady,
+              devMode: widget.devMode,
+              bootError: widget.bootError,
+            )
+          : _buildSplashLoader(),
+    );
+  }
+
+  /// THE SPLASH PROTOCOL
+  /// Displays the Circuitry Glyph during initialization states
+  Widget _buildSplashLoader() {
+    return Scaffold(
+      backgroundColor: const Color(0xFF050508),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // The Nexus Circuitry Glyph
+            Image.asset(
+              'assets/nexus-logo.png',
+              width: 160,
+              height: 160,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 30),
+            // Minimalist Terminal Loader
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Color(0xFF10b981), // Terminal Green
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
