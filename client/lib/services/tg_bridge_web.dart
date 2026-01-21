@@ -6,8 +6,9 @@ class TelegramBridge {
   /// AUTHENTICATION PERIMETER
   static String get initData {
     try {
-      // Use ?. and ?? to handle null-safety according to 0.3.3 specs
-      return TelegramWebApp.instance.initData.raw ?? "";
+      // FIXED: Removed redundant '?? ""' (Line 10) 
+      // The compiler knows 'raw' is non-nullable here.
+      return TelegramWebApp.instance.initData.raw;
     } catch (_) {
       return "";
     }
@@ -17,8 +18,7 @@ class TelegramBridge {
   /// Hardened for Phase 1.3.1 - Resolves the Null-Safety error
   static String get userId {
     try {
-      // FIX: Added ?. before .user to satisfy the compiler
-      final user = TelegramWebApp.instance.initDataUnsafe?.user;
+      final user = TelegramWebApp.instance.initDataUnsafe.user;
       if (user != null && user.id != 0) {
         return user.id.toString();
       }
@@ -32,10 +32,8 @@ class TelegramBridge {
   /// Logic: Uses the 0.3.3 compliant enum naming
   static void triggerHaptic() {
     try {
-      // Logic: Use dynamic invocation to bypass package version naming conflicts
       (TelegramWebApp.instance.hapticFeedback as dynamic).notificationOccurred('success');
     } catch (_) {
-      // Fallback: This ensures the app doesn't crash if the TMA SDK fails
       HapticFeedback.mediumImpact();
     }
   }
