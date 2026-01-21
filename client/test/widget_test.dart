@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nexus_protocol/main.dart'; // Ensure package name matches pubspec.yaml
-import 'package:nexus_protocol/screens/dashboard.dart';
+// 1. RELATIVE IMPORTS (Bypasses package name errors)
+import '../lib/main.dart';
+import '../lib/screens/dashboard.dart';
 
 void main() {
   testWidgets('Nexus Protocol: Sovereign Body Smoke Test', (WidgetTester tester) async {
@@ -9,7 +10,7 @@ void main() {
     await tester.pumpWidget(const NexusApp(
       telegramReady: false, 
       devMode: true,
-      bootError: "", // <--- FIXED: Added required parameter
+      bootError: "", 
     ));
 
     // 2. Verify the App Root exists and initialized
@@ -19,7 +20,6 @@ void main() {
     expect(find.byType(NexusDashboard), findsOneWidget);
 
     // 4. Verify Brand Integrity
-    // This ensures the UI is pulling the correct hardened version string
     expect(find.textContaining('v1.3.1'), findsOneWidget);
   });
 }

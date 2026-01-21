@@ -22,7 +22,7 @@ class NexusDashboard extends StatefulWidget {
 
 class _NexusDashboardState extends State<NexusDashboard> {
   final TextEditingController _amountController = TextEditingController(text: "100.0");
-  // List<VaultTransaction> _transactions = [];
+  List<dynamic> _transactions = [];
   
   double _creatorTotal = 0.0;
   double _poolTotal = 0.0;
