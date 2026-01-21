@@ -22,49 +22,63 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <script>
-    // 2. LOGIC LOCK: Initializing Telegram Interface immediately
+    // 2. LOGIC LOCK: Initializing Telegram Interface immediately (Audit 2.2)
+    // Priming the environment BEFORE Flutter boots to ensure sync-mapping is atomic.
     if (window.Telegram && window.Telegram.WebApp) {
       window.Telegram.WebApp.ready();
       window.Telegram.WebApp.expand();
-      // Visual Audit: Set header color to match our Cyber-Midnight theme
+      
+      // Visual Audit: Sync native Telegram chrome with Cyber-Midnight theme
       window.Telegram.WebApp.setHeaderColor('#0A0E14');
       window.Telegram.WebApp.setBackgroundColor('#0A0E14');
     }
   </script>
 
   <style>
-    /* 3. VISUAL STRESS TEST: Eliminating the 'White Flash' Bug */
-    /* By setting the background here, we prevent the browser from flashing white 
-       during the 2-second Flutter engine download. */
+    /* 3. VISUAL STABILITY: Eliminating the 'White Flash' Bug (Audit 3) */
     :root { background-color: #0A0E14; }
+    
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    
     body { 
       background-color: #0A0E14; 
       margin: 0; padding: 0; 
       overflow: hidden; 
-      position: fixed; /* Prevents elastic scrolling on iOS */
+      position: fixed; /* Audit: Prevents elastic 'rubber-band' scrolling on iOS */
       width: 100%; height: 100%;
     }
-    /* Loading Indicator for Sovereign feel */
+
     #loading-indicator {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      color: #4F46E5; font-family: monospace; font-size: 10px;
+      color: #4F46E5; font-family: 'Courier New', Courier, monospace; 
+      font-size: 10px;
       letter-spacing: 2px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
     }
   </style>
 </head>
 <body>
   <div id="loading-indicator">INITIALIZING_SOVEREIGN_NODE...</div>
 
-  <script async src="https://tganalytics.xyz/index.js"></script>
+  
   
   <script>
-    // 5. ENGINE BOOTSTRAP
-    // We defer the loading indicator removal until the Flutter engine is active
+    // 5. ENGINE HANDOFF (Audit 4)
+    // Defer loading indicator removal until the Flutter engine paints the first frame.
     window.addEventListener('flutter-first-frame', function() {
       var indicator = document.getElementById('loading-indicator');
-      if (indicator) indicator.remove();
+      if (indicator) {
+        indicator.style.transition = 'opacity 0.5s ease';
+        indicator.style.opacity = '0';
+        setTimeout(function() { indicator.remove(); }, 500);
+      }
     });
   </script>
 

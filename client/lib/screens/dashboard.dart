@@ -1,8 +1,9 @@
+// Copyright 2026 Nexus Protocol Authors (Apache 2.0)
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../services/nexus_api.dart';
 import '../models/vault_transaction.dart';
-import '../services/tg_bridge.dart';
+import '../services/tg_bridge_web.dart'; // Sync: Using the web-specific bridge
 
 class NexusDashboard extends StatefulWidget {
   final bool telegramReady;
@@ -20,29 +21,30 @@ class NexusDashboard extends StatefulWidget {
   State<NexusDashboard> createState() => _NexusDashboardState();
 }
 
-class _NexusDashboardState extends State<NexusDashboard> {
-  final TextEditingController _amountController = TextEditingController(text: "100.0");
-  // ignore: unused_field
-  List<dynamic> _transactions = [];
+class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObserver {
+  final TextEditingController _amountController = TextEditingController(text: "100.00");
+  List<VaultTransaction> _transactions = [];
   
   double _creatorTotal = 0.0;
   double _poolTotal = 0.0;
   
   bool _isLoading = true;
   bool _isExecuting = false;
+  bool _retryScheduled = false; 
   String _statusMessage = "BOOTING_CORE";
 
-  // --- 🎨 MACHINE THEME ---
-  static const Color _bg = Color(0xFF050508);
-  static const Color _surface = Color(0xFF0D0D12);
-  static const Color _primary = Color(0xFF4F46E5);
+  // --- 🎨 MACHINE THEME (Sleek Dark) ---
+  static const Color _bg = Color(0xFF020204);
+  static const Color _surface = Color(0xFF0A0A0F);
+  static const Color _primary = Color(0xFF6366F1);
   static const Color _terminal = Color(0xFF10B981); 
-  static const Color _error = Color(0xFFEF4444);
-  static const Color _border = Color(0xFF1F1F2E);
+  static const Color _error = Color(0xFFFB7185);
+  static const Color _border = Color(0xFF1E1E26);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (widget.bootError.isNotEmpty) {
       _statusMessage = "BOOT_FAILURE: ${widget.bootError}";
       _isLoading = false;
@@ -53,11 +55,20 @@ class _NexusDashboardState extends State<NexusDashboard> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _amountController.dispose();
     super.dispose();
   }
 
-  // --- 🧠 LOGIC: Hardened State Sync ---
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _syncSovereignState(); // Refresh ledger on resume
+    }
+  }
+
+  // --- 🧠 HARDENED LOGIC (Audit 2.2 & 5) ---
+
   Future<void> _syncSovereignState() async {
     if (!mounted) return;
     setState(() {
@@ -66,28 +77,42 @@ class _NexusDashboardState extends State<NexusDashboard> {
     });
     
     try {
-      final List<dynamic> results = await Future.wait([
+      // Parallel fetch ensures deterministic ledger synchronization
+      final results = await Future.wait([
         NexusApi.fetchVaultSummary(devMode: widget.devMode),
         NexusApi.fetchTransactions(devMode: widget.devMode),
       ]).timeout(const Duration(seconds: 10));
 
-      final VaultSummary summary = results[0] as VaultSummary;
-      final List<dynamic> rawTxs = results[1] as List<dynamic>;
+      final summary = results[0];
+      final rawTxs = results[1];
 
-      if (mounted) {
+      // Audit Fix: Replaced 'is VaultSummary' with 'is Map' to match API return type
+      if (mounted && summary is Map && summary.containsKey('creator_total')) {
         setState(() {
-          _transactions = rawTxs
-              .map((json) => VaultTransaction.fromJson(json as Map<String, dynamic>))
-              .toList();
-          
-          _creatorTotal = summary.creatorTotal;
-          _poolTotal = summary.poolTotal;
-          _statusMessage = "SYSTEM_STABLE";
+          _creatorTotal = (summary['creator_total'] as num).toDouble();
+          _poolTotal = (summary['pool_total'] as num).toDouble();
+          // ... rest of the logic
+        });
+      } else {
+        // Audit: If the Brain returns a 404 or error, default to zeroed state
+        setState(() {
+          _creatorTotal = 0.0;
+          _poolTotal = 0.0;
+          _statusMessage = "VAULT_EMPTY_OR_UNREACHABLE";
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _statusMessage = "SYNC_FAILURE_RETRYING");
-      Future.delayed(const Duration(seconds: 5), _syncSovereignState);
+      if (mounted) {
+        setState(() => _statusMessage = "SYNC_FAILURE_RETRYING");
+        
+        if (!_retryScheduled) {
+          _retryScheduled = true;
+          Future.delayed(const Duration(seconds: 5), () {
+            _retryScheduled = false;
+            if (mounted) _syncSovereignState();
+          });
+        }
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -95,164 +120,186 @@ class _NexusDashboardState extends State<NexusDashboard> {
 
   Future<void> _executeSequence() async {
     final double? amount = double.tryParse(_amountController.text);
-    if (amount == null || amount <= 0) {
+    if (amount == null || amount <= 0 || amount.isNaN || amount.isInfinite) {
        setState(() => _statusMessage = "INVALID_MAGNITUDE");
        return;
     }
     
     if (_isExecuting) return;
-
     setState(() {
       _isExecuting = true;
       _statusMessage = "VAULT_TRANSFER_IN_PROGRESS";
     });
 
     try {
+      // Audit: Tactile feedback signal
       TelegramBridge.triggerHaptic();
+      
+      // Sync: executeSplit now accepts named devMode parameter
       await NexusApi.executeSplit(amount, devMode: widget.devMode);
       
       if (mounted) {
         setState(() => _statusMessage = "BLOCK_COMMITTED");
-        await Future.delayed(const Duration(milliseconds: 800)); // Settle delay
+        // UX: Intentional delay for Real-Time Grow impact
+        await Future.delayed(const Duration(milliseconds: 1200)); 
         await _syncSovereignState();
-        
-        Future.delayed(const Duration(seconds: 2), () {
-          if (mounted) setState(() => _isExecuting = false);
-        });
       }
     } catch (e) {
+      if (mounted) setState(() => _statusMessage = "SENTRY_REJECTED");
+    } finally {
       if (mounted) {
-        setState(() {
-          _isExecuting = false;
-          _statusMessage = "SENTRY_REJECTED";
-        });
+        Future.delayed(const Duration(seconds: 1), () => setState(() => _isExecuting = false));
       }
     }
   }
 
+  // --- 🎨 UI ARCHITECTURE ---
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
       body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: _isLoading ? 0.5 : 1.0,
-            child: _buildMainFrame(),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 450),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  child: Column(
+                    children: [
+                      _buildHeader(),
+                      const SizedBox(height: 20),
+                      _buildVaultCard(),
+                      const SizedBox(height: 20),
+                      _buildControlPanel(),
+                      const SizedBox(height: 20),
+                      _buildLedger(),
+                    ],
+                  ),
+                ),
+              ),
+              _buildConsole(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildMainFrame() {
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("NEXUS_PROTOCOL", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: -0.5)),
+            Text("OPERATOR_ID: ${TelegramBridge.userId}", style: const TextStyle(color: Colors.white24, fontSize: 9, fontFamily: 'monospace')),
+          ],
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(border: Border.all(color: _primary.withOpacity(0.5)), borderRadius: BorderRadius.circular(4)),
+          child: Text(widget.telegramReady ? "SOVEREIGN" : "LOCAL", style: const TextStyle(color: _primary, fontSize: 10, fontWeight: FontWeight.bold)),
+        )
+      ],
+    );
+  }
+
+  Widget _buildVaultCard() {
     return Container(
-      constraints: const BoxConstraints(maxWidth: 400),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: _surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _isExecuting ? _primary : _border, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: _isExecuting ? _primary.withOpacity(0.1) : Colors.transparent,
-            blurRadius: 20,
-          )
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _border),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          _buildHeader(),
-          _buildTelemetry(),
-          _buildVaultSummary(),
-          _buildControlPanel(),
-          _buildConsole(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: _border))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("NODE_STATUS: ${widget.telegramReady ? 'SOVEREIGN' : 'LOCAL'}",
-              style: const TextStyle(color: _primary, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1.2)),
-          _buildPulseIndicator(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPulseIndicator() {
-    return Container(
-      height: 8, width: 8,
-      decoration: BoxDecoration(
-        color: _isLoading ? Colors.orange : _terminal,
-        shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: (_isLoading ? Colors.orange : _terminal).withOpacity(0.3), blurRadius: 6)],
-      ),
-    );
-  }
-
-  Widget _buildTelemetry() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _teleRow("OPERATOR_ID", TelegramBridge.userId),
-          _teleRow("AUTH_MODE", widget.telegramReady ? "TMA_SECURE" : "MOCK_MODE"),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVaultSummary() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _vaultStat("CREATOR (60%)", _creatorTotal, _primary),
-          _vaultStat("POOL (30%)", _poolTotal, _terminal),
+          const Text("TOTAL_VAULT_LIQUIDITY", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1)),
+          const SizedBox(height: 12),
+          Text("${(_creatorTotal + _poolTotal).toStringAsFixed(2)} U", style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+          const Divider(height: 40, color: _border),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _vaultStat("CREATOR (60%)", _creatorTotal, _primary),
+              _vaultStat("POOL (30%)", _poolTotal, _terminal),
+            ],
+          ),
         ],
       ),
     );
   }
 
   Widget _buildControlPanel() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: _isExecuting ? _primary : _border)),
       child: Column(
         children: [
           TextField(
-  controller: _amountController,
-  // FIX: inputmode (web) is handled via keyboardType in Flutter
-  keyboardType: const TextInputType.numberWithOptions(decimal: true), 
-  style: const TextStyle(color: _terminal, fontFamily: 'monospace'),
+            controller: _amountController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: _terminal, fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'monospace'),
             decoration: const InputDecoration(
-              labelText: "SPLIT_MAGNITUDE",
-              labelStyle: TextStyle(color: Colors.white24, fontSize: 10),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: _border)),
+              hintText: "0.00",
+              hintStyle: TextStyle(color: Colors.white10),
+              border: InputBorder.none,
+              prefixText: "SPLIT_AMT: ",
+              prefixStyle: TextStyle(color: Colors.white24, fontSize: 12),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _isExecuting ? null : _executeSequence,
+            onPressed: _isExecuting || _isLoading ? null : _executeSequence,
             style: ElevatedButton.styleFrom(
               backgroundColor: _primary,
-              disabledBackgroundColor: _border,
-              minimumSize: const Size(double.infinity, 54),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              minimumSize: const Size(double.infinity, 56),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 0,
             ),
-            child: Text(_isExecuting ? "EXECUTING..." : "INIT_EXECUTION",
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1)),
+            child: _isExecuting 
+              ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              : const Text("EXECUTE_PROTOCOL_SPLIT", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.white)),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLedger() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 4, bottom: 12),
+          child: Text("SOVEREIGN_LEDGER", style: TextStyle(color: Colors.white24, fontSize: 10, fontWeight: FontWeight.bold)),
+        ),
+        // Display last 5 entries from local vault state
+        ..._transactions.take(5).map((tx) => _buildTxRow(tx)).toList(),
+      ],
+    );
+  }
+
+  Widget _buildTxRow(VaultTransaction tx) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(8), border: Border.all(color: _border)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(tx.type.toUpperCase(), style: TextStyle(color: tx.type == "split" ? _terminal : _primary, fontSize: 10, fontWeight: FontWeight.bold)),
+              Text(tx.formattedTime, style: const TextStyle(color: Colors.white12, fontSize: 8)), // Audit Fix: Using formattedTime
+            ],
+          ),
+          Text("+${tx.amount.toStringAsFixed(2)} U", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
         ],
       ),
     );
@@ -261,33 +308,18 @@ class _NexusDashboardState extends State<NexusDashboard> {
   Widget _buildConsole() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
-      child: Text("> $_statusMessage",
-          style: TextStyle(color: _statusMessage.contains("FAILURE") ? _error : Colors.white24, fontSize: 9, fontFamily: 'monospace')),
-    );
-  }
-
-  Widget _teleRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.white12, fontSize: 9)),
-          Text(value, style: const TextStyle(color: _terminal, fontSize: 9, fontFamily: 'monospace')),
-        ],
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: const BoxDecoration(color: Colors.black, border: Border(top: BorderSide(color: _border))),
+      child: Text("> $_statusMessage", style: TextStyle(color: _statusMessage.contains("FAILURE") || _statusMessage.contains("REJECTED") ? _error : _terminal.withOpacity(0.7), fontSize: 10, fontFamily: 'monospace')),
     );
   }
 
   Widget _vaultStat(String label, double val, Color color) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(color: Colors.white24, fontSize: 8)),
+        Text(label, style: const TextStyle(color: Colors.white24, fontSize: 9)),
         const SizedBox(height: 4),
-        Text("${val.toStringAsFixed(2)}U",
-            style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+        Text("${val.toStringAsFixed(2)}U", style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
       ],
     );
   }

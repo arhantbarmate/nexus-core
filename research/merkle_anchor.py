@@ -1,9 +1,9 @@
+# Copyright 2026 Nexus Protocol Authors (Apache 2.0 Licensed)
 """
-Nexus Protocol — Phase 1.3.1 Merkle Anchoring (Perimeter-Verified)
-
-This script demonstrates the cryptographic feasibility of hashing local 
-sovereign state into a single Merkle Root. In Phase 1.3.1, this state 
-is acknowledged as having passed the Sentry's HMAC-SHA256 integrity gate.
+🏛️ NEXUS MERKLE ANCHOR (Phase 1.3.1 - RESEARCH ONLY)
+NOTE: This script demonstrates cryptographic feasibility and is not part 
+of the live execution path. It proves that the Sovereign Ledger state 
+is mathematically ready for immutable anchoring in Phase 2.0.
 """
 
 import sqlite3
@@ -15,14 +15,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(BASE_DIR, "backend", "nexus_vault.db")
 HASH_ALGO = "sha256"
 
+
+
 def hash_row(row: tuple) -> str:
     """
     Hash a single transaction row deterministically.
     Joining all columns ensures strict order dependence for the ledger.
     """
-    # Explicit Schema Assertion: Ensure row matches expected Phase 1.3.1 structure
+    # Audit 2.4: Schema assertion prevents silent drift between DB and Anchor
     assert len(row) == 5, f"Schema mismatch: Expected 5 columns, got {len(row)}"
     
+    # Audit 2.4: Delimiter use prevents concatenation-based hash collision attacks
     row_bytes = "|".join(map(str, row)).encode()
     return hashlib.sha256(row_bytes).hexdigest()
 
@@ -33,16 +36,16 @@ def generate_merkle_root():
     """
     if not os.path.exists(DB_PATH):
         print(f"Error: Vault not found at {DB_PATH}")
-        print("Verification Failed: Run backend and generate Sentry-validated transactions first.")
         return None
 
-    # 1. Connect to Phase 1.3.1 Vault in Read-Only Mode
+    # 1. Connect to Phase 1.3.1 Vault in Read-Only Mode (Audit 2.2)
     try:
-        # Using URI mode for explicit read-only (ro) safety
+        # URI mode with mode=ro ensures the research script cannot mutate state
         conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
         cursor = conn.cursor()
 
-        # 2. Extract deterministic history
+        # 2. Extract deterministic history (Audit 2.3)
+        # Order is mandatory for Merkle Root determinism
         cursor.execute("""
             SELECT amount, creator_share, user_pool_share, network_fee, timestamp 
             FROM transactions 
@@ -63,6 +66,7 @@ def generate_merkle_root():
     initial_count = len(leaves)
 
     # 4. Recursive Merkle Reduction (Binary Tree)
+    # Audit 2.5: Standard binary hash tree semantics (duplicate-last-node strategy)
     nodes = leaves
     while len(nodes) > 1:
         if len(nodes) % 2 != 0:

@@ -1,62 +1,91 @@
-import 'dart:js_util' as js_util;
-import 'package:flutter/foundation.dart';
+// Copyright 2026 Nexus Protocol Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-/// NEXUS_IDENTITY_GUARD v1.3.1
-/// High-Level Architectural Bridge for Sovereign Identity Extraction.
-class TelegramIdentity {
-  
-  /// HIGH-LEVEL AUDIT: 
-  /// The "IDLE_HUNG" Bug: Raw JS access can hang if the Telegram Object is 
-  /// injected but not yet hydrated. We've added a deterministic fallback chain.
-  static String getUserId() {
-    // 1. Platform Perimeter Check
-    if (!kIsWeb) return "LOCAL_HOST";
+@JS()
+library telegram_js;
 
-    try {
-      // 2. The Global Reference Chain
-      // High-level access via js_util ensures we don't crash if 'window' is restricted
-      final dynamic window = js_util.globalThis;
-      final dynamic telegram = js_util.getProperty(window, 'Telegram');
-      
-      if (telegram != null) {
-        final dynamic webApp = js_util.getProperty(telegram, 'WebApp');
-        if (webApp != null) {
-          final dynamic initDataUnsafe = js_util.getProperty(webApp, 'initDataUnsafe');
-          final dynamic user = js_util.getProperty(initDataUnsafe, 'user');
-          
-          if (user != null) {
-            final dynamic id = js_util.getProperty(user, 'id');
-            if (id != null && id.toString() != "0") {
-              return id.toString();
-            }
-          }
-        }
-      }
-    } catch (e) {
-      // STRESS TEST LOGIC: Never let an identity failure crash the UI boot.
-      debugPrint("🏛️ [SENTRY_CRITICAL] Identity Bridge Breach: $e");
-    }
+import 'package:js/js.dart';
 
-    // 3. SOVEREIGN FALLBACK
-    // Ensuring the return is NEVER null to prevent 'URI.parse' crashes in NexusApi
-    return "LOCAL_HOST";
-  }
+// --- 🛰️ THE TELEGRAM SDK MAPPING (Dart-JS Interop) ---
+// NOTE: All bindings assume Telegram WebApp SDK is injected by the host. (Audit 3)
+// Callers MUST guard access via runtime support checks (e.g., TelegramBridge.isSupported).
 
-  /// HIGH-LEVEL STRESS TEST: Secure Envelope Extraction
-  /// This retrieves the raw 'initData' string required for the Sentry's 
-  /// cryptographic signature verification in the Brain.
-  static String? getRawAuthData() {
-    if (!kIsWeb) return null;
-    
-    try {
-      final dynamic window = js_util.globalThis;
-      final dynamic telegram = js_util.getProperty(window, 'Telegram');
-      final dynamic webApp = js_util.getProperty(telegram, 'WebApp');
-      
-      final String? initData = js_util.getProperty(webApp, 'initData');
-      return (initData != null && initData.isNotEmpty) ? initData : null;
-    } catch (_) {
-      return null;
-    }
-  }
+@JS('Telegram.WebApp')
+class TelegramWebApp {
+  external static String get initData;
+  external static WebAppInitData get initDataUnsafe;
+  external static String get colorScheme;
+  external static String get themeParams;
+  external static bool get isExpanded;
+  external static double get viewportHeight;
+  external static double get viewportStableHeight;
+  external static MainButton get MainButton;
+  external static HapticFeedback get HapticFeedback;
+
+  external static void ready();
+  external static void expand();
+  external static void close();
+}
+
+@JS()
+@anonymous
+class WebAppInitData {
+  external WebAppUser? get user;
+  external String? get auth_date;
+  external String? get hash;
+  external String? get query_id;
+}
+
+@JS()
+@anonymous
+class WebAppUser {
+  /// 🛡️ ID PERSISTENCE & NUMERIC SAFETY (Audit 2.3): 
+  /// Telegram User IDs often exceed the 32-bit integer range.
+  /// We map to 'int' to ensure Dart/Web treats this as a JS Number/BigInt,
+  /// preventing the precision loss or truncation common with 'double' or 'num'.
+  external int get id;
+  external String? get first_name;
+  external String? get last_name;
+  external String? get username;
+  external String? get language_code;
+  external bool? get is_premium;
+}
+
+@JS()
+@anonymous
+class MainButton {
+  external String get text;
+  external String get color;
+  external String get textColor;
+  external bool get isVisible;
+  external bool get isActive;
+  external bool get isProgressVisible;
+
+  external void setText(String text);
+  external void onClick(void Function() callback);
+  external void show();
+  external void hide();
+  external void enable();
+  external void disable();
+}
+
+@JS()
+@anonymous
+class HapticFeedback {
+  /// ⚡ HAPTIC HANDSHAKE (Audit 2.5):
+  /// Signatures strictly follow the Telegram Bot API v7.x JS specification.
+  external void notificationOccurred(String type);
+  external void impactOccurred(String style);
+  external void selectionChanged();
 }

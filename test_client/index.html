@@ -3,52 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS SENTRY v1.3.1</title>
+    <title>NEXUS TERMINAL v1.3.1</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #050508; --surface: #0d0d12; --primary: #4f46e5; --term: #10b981; --border: #1f1f2e; --error: #ef4444; }
+        :root { 
+            --bg: #030305; --surface: #0a0a0f; --primary: #6366f1; 
+            --term: #00ff9d; --border: #1a1a2e; --error: #ff4757; 
+            --glow: rgba(0, 255, 157, 0.15);
+        }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 15px; overflow: hidden; }
-        .frame { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; width: 100%; max-width: 400px; padding: 20px; box-shadow: 0 0 30px rgba(79, 70, 229, 0.1); }
-        .ledger { background: #000; border: 1px solid #1a1a1a; padding: 12px; border-radius: 6px; font-size: 0.7rem; margin-bottom: 15px; }
-        .row { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px solid #111; padding-bottom: 2px; }
-        /* Optimization: inputmode ensures the dial pad on mobile */
-        input { width: 100%; background: #000; border: 1px solid var(--border); padding: 12px; color: var(--term); margin-bottom: 20px; border-radius: 4px; font-size: 1rem; outline: none; transition: border 0.3s; }
-        input:focus { border-color: var(--primary); }
-        .btn { width: 100%; background: var(--primary); color: #fff; border: none; padding: 18px; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; font-family: monospace; transition: all 0.2s; }
-        .btn.locked { opacity: 0.4; filter: grayscale(1); pointer-events: none; transform: scale(0.98); }
-        #receipt { display: none; margin-top: 20px; padding: 12px; border: 1px solid var(--term); font-size: 0.7rem; color: var(--term); background: rgba(16, 185, 129, 0.05); animation: fadeIn 0.3s ease; }
-        .console { font-size: 0.6rem; color: #444; margin-top: 12px; height: 1.2em; overflow: hidden; border-left: 1px solid #222; padding-left: 5px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        body { 
+            background: var(--bg); color: #8f9bb3; 
+            font-family: 'Consolas', 'Monaco', monospace; 
+            display: flex; align-items: center; justify-content: center; 
+            min-height: 100vh; margin: 0; padding: 10px; overflow: hidden;
+        }
+        
+        /* CRT Scanline effect - Hardware Simulation */
+        body::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 100; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        .terminal-frame { 
+            background: var(--surface); border: 1px solid var(--border); 
+            border-radius: 4px; width: 100%; max-width: 380px; padding: 20px; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(99, 102, 241, 0.05);
+            position: relative; z-index: 1;
+        }
+
+        .header-system {
+            border-bottom: 1px solid var(--border); margin-bottom: 15px; padding-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .node-tag { font-size: 0.65rem; color: var(--primary); letter-spacing: 2px; font-weight: bold; }
+        .live-pulse { width: 8px; height: 8px; background: var(--term); border-radius: 50%; box-shadow: 0 0 10px var(--term); animation: pulse 2s infinite; }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .data-cell { background: rgba(0,0,0,0.4); border: 1px solid #161625; padding: 12px; border-radius: 2px; }
+        .label { font-size: 0.55rem; color: #4a4a6a; text-transform: uppercase; margin-bottom: 5px; display: block; letter-spacing: 1px; }
+        .value { font-size: 1rem; color: var(--term); font-weight: bold; text-shadow: 0 0 8px var(--glow); }
+
+        .identity-strip { background: #000; border: 1px solid var(--border); padding: 10px; margin-bottom: 20px; border-left: 3px solid var(--primary); }
+
+        .input-group { margin-bottom: 20px; }
+        input { 
+            width: 100%; background: #000; border: 1px solid var(--border); padding: 15px;
+            color: #fff; font-size: 1.2rem; text-align: center; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.2); }
+
+        .btn-execute { 
+            width: 100%; background: var(--primary); color: #fff; border: none;
+            padding: 18px; font-family: monospace; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 4px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #312e81;
+        }
+        .btn-execute:active { transform: translateY(2px); box-shadow: 0 2px 0 #312e81; }
+        .btn-execute.locked { opacity: 0.3; filter: grayscale(1); pointer-events: none; }
+
+        #receipt { 
+            display: none; margin-top: 20px; padding: 12px; border: 1px solid var(--term);
+            background: rgba(0, 255, 157, 0.03); animation: slideUp 0.4s ease;
+        }
+        .receipt-row { display: flex; justify-content: space-between; font-size: 0.7rem; margin-top: 6px; border-bottom: 1px solid rgba(0,255,157,0.1); padding-bottom: 2px; }
+
+        .footer { 
+            margin-top: 20px; font-size: 0.6rem; color: #3a3a4d; border-top: 1px solid var(--border);
+            padding-top: 10px; display: flex; justify-content: space-between;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <div class="frame">
-        <div style="color:var(--primary); font-weight:900; margin-bottom:15px; letter-spacing: 1px;">🏛️ NEXUS_SENTRY_V1.3.1</div>
-        
-        <div class="ledger">
-            <div class="row"><span>VAULT_CREATOR:</span><strong id="v-creator">0.00_U</strong></div>
-            <div class="row"><span>VAULT_POOL:</span><strong id="v-pool">0.00_U</strong></div>
+    <div class="terminal-frame">
+        <div class="header-system">
+            <span class="node-tag">🏛️ NEXUS_CORE_v1.3.1</span>
+            <div class="live-pulse"></div>
         </div>
 
-        <div class="ledger" style="color:var(--term)">
-            <div class="row"><span>OPERATOR_ID:</span><span id="tg-id">BOOTING...</span></div>
-            <div class="row"><span>NODE_LINK:</span><span id="sentry-status">IDLE</span></div>
+        <div class="data-grid">
+            <div class="data-cell">
+                <span class="label">VAULT: CREATOR</span>
+                <span id="v-creator" class="value">0.00</span>
+            </div>
+            <div class="data-cell">
+                <span class="label">VAULT: POOL</span>
+                <span id="v-pool" class="value">0.00</span>
+            </div>
         </div>
 
-        <label style="font-size: 0.6rem; color: #666; margin-bottom: 5px; display: block;">SPLIT_MAGNITUDE</label>
-        <input type="number" id="tx-amount" value="100" placeholder="0.00" inputmode="decimal">
+        <div class="identity-strip">
+            <span class="label">OPERATOR_ID</span>
+            <span id="tg-id" style="font-size: 0.75rem; color: var(--primary);">INITIALIZING_LINK...</span>
+        </div>
 
-        <button id="exec-btn" class="btn" onclick="triggerVTE()">INIT_EXECUTION_SEQUENCE</button>
+        <div class="input-group">
+            <span class="label">SPLIT_MAGNITUDE (USDT)</span>
+            <input type="number" id="tx-amount" value="100" inputmode="decimal">
+        </div>
+
+        <button id="exec-btn" class="btn-execute" onclick="triggerVTE()">INIT_SPLIT</button>
 
         <div id="receipt">
-            <div style="border-bottom:1px solid var(--term); margin-bottom:8px; font-weight: bold;">SETTLEMENT_RECEIPT</div>
-            <div class="row"><span>CREATOR_60%</span><span id="r-creator">0.00</span></div>
-            <div class="row"><span>POOL_30%</span><span id="r-pool">0.00</span></div>
-            <div style="font-size: 0.5rem; margin-top: 5px; opacity: 0.7;">NETWORK_FEE_10%_COLLECTED</div>
+            <div class="label" style="text-align: center; color: var(--term); margin-bottom: 10px; font-weight: bold;">SETTLEMENT_REPORT</div>
+            <div class="receipt-row"><span>ALLOC_CREATOR:</span><span id="r-creator">0.00</span></div>
+            <div class="receipt-row"><span>ALLOC_POOL:</span><span id="r-pool">0.00</span></div>
+            <div style="font-size: 0.5rem; text-align: center; margin-top: 10px; color: #444;">FEE_10%_DETACHED</div>
         </div>
 
-        <div id="console" class="console">> SYSTEM_READY</div>
+        <div class="footer">
+            <span id="console">SYSTEM_READY</span>
+            <span id="sentry-status">BOOT_OK</span>
+        </div>
     </div>
 
     <script>
@@ -56,92 +126,109 @@
         const log = (m) => { document.getElementById('console').innerText = `> ${m}`; };
         let isProcessing = false;
 
-        // Ensure the WebApp expands to full height
-        if (tg.ready) {
-            tg.ready();
-            tg.expand();
-        }
+        /**
+         * 🛡️ THE HANDSHAKE HEADERS
+         * Ensures identity resolution via Regex extraction at the Brain.
+         */
+        const getHeaders = () => {
+            const h = { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json', 
+                'ngrok-skip-browser-warning': 'true' 
+            };
+            if (tg.initData) h['X-Nexus-TMA'] = tg.initData;
+            const rawID = tg.initDataUnsafe?.user?.id;
+            if (rawID) h['X-Nexus-Backup-ID'] = String(rawID);
+            return h;
+        };
 
+        if (tg.ready) { tg.ready(); tg.expand(); }
+
+        /**
+         * LEDGER UPDATE UI
+         * Fetches totals for the correctly mapped namespace.
+         */
         async function updateUI() {
             const rawID = tg.initDataUnsafe?.user?.id;
             const uid = rawID ? String(rawID) : 'LOCAL_HOST';
             document.getElementById('tg-id').innerText = uid;
 
             try {
-                // Cache-busting URL to ensure balance updates immediately
-                const r = await fetch(`/api/vault_summary/${uid}?t=${Date.now()}`);
+                const r = await fetch(`/api/vault_summary?t=${Date.now()}`, { headers: getHeaders() });
                 if (!r.ok) throw new Error();
                 const d = await r.json();
                 
-                document.getElementById('v-creator').innerText = `${(d.creator_total || 0).toFixed(2)}_U`;
-                document.getElementById('v-pool').innerText = `${(d.pool_total || 0).toFixed(2)}_U`;
-                document.getElementById('sentry-status').innerText = uid === 'LOCAL_HOST' ? "DEV_LINK" : "SOVEREIGN_LINK";
+                document.getElementById('v-creator').innerText = (d.creator_total || 0).toFixed(2);
+                document.getElementById('v-pool').innerText = (d.pool_total || 0).toFixed(2);
+                document.getElementById('sentry-status').innerText = uid === 'LOCAL_HOST' ? "DEV_LINK" : "SECURE_LINK";
+                log("NODE_SYNCED");
             } catch (e) { 
-                log("NODE_UNREACHABLE");
+                log("SYNC_FAILURE");
                 document.getElementById('sentry-status').innerText = "OFFLINE";
             }
         }
 
+        /**
+         * EXECUTION LOGIC
+         * Corrects the schema mapping to prevent the 'null is not an object' error.
+         */
         async function triggerVTE() {
             if (isProcessing) return;
-            
             const btn = document.getElementById('exec-btn');
-            const amtInput = document.getElementById('tx-amount');
-            const amt = parseFloat(amtInput.value);
+            const amt = parseFloat(document.getElementById('tx-amount').value);
 
-            if (isNaN(amt) || amt <= 0) {
-                log("INVALID_MAGNITUDE_ERROR");
-                amtInput.style.borderColor = "var(--error)";
-                setTimeout(() => amtInput.style.borderColor = "", 1000);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
+            if (isNaN(amt) || amt <= 0) { log("INVALID_AMT"); return; }
 
             isProcessing = true;
             btn.classList.add('locked');
             btn.innerText = "EXECUTING...";
-            // Explicitly hide previous receipt
             document.getElementById('receipt').style.display = "none";
 
-            const headers = { 'Content-Type': 'application/json' };
-            if (tg.initData) headers['X-Nexus-TMA'] = tg.initData;
-            if (tg.initDataUnsafe?.user?.id) headers['X-Nexus-Backup-ID'] = String(tg.initDataUnsafe.user.id);
-
             try {
-                const r = await fetch(`/api/execute_split/${amt}`, { method: 'POST', headers });
+                const r = await fetch(`/api/execute_split`, { 
+                    method: 'POST', 
+                    headers: getHeaders(),
+                    body: JSON.stringify({ amount: amt, nonce: Date.now() })
+                });
+                
                 const res = await r.json();
-                
-                if (!r.ok) throw new Error(res.detail || "DENIED");
+                if (!r.ok) throw new Error(res.detail || "REJECTED");
 
-                // Populate Receipt with atomic data
-                document.getElementById('r-creator').innerText = (res.split.creator || 0).toFixed(2);
-                document.getElementById('r-pool').innerText = (res.split.pool || 0).toFixed(2);
-                document.getElementById('receipt').style.display = "block";
-                
-                log("TRANSACTION_SETTLED");
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                
-                // Immediate Refresh
-                await updateUI();
+                // CRITICAL FIX: Explicitly access the 'split' child object
+                if (res && res.split) {
+                    document.getElementById('r-creator').innerText = (res.split.creator || 0).toFixed(2);
+                    document.getElementById('r-pool').innerText = (res.split.pool || 0).toFixed(2);
+                    document.getElementById('receipt').style.display = "block";
+                    
+                    log("SETTLED");
+                    if (tg.HapticFeedback?.notificationOccurred) tg.HapticFeedback.notificationOccurred('success');
+                    
+                    // Trigger real-time data growth
+                    await updateUI();
+                } else {
+                    throw new Error("MALFORMED_RESPONSE");
+                }
             } catch (e) {
-                log(`ERROR: ${e.message}`);
-                btn.style.background = "var(--error)";
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                log(`ERR: ${e.message}`);
+                if (tg.HapticFeedback?.notificationOccurred) tg.HapticFeedback.notificationOccurred('error');
             } finally {
-                // Unified Cooldown: Resets state after a visibility window
                 setTimeout(() => {
                     isProcessing = false;
                     btn.classList.remove('locked');
-                    btn.style.background = "";
-                    btn.innerText = "INIT_NEW_SEQUENCE";
-                    // Hide receipt only when ready for next transaction
-                    document.getElementById('receipt').style.display = "none";
-                }, 5000);
+                    btn.innerText = "INIT_SPLIT";
+                }, 2000);
             }
         }
 
         window.addEventListener('load', () => {
-            setTimeout(updateUI, 500);
+            let attempts = 0;
+            const boot = setInterval(() => {
+                if (tg.initData || attempts > 5) {
+                    updateUI();
+                    clearInterval(boot);
+                }
+                attempts++;
+            }, 200);
         });
     </script>
 </body>

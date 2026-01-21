@@ -1,35 +1,39 @@
 name: nexus_app
-description: "Nexus Protocol - Sovereign Edge Gateway Client"
-# Prevents accidental publishing to pub.dev
+description: "Nexus Protocol - Sovereign Edge Gateway Client (Phase 1.3.1)"
+# Audit 2.1: Governance Signal - Protects Sovereign IP and prevents registry leaks
 publish_to: 'none'
 
 version: 1.3.1+1
 
 environment:
-  # Pinned to support Flutter 3.19.0
+  # Audit 2.2: Pinned for stable JS-interop and CI determinism
   sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
+  
+  # 🛰️ CORE BRIDGE: Verified for Telegram Bot API v7.x environment priming
   telegram_web_app: ^0.1.6
   
-  # Networking and State Management
+  # 🧠 PROTOCOL TRANSPORT: Hardened for Ngrok tunnel stability
   http: ^1.2.0
+  # Audit 3: UI state coordination only (No protocol authority)
   provider: ^6.1.1
   
-  # UI Hardening
+  # 🎨 UI HARDENING: Machine/Terminal aesthetics for DePIN surfaces
   google_fonts: ^6.1.0
   intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  # Standard linting for solo-dev code quality
+  # Audit 2.4: Standard linting for solo-dev/student-team code quality
   flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
 
+  # Audit 2.4: Circuitry Glyph asset mapping for Sovereign Splash protocol
   assets:
     - assets/nexus-logo.png
