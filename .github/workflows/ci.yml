@@ -50,10 +50,11 @@ jobs:
           restore-keys: |
             flutter-${{ runner.os }}-
 
-      - name: Setup Flutter
+     - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          # UPGRADED: 3.27.1 provides the necessary WidgetState definitions
+          flutter-version: '3.27.1'
           channel: 'stable'
 
       - name: Install Body Dependencies
