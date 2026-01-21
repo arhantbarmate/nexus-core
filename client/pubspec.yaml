@@ -12,9 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  # CRITICAL: Downgraded to 0.1.6 to match Flutter 3.19.0 and fix CI/CD failure
-  telegram_web_app: ^0.1.6
+  # Change from ^0.0.4 or similar to exactly this:
+  telegram_web_app: 0.1.3
   
   # Networking and State Management
   http: ^1.2.0

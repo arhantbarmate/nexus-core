@@ -372,10 +372,10 @@ packages:
     dependency: "direct main"
     description:
       name: telegram_web_app
-      sha256: "595f768eb6aa0832cd7b4c6ecb3ef8500bdd249591494c43d7f0fc4cf7424a33"
+      sha256: d83a2f8bdd297d23adc91b76ffb2dff934c05d8e80040baba31749cea753fa9d
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.6"
+    version: "0.1.3"
   term_glyph:
     dependency: transitive
     description:
