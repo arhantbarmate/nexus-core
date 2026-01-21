@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nexus_app/main.dart';
-import 'package:nexus_app/screens/dashboard.dart';
+import 'package:nexus_protocol/main.dart'; // Ensure package name matches pubspec.yaml
+import 'package:nexus_protocol/screens/dashboard.dart';
 
 void main() {
   testWidgets('Nexus Protocol: Sovereign Body Smoke Test', (WidgetTester tester) async {
@@ -9,6 +9,7 @@ void main() {
     await tester.pumpWidget(const NexusApp(
       telegramReady: false, 
       devMode: true,
+      bootError: "", // <--- FIXED: Added required parameter
     ));
 
     // 2. Verify the App Root exists and initialized

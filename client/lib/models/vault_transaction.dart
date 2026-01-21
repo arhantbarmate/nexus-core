@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart'; // Recommendation: for human-readable timestamps
-
 class VaultTransaction {
   final int id;
   final String userId;
