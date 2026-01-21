@@ -37,7 +37,8 @@ class VaultTransaction {
   /// HELPER: Formats the ISO timestamp into a readable terminal format
   String get formattedTime {
     try {
-      DateTime dt = DateTime.parse(timestamp);
+      // FIXED: Added 'final' keyword to satisfy linter (Line 40)
+      final dt = DateTime.parse(timestamp);
       return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
     } catch (_) {
       return "00:00:00";

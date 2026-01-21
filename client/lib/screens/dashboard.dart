@@ -22,6 +22,7 @@ class NexusDashboard extends StatefulWidget {
 
 class _NexusDashboardState extends State<NexusDashboard> {
   final TextEditingController _amountController = TextEditingController(text: "100.0");
+  // ignore: unused_field
   List<dynamic> _transactions = [];
   
   double _creatorTotal = 0.0;
