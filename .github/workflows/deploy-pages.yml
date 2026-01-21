@@ -1,50 +1,69 @@
-name: Deploy to GitHub Pages
+name: Deploy Nexus Protocol to Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  build:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          # UPGRADED: 3.27.1 supports WidgetStateProperty used by Telegram SDK
           flutter-version: '3.27.1'
           channel: 'stable'
+          cache: true
 
-      - name: Install Dependencies
+      - name: Build Flutter Body
         run: |
           cd client
           flutter pub get
+          # The base-href matches the URL sub-path where the app will live
+          flutter build web --release --base-href "/nexus-core/app/" --dart-define=NEXUS_DEV=false
 
-      - name: Build Web
+      - name: Prepare Hardened Staging Area
         run: |
-          cd client
-          # Added NEXUS_DEV=true and ensured release mode
-          flutter build web --release --base-href "/nexus-core/" --dart-define=NEXUS_DEV=true
+          # 1. Create a clean staging directory (The Web Root)
+          mkdir staging
+          
+          # 2. Sync Landing Page (Doraemon Door) from docs to staging root
+          # This ensures docs/index.html becomes the main entry point
+          cp -r docs/* staging/
+          
+          # 3. Mount Flutter Build as a sub-surface under /app
+          mkdir -p staging/app
+          cp -r client/build/web/* staging/app/
+          
+          # Audit Log: Verify structure before upload
+          echo "🏛️ STAGING STRUCTURE AUDIT:"
+          ls -R staging
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: client/build/web
+          # Only upload the clean, merged staging area
+          path: staging
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
