@@ -176,10 +176,12 @@
         .n-attacker { border-color: var(--status-red); color: var(--status-red); }
         .n-tunnel { border-color: var(--text-dim); color: #fff; border-style: dotted; }
         
+        /* FIXED SENTRY - NO CLIP PATH TO PREVENT RENDERING GLITCH */
         .n-sentry { 
             border-color: var(--status-amber); color: var(--status-amber); 
-            clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%, 0% 15%); /* Cut corner visual */
+            background: rgba(245, 158, 11, 0.05);
         }
+        
         .n-brain { border-color: var(--status-green); color: var(--status-green); font-weight: bold; }
         .n-vault { border-color: var(--accent-blue); color: #fff; border-bottom-width: 4px; }
         .n-reject { border-color: var(--status-red); opacity: 0.6; font-size: 0.7rem; border-style: dashed; }
@@ -207,15 +209,6 @@
         .live-dot.bad { background: var(--status-red); box-shadow: 0 0 10px var(--status-red); animation-duration: 3s; }
 
         @keyframes flow { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
-
-        /* 🚀 LAUNCH BUTTON */
-        .launch-btn {
-            display: block; margin: 4rem auto; padding: 1.2rem 3rem;
-            background: var(--accent-blue); color: #fff; text-decoration: none;
-            font-weight: 700; border-radius: 4px; width: fit-content;
-            box-shadow: 0 0 40px var(--accent-glow); transition: 0.3s;
-        }
-        .launch-btn:hover { transform: translateY(-2px); box-shadow: 0 0 60px var(--accent-blue); }
 
         footer { text-align: center; margin-top: 8rem; padding-bottom: 4rem; border-top: 1px solid var(--border-panel); padding-top: 3rem; }
         .footer-links a { color: var(--text-dim); text-decoration: none; margin: 0 1rem; font-size: 0.8rem; }
@@ -332,8 +325,6 @@
             <a href="portal/threat_model.html" style="color:var(--text-dim); font-size:0.8rem; text-decoration:none; border-bottom:1px dotted var(--text-dim);">VIEW FULL THREAT REPORT ></a>
         </div>
     </div>
-
-    <a href="app/" class="launch-btn">INITIALIZE CORE INTERFACE</a>
 
     <footer>
         <p style="color:var(--text-dim); font-size: 0.7rem; letter-spacing: 2px;">© 2026 NEXUS PROTOCOL SYSTEMS</p>
