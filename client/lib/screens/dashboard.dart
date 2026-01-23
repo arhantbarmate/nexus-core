@@ -36,6 +36,7 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   bool _isExecuting = false;
   bool _retryScheduled = false;
   bool _isSyncing = false;
+  bool _isFetchingPage = false; // New flag for pagination
   String _statusMessage = "BOOTING_CORE";
 
   static const Color _bg = Color(0xFF020204);
@@ -49,11 +50,15 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    
+    // ATTACH SCROLL LISTENER FOR PAGINATION
+    _scrollController.addListener(_onScroll);
+
     if (widget.bootError.isNotEmpty) {
       _statusMessage = "BOOT_FAILURE: ${widget.bootError}";
       _isLoading = false;
     } else {
-      _syncSovereignState();
+      _syncSovereignState(refresh: true);
     }
   }
 
@@ -68,23 +73,61 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _syncSovereignState();
+      _syncSovereignState(refresh: true);
     }
   }
 
-  // FIX 3: Refactored to handle CursorPage return type
-  Future<void> _syncSovereignState() async {
+  void _onScroll() {
+    // Trigger load when within 200 pixels of the bottom
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      _fetchNextPage();
+    }
+  }
+
+  // CORE: Fetches next page of transactions using the cursor
+  Future<void> _fetchNextPage() async {
+    if (_isFetchingPage || !_hasMore || _isSyncing) return;
+
+    setState(() {
+      _isFetchingPage = true;
+    });
+
+    try {
+      final page = await NexusApi.fetchTransactions(cursor: _cursor);
+
+      if (!mounted) return;
+
+      setState(() {
+        final newItems = page.items
+            .map((e) => VaultTransaction.fromJson(e as Map<String, dynamic>))
+            .toList();
+        
+        _transactions.addAll(newItems);
+        _cursor = page.nextCursor;
+        _hasMore = page.nextCursor != null;
+      });
+    } catch (_) {
+      // Silent fail on pagination, user can try scrolling again
+    } finally {
+      if (mounted) setState(() => _isFetchingPage = false);
+    }
+  }
+
+  // FIX 3: Refactored to handle CursorPage return type & Full Refresh
+  Future<void> _syncSovereignState({bool refresh = false}) async {
     if (!mounted || _isSyncing) return;
+    
     setState(() {
       _isSyncing = true;
-      _isLoading = true;
+      if (refresh) _isLoading = true;
       _statusMessage = "SYNCING_WITH_BRAIN";
     });
 
     try {
+      // If refreshing, we reset the cursor to null to get the latest page
       final results = await Future.wait([
         NexusApi.fetchVaultSummary(),
-        NexusApi.fetchTransactions(cursor: null),
+        NexusApi.fetchTransactions(cursor: null), 
       ]).timeout(const Duration(seconds: 15));
 
       final summary = results[0] as Map<String, dynamic>;
@@ -94,9 +137,15 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
 
       setState(() {
         // Map page items correctly using the model
-        _transactions = page.items
+        final freshItems = page.items
             .map((e) => VaultTransaction.fromJson(e as Map<String, dynamic>))
             .toList();
+        
+        if (refresh) {
+          _transactions = freshItems;
+        } else {
+          _transactions.addAll(freshItems);
+        }
         
         // Save cursor state for future infinite scrolling
         _cursor = page.nextCursor;
@@ -112,9 +161,10 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
       if (mounted) setState(() => _statusMessage = "SYNC_FAILURE_RETRYING");
       if (!_retryScheduled) {
         _retryScheduled = true;
+        _retryScheduled = true;
         Future.delayed(const Duration(seconds: 5), () {
           _retryScheduled = false;
-          if (mounted) _syncSovereignState();
+          if (mounted) _syncSovereignState(refresh: true);
         });
       }
     } finally {
@@ -144,7 +194,7 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
       await NexusApi.executeSplit(amount);
       if (mounted) setState(() => _statusMessage = "BLOCK_COMMITTED");
       await Future.delayed(const Duration(milliseconds: 1200));
-      await _syncSovereignState();
+      await _syncSovereignState(refresh: true); // Refresh list to show new TX
     } catch (_) {
       if (mounted) setState(() => _statusMessage = "SENTRY_REJECTED");
     } finally {
@@ -174,6 +224,7 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
               children: [
                 Expanded(
                   child: SingleChildScrollView(
+                    controller: _scrollController, // ATTACHED CONTROLLER
                     physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                     child: Column(
@@ -186,6 +237,11 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
                         const SizedBox(height: 30),
                         _buildLedger(),
                         const SizedBox(height: 20),
+                        if (_isFetchingPage) 
+                          const Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: CircularProgressIndicator(color: _primary, strokeWidth: 2),
+                          ),
                       ],
                     ),
                   ),
@@ -277,7 +333,7 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   }
 
   Widget _buildLedger() {
-    if (_transactions.isEmpty) {
+    if (_transactions.isEmpty && !_isLoading) {
       return const Padding(
         padding: EdgeInsets.all(20),
         child: Text("NO_RECORDS_FOUND", style: TextStyle(color: Colors.white10, fontFamily: 'monospace')),

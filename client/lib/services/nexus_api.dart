@@ -33,7 +33,7 @@ class NexusApi {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        throw Exception("BRAIN_REJECTED: ${response.statusCode}");
+        throw Exception("BRAIN_REJECTED: ${response.statusCode} - ${response.body}");
       }
     } catch (e) {
       rethrow;
@@ -93,6 +93,7 @@ class NexusApi {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        
         return CursorPage(
           items: data['items'] ?? [],
           nextCursor: data['next_cursor'],

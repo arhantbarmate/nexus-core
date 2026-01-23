@@ -9,9 +9,11 @@ cd /d "%~dp0"
 :: 0. PORT CLEANSE
 taskkill /FI "WINDOWTITLE eq NEXUS_BRAIN*" /F >nul 2>&1
 
-:: 1. VALIDATION
-if not exist "%~dp0test_client\index.html" (
-    echo [ERROR] test_client assets not found.
+:: 1. VALIDATION (Updated for Phase 1.3.1)
+:: Checks for production Flutter build instead of test_client
+if not exist "%~dp0client\build\web\index.html" (
+    echo [ERROR] Production Client Build not found!
+    echo [FIX] Please run: cd client ^&^& flutter build web --release
     pause
     exit /b 1
 )

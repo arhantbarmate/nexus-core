@@ -1,5 +1,4 @@
 @JS()
-library telegram_js;
 
 import 'package:js/js.dart';
 
