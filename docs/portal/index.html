@@ -14,6 +14,8 @@
             --border-panel: rgba(255, 255, 255, 0.05);
             --text-dim: #94a3b8;
             --status-red: #fb7185;
+            --status-amber: #f59e0b;
+            --status-green: #10b981;
         }
 
         * { box-sizing: border-box; }
@@ -70,7 +72,7 @@
         .dot { width: 6px; height: 6px; background: #fb7185; border-radius: 50%; box-shadow: 0 0 10px #fb7185; animation: blink 1.5s infinite; }
 
         /* 📟 MACHINE GRID */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
         .machine-card {
             background: var(--panel-bg); border: 1px solid var(--border-panel);
             padding: 2.5rem; border-radius: 4px; position: relative;
@@ -93,42 +95,118 @@
         .machine-card h3 { font-size: 1.5rem; margin: 0 0 0.8rem; color: #fff; }
         .machine-card p { color: var(--text-dim); line-height: 1.6; font-size: 0.9rem; margin: 0; }
 
-        /* ⚔️ THREAT VISUALIZER (Full Width) */
-        .threat-section {
-            grid-column: span 2; /* Spans both columns */
+        /* ---------------------------------------------------------
+           📐 HIGH-FIDELITY THREAT DIAGRAM (Pure CSS Schematic) 
+           --------------------------------------------------------- */
+        .schematic-container {
             border: 1px solid var(--border-panel);
-            background: rgba(10, 10, 15, 0.8);
-            position: relative;
-            overflow: hidden;
-            border-radius: 4px;
-            margin-top: 1.5rem;
-        }
-        
-        .threat-content {
+            background: rgba(5, 5, 8, 0.8);
+            border-radius: 8px;
             padding: 3rem;
             position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            grid-column: span 2;
         }
-
-        .threat-info { max-width: 60%; }
-        .threat-status { 
-            font-family: 'JetBrains Mono', monospace; 
-            color: #fb7185; 
-            border: 1px solid #fb7185; 
-            padding: 0.5rem 1rem; 
+        .schematic-title {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-dim);
             font-size: 0.8rem;
-            background: rgba(251, 113, 133, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 3rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-panel);
+            padding-bottom: 1rem;
+            display: flex; justify-content: space-between;
         }
 
-        .visualizer-canvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            opacity: 0.3;
+        .flow-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2rem;
+            position: relative;
+            flex-wrap: wrap;
         }
+
+        /* ZONES */
+        .zone {
+            padding: 2rem;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            min-width: 250px;
+        }
+        .zone-untrusted { border: 1px dashed rgba(251, 113, 133, 0.3); background: rgba(251, 113, 133, 0.02); }
+        .zone-sovereign { border: 1px dashed rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.02); flex-grow: 1; }
+        
+        .zone-label {
+            position: absolute;
+            top: -12px; left: 20px;
+            background: var(--bg-black);
+            padding: 0 10px;
+            font-family: 'JetBrains Mono';
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        /* NODES */
+        .node {
+            width: 100%;
+            padding: 1rem;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-panel);
+            border-radius: 4px;
+            text-align: center;
+            font-family: 'JetBrains Mono';
+            font-size: 0.8rem;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .node:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15); }
+
+        .n-user { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .n-attacker { border-color: var(--status-red); color: var(--status-red); }
+        .n-tunnel { border-color: var(--text-dim); color: #fff; border-style: dotted; }
+        
+        .n-sentry { 
+            border-color: var(--status-amber); color: var(--status-amber); 
+            clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%, 0% 15%); /* Cut corner visual */
+        }
+        .n-brain { border-color: var(--status-green); color: var(--status-green); font-weight: bold; }
+        .n-vault { border-color: var(--accent-blue); color: #fff; border-bottom-width: 4px; }
+        .n-reject { border-color: var(--status-red); opacity: 0.6; font-size: 0.7rem; border-style: dashed; }
+
+        /* CONNECTORS (CSS Arrows) */
+        .connector {
+            width: 2px; height: 30px;
+            background: var(--border-panel);
+            margin: 0 auto;
+            position: relative;
+        }
+        .connector::after {
+            content: ''; position: absolute; bottom: 0; left: -3px;
+            border-left: 4px solid transparent; border-right: 4px solid transparent;
+            border-top: 5px solid var(--border-panel);
+        }
+
+        /* LIVE DATA DOTS */
+        .live-dot {
+            width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%;
+            position: absolute; left: -2px; top: 0;
+            box-shadow: 0 0 10px var(--accent-blue);
+            animation: flow 2s infinite linear;
+        }
+        .live-dot.bad { background: var(--status-red); box-shadow: 0 0 10px var(--status-red); animation-duration: 3s; }
+
+        @keyframes flow { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
         /* 🚀 LAUNCH BUTTON */
         .launch-btn {
@@ -142,17 +220,16 @@
         footer { text-align: center; margin-top: 8rem; padding-bottom: 4rem; border-top: 1px solid var(--border-panel); padding-top: 3rem; }
         .footer-links a { color: var(--text-dim); text-decoration: none; margin: 0 1rem; font-size: 0.8rem; }
         
-        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
             .grid { grid-template-columns: 1fr; }
-            .threat-section { grid-column: span 1; }
-            .threat-content { flex-direction: column; text-align: center; gap: 2rem; }
-            .threat-info { max-width: 100%; }
+            .flow-wrapper { flex-direction: column; }
+            .zone { width: 100%; }
             .nav { padding: 1rem; }
+            .schematic-container { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -201,20 +278,59 @@
             <h3>Sovereignty FAQ</h3>
             <p>In-depth reasoning behind local settlement and identity abstraction.</p>
         </a>
+    </div>
 
-        <a href="portal/threat_model.html" class="machine-card threat-section">
-            <canvas id="threat-canvas" class="visualizer-canvas"></canvas>
-            <div class="threat-content">
-                <div class="threat-info">
-                    <div class="card-num" style="color: #fb7185;">MOD_05 // SECURITY_CORE</div>
-                    <h3>Live Threat Model</h3>
-                    <p>Visualizing the Fail-Closed Sentry, Attack Surfaces, and 1.3.1 Mitigation Logic.</p>
+    <div class="schematic-container">
+        <div class="schematic-title">
+            <span>// THREAT_SURFACE_VISUALIZATION</span>
+            <span style="color:var(--status-green)">● SYSTEM_SECURE</span>
+        </div>
+
+        <div class="flow-wrapper">
+            <div class="zone zone-untrusted">
+                <div class="zone-label">EXTERNAL (UNTRUSTED)</div>
+                
+                <div class="node n-user">User / Client</div>
+                <div class="connector"><div class="live-dot"></div></div>
+                
+                <div class="node n-tunnel">Ngrok Tunnel</div>
+                <div class="connector"><div class="live-dot"></div></div>
+                
+                <div class="node n-attacker">Attacker</div>
+                <div class="connector"><div class="live-dot bad"></div></div>
+            </div>
+
+            <div style="align-self: center; color: var(--text-dim); font-size: 1.5rem;">→</div>
+
+            <div class="zone zone-sovereign">
+                <div class="zone-label">SOVEREIGN NODE (TRUST BOUNDARY)</div>
+                
+                <div style="display:flex; width: 100%; gap: 1rem;">
+                    <div style="flex:1;">
+                        <div class="node n-sentry">Sentry Guard</div>
+                        <div style="font-size: 0.6rem; color:var(--text-dim); margin-top:5px;">FAIL_CLOSED_LOGIC</div>
+                    </div>
                 </div>
-                <div class="threat-status">
-                    ● ACTIVE MONITORING
+
+                <div style="display:flex; width: 100%; gap: 1rem; align-items: flex-start;">
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                        <div class="connector" style="height: 40px;"><div class="live-dot"></div></div>
+                        <div class="node n-brain">BRAIN (FastAPI)</div>
+                        <div class="connector"></div>
+                        <div class="node n-vault">VAULT (SQLite)</div>
+                    </div>
+
+                    <div style="flex:0.5; display:flex; flex-direction:column; align-items:center;">
+                        <div class="connector" style="height: 40px; border-style:dashed;"></div>
+                        <div class="node n-reject">403 REJECT</div>
+                    </div>
                 </div>
             </div>
-        </a>
+        </div>
+        
+        <div style="text-align:center; margin-top: 2rem;">
+            <a href="portal/threat_model.html" style="color:var(--text-dim); font-size:0.8rem; text-decoration:none; border-bottom:1px dotted var(--text-dim);">VIEW FULL THREAT REPORT ></a>
+        </div>
     </div>
 
     <a href="app/" class="launch-btn">INITIALIZE CORE INTERFACE</a>
@@ -241,53 +357,6 @@
             move: { enable: true, speed: 1 }
         }
     });
-
-    /* 🛡️ SIMPLE THREAT VISUALIZER ANIMATION */
-    const threatCanvas = document.getElementById('threat-canvas');
-    const tCtx = threatCanvas.getContext('2d');
-    let tWidth, tHeight;
-
-    function resizeThreat() {
-        tWidth = threatCanvas.width = threatCanvas.offsetWidth;
-        tHeight = threatCanvas.height = threatCanvas.offsetHeight;
-    }
-
-    // Create red "scanning" particles
-    const threatParticles = [];
-    for(let i=0; i<20; i++) {
-        threatParticles.push({
-            x: Math.random() * 500,
-            y: Math.random() * 200,
-            speed: Math.random() * 2 + 1
-        });
-    }
-
-    function animateThreat() {
-        tCtx.clearRect(0, 0, tWidth, tHeight);
-        tCtx.fillStyle = 'rgba(251, 113, 133, 0.4)'; // Reddish scan color
-        
-        threatParticles.forEach(p => {
-            p.x += p.speed;
-            if(p.x > tWidth) p.x = 0;
-            
-            tCtx.beginPath();
-            tCtx.arc(p.x, p.y, 2, 0, Math.PI*2);
-            tCtx.fill();
-            
-            // Draw trail
-            tCtx.strokeStyle = 'rgba(251, 113, 133, 0.1)';
-            tCtx.beginPath();
-            tCtx.moveTo(p.x - 50, p.y);
-            tCtx.lineTo(p.x, p.y);
-            tCtx.stroke();
-        });
-        requestAnimationFrame(animateThreat);
-    }
-
-    window.addEventListener('resize', resizeThreat);
-    // Init visualizer
-    resizeThreat();
-    animateThreat();
 </script>
 
 </body>
