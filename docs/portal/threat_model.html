@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Threat Model | Security Specs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-black: #050505;
+            --accent-blue: #6366f1;
+            --accent-red: #f43f5e; /* Added for Threat highlighting */
+            --panel-bg: rgba(15, 15, 20, 0.8);
+            --border-panel: rgba(255, 255, 255, 0.05);
+            --text-dim: #94a3b8;
+        }
+        body { margin: 0; background: var(--bg-black); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%); }
+        
+        .nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-panel); }
+        .nav a { color: var(--text-dim); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        
+        .container { max-width: 800px; margin: 0 auto; padding: 10rem 2rem 5rem; }
+        
+        h1 { font-size: 3.5rem; font-weight: 800; margin: 0; letter-spacing: -2px; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 1.5rem; margin-top: 3rem; color: #fff; border-bottom: 1px solid var(--border-panel); padding-bottom: 1rem; }
+        
+        .badge { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.8rem; margin: 1rem 0 4rem; text-transform: uppercase; letter-spacing: 4px; }
+        
+        /* ⚠️ WARNING BOX */
+        .warning-box {
+            border-left: 3px solid var(--accent-red);
+            background: rgba(244, 63, 94, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* 🎯 OBJECTIVE BOX */
+        .objective-panel {
+            border: 1px solid var(--accent-blue);
+            background: rgba(99, 102, 241, 0.05);
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 4rem;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.1);
+        }
+
+        /* ⏳ SECTION AESTHETIC (Reused from Roadmap) */
+        .epoch { position: relative; padding-left: 3rem; margin-bottom: 3rem; border-left: 1px solid var(--border-panel); }
+        .epoch::before { content: ''; position: absolute; left: -5px; top: 0; width: 9px; height: 9px; background: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 15px var(--accent-blue); }
+        .epoch-header { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--accent-blue); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px; }
+        .epoch-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; color: #fff; }
+        .epoch-list { list-style: none; padding: 0; margin: 0; color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; }
+        .epoch-list li { margin-bottom: 1rem; }
+        
+        /* 🧱 FLOW DIAGRAM (Custom for Threat Model) */
+        .flow-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .flow-box {
+            border: 1px solid var(--border-panel);
+            padding: 1rem;
+            background: var(--panel-bg);
+            color: var(--text-dim);
+        }
+        .flow-box.trust { border-color: var(--accent-blue); color: #fff; }
+        .flow-arrow { display: flex; align-items: center; color: var(--text-dim); }
+
+        /* 📊 TABLE STYLE */
+        .security-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+        .security-table th { text-align: left; color: var(--text-dim); padding: 1rem; border-bottom: 1px solid var(--border-panel); }
+        .security-table td { padding: 1rem; border-bottom: 1px solid var(--border-panel); color: #fff; }
+        .status-verified { color: var(--accent-blue); }
+        .status-deferred { color: var(--text-dim); font-style: italic; }
+
+        .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<nav class="nav">
+    <a href="../index.html">// RETURN_TO_TERMINAL</a>
+    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">SECURITY_SPEC_v1.3.1</div>
+</nav>
+
+<div class="container">
+    <h1>Threat Model</h1>
+    <div class="badge">Architecture & Security Assumptions</div>
+
+    <div class="warning-box">
+        > [!CAUTION] SCOPE DISCLAIMER<br>
+        This threat model applies ONLY to Phase 1.3.1. Future features (cryptographic identity, mesh networking) are explicitly OUT OF SCOPE.
+    </div>
+
+    <div class="objective-panel">
+        "To preserve the integrity of the local economic ledger under adversarial request conditions, while failing closed on identity ambiguity."
+    </div>
+
+    <div class="epoch">
+        <div class="epoch-header">Visual // Attack Surface</div>
+        <div class="epoch-title">Data Flow & Trust Boundaries</div>
+        
+        <div class="flow-container">
+            <div class="flow-box">User / Attacker</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">Tunnel (Ngrok)</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box trust">Sentry Perimeter</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box trust">Brain (FastAPI)</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box trust">Vault (SQLite WAL)</div>
+        </div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--accent-blue); font-family: 'JetBrains Mono';">Using Fail-Closed Logic at Sentry Node</div>
+    </div>
+
+    <div class="epoch">
+        <div class="epoch-header">Scope // Boundaries</div>
+        <div class="epoch-title">In-Scope Components</div>
+        <ul class="epoch-list">
+            <li><strong>Sovereign Brain:</strong> FastAPI runtime & SQLite vault (WAL mode).</li>
+            <li><strong>Execution Surface:</strong> Flutter Web UI / Telegram Mini App context.</li>
+            <li><strong>Sentry Perimeter:</strong> Header-based context extraction & deterministic fallback logic.</li>
+            <li><strong>Local Hardware:</strong> The physical/virtual environment of the Node Operator.</li>
+        </ul>
+    </div>
+
+    <div class="epoch" style="opacity: 0.7;">
+        <div class="epoch-header">Deferred // Out of Scope</div>
+        <div class="epoch-title">Excluded from Phase 1.3.1</div>
+        <ul class="epoch-list">
+            <li>• Cryptographic identity enforcement (ioID / signatures)</li>
+            <li>• Asset custody (private keys or on-chain wallets)</li>
+            <li>• P2P networking or cross-node consensus</li>
+        </ul>
+    </div>
+
+    <div class="epoch">
+        <div class="epoch-header">Analysis // Vectors</div>
+        <div class="epoch-title">Identified Threats & Mitigations</div>
+        <ul class="epoch-list">
+            <li>
+                <strong style="color: #fff;">1. Economic Tampering</strong><br>
+                Threat: Client attempts to alter the 60/30/10 split.<br>
+                <span style="color: var(--accent-blue);">Mitigation:</span> Split logic is enforced server-side only. Zero client authority.
+            </li>
+            <li>
+                <strong style="color: #fff;">2. Unauthorized Ledger Writes</strong><br>
+                Threat: Requests without valid context attempting to write.<br>
+                <span style="color: var(--accent-blue);">Mitigation:</span> <strong>Fail-Closed Resolution:</strong> Unresolvable namespaces are rejected (403).
+            </li>
+            <li>
+                <strong style="color: #fff;">3. Database Corruption</strong><br>
+                Threat: Concurrent writes or system crashes.<br>
+                <span style="color: var(--accent-blue);">Mitigation:</span> <strong>SQLite WAL Mode:</strong> Atomicity verified via 1M Tx stress test.
+            </li>
+            <li>
+                <strong style="color: #fff;">4. Replay Attacks</strong><br>
+                <span style="color: var(--text-dim);">Deferred to Phase 2.0 (Signed Nonces).</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="epoch">
+        <div class="epoch-header">Audit // Status</div>
+        <div class="epoch-title">Verified Security Properties</div>
+        <table class="security-table">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ledger Integrity</td>
+                    <td class="status-verified">✓ Verified (1M Stress Test)</td>
+                </tr>
+                <tr>
+                    <td>Determinism</td>
+                    <td class="status-verified">✓ Verified</td>
+                </tr>
+                <tr>
+                    <td>Crash Resilience</td>
+                    <td class="status-verified">✓ Verified (WAL Mode)</td>
+                </tr>
+                <tr>
+                    <td>Fail-Closed</td>
+                    <td class="status-verified">✓ Verified</td>
+                </tr>
+                <tr>
+                    <td>Identity Enforcement</td>
+                    <td class="status-deferred">× Deferred to Phase 2.0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">// END_OF_THREAT_MODEL // NEXUS_PROTOCOL_2026 // SEC_AUDIT_LOGGED</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    particlesJS('particles-js', {
+        particles: { number: { value: 60 }, color: { value: '#6366f1' }, opacity: { value: 0.2 }, size: { value: 2 }, line_linked: { enable: true, distance: 150, color: '#6366f1', opacity: 0.1, width: 1 }, move: { enable: true, speed: 1 } }
+    });
+</script>
+</body>
+</html>
