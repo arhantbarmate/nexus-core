@@ -10,8 +10,8 @@
             --bg-black: #050505;
             --accent-blue: #6366f1;
             --accent-glow: rgba(99, 102, 241, 0.4);
-            --panel-bg: rgba(15, 15, 20, 0.7);
-            --border-panel: rgba(255, 255, 255, 0.05);
+            --panel-bg: rgba(15, 15, 20, 0.6); /* More transparent */
+            --border-panel: rgba(255, 255, 255, 0.08);
             --text-dim: #94a3b8;
             --status-red: #fb7185;
             --status-amber: #f59e0b;
@@ -28,201 +28,198 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 🌌 BACKGROUND MATRIX */
+        /* 🌌 BACKGROUND */
         #particles-js {
             position: fixed; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
         }
 
-        /* 🛠️ NAVIGATION */
+        /* 🛠️ NAV (Minimalist from Screen 8) */
         .nav {
             position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px);
+            z-index: 100; 
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-panel);
         }
-        .nav-brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; letter-spacing: 2px; }
-        .nav-link { color: var(--text-dim); text-decoration: none; font-size: 0.8rem; transition: 0.3s; }
-        .nav-link:hover { color: var(--accent-blue); text-shadow: 0 0 10px var(--accent-glow); }
-
-        .container { max-width: 1100px; margin: 0 auto; padding: 10rem 2rem 5rem; }
-
-        /* ⚡ HERO SECTION */
-        .hero { text-align: center; position: relative; }
-        .logo-container {
-            position: relative; width: 120px; margin: 0 auto 2rem;
-            animation: float 4s ease-in-out infinite;
+        .nav-brand { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+            color: var(--accent-blue);
         }
-        .logo-main { width: 100%; filter: drop-shadow(0 0 30px var(--accent-glow)); }
-        
+        .nav-link { color: var(--text-dim); text-decoration: none; font-size: 0.8rem; font-family: 'JetBrains Mono'; transition: 0.3s; }
+        .nav-link:hover { color: #fff; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 8rem 2rem 5rem; }
+
+        /* ⚡ HEADER (Cleaned up) */
+        .header { text-align: left; margin-bottom: 4rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border-panel); }
         h1 {
-            font-size: 4rem; font-weight: 800; margin: 0; letter-spacing: -2px;
-            background: linear-gradient(180deg, #fff 0%, #444 100%);
+            font-size: 3rem; font-weight: 800; margin: 0; letter-spacing: -1px;
+            background: linear-gradient(180deg, #fff 0%, #aaa 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .subtitle { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.9rem; margin: 1rem 0 3rem; text-transform: uppercase; letter-spacing: 4px; }
-
-        /* 🛡️ HARDENING BADGE */
-        .badge {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: rgba(251, 113, 133, 0.05); border: 1px solid rgba(251, 113, 133, 0.2);
-            padding: 0.7rem 1.5rem; border-radius: 4px; margin-bottom: 4rem;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #fda4af;
+        .subtitle { 
+            font-family: 'JetBrains Mono', monospace; 
+            color: var(--text-dim); 
+            font-size: 0.9rem; 
+            margin-top: 10px;
         }
-        .dot { width: 6px; height: 6px; background: #fb7185; border-radius: 50%; box-shadow: 0 0 10px #fb7185; animation: blink 1.5s infinite; }
 
-        /* 📟 MACHINE GRID */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
-        .machine-card {
-            background: var(--panel-bg); border: 1px solid var(--border-panel);
-            padding: 2.5rem; border-radius: 4px; position: relative;
-            text-decoration: none; overflow: hidden; transition: 0.4s cubic-bezier(0.2, 1, 0.2, 1);
-            display: block;
+        /* 📟 3x3 GRID LAYOUT */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 1.5rem; 
+            margin-bottom: 5rem; 
         }
-        .machine-card:hover {
-            border-color: var(--accent-blue); background: rgba(99, 102, 241, 0.03);
-            transform: scale(1.02);
-        }
-        /* Scanning line animation */
-        .machine-card::after {
-            content: ''; position: absolute; top: -50%; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
-            animation: scan 3s linear infinite; opacity: 0;
-        }
-        .machine-card:hover::after { opacity: 1; }
 
-        .card-num { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.7rem; margin-bottom: 1rem; }
-        .machine-card h3 { font-size: 1.5rem; margin: 0 0 0.8rem; color: #fff; }
-        .machine-card p { color: var(--text-dim); line-height: 1.6; font-size: 0.9rem; margin: 0; }
-
-        /* ---------------------------------------------------------
-           📐 HIGH-FIDELITY THREAT DIAGRAM (Pure CSS Schematic) 
-           --------------------------------------------------------- */
-        .schematic-container {
+        .tile {
+            background: var(--panel-bg);
             border: 1px solid var(--border-panel);
-            background: rgba(5, 5, 8, 0.8);
-            border-radius: 8px;
-            padding: 3rem;
+            padding: 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            margin-bottom: 2rem;
-            grid-column: span 2;
-        }
-        .schematic-title {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-dim);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 3rem;
-            text-align: center;
-            border-bottom: 1px solid var(--border-panel);
-            padding-bottom: 1rem;
-            display: flex; justify-content: space-between;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
         }
 
-        .flow-wrapper {
+        .tile:hover {
+            border-color: var(--accent-blue);
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .category {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .tile h3 {
+            margin: 0 0 0.8rem 0;
+            font-size: 1.4rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .tile p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ---------------------------------------------------------
+           📐 HIGH-FIDELITY THREAT DIAGRAM (Transparent & Sleek) 
+           --------------------------------------------------------- */
+        .schematic-section {
+            margin-top: 4rem;
+            padding: 3rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-panel);
+            
+            /* SEE-THROUGH VISUALS */
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .schematic-header {
+            text-align: center;
+            font-family: 'JetBrains Mono';
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            margin-bottom: 3rem;
+            letter-spacing: 3px;
+            display: flex; justify-content: space-between;
+            border-bottom: 1px solid var(--border-panel);
+            padding-bottom: 1.5rem;
+        }
+
+        .diagram-wrapper {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            gap: 2rem;
-            position: relative;
+            align-items: center;
+            gap: 3rem;
             flex-wrap: wrap;
         }
 
-        /* ZONES */
-        .zone {
-            padding: 2rem;
-            border-radius: 8px;
+        /* Diagram Containers */
+        .d-zone {
+            padding: 2.5rem;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            min-width: 250px;
+            min-width: 280px;
         }
-        .zone-untrusted { border: 1px dashed rgba(251, 113, 133, 0.3); background: rgba(251, 113, 133, 0.02); }
-        .zone-sovereign { border: 1px dashed rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.02); flex-grow: 1; }
-        
-        .zone-label {
-            position: absolute;
-            top: -12px; left: 20px;
-            background: var(--bg-black);
-            padding: 0 10px;
-            font-family: 'JetBrains Mono';
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
+        .d-zone-label {
+            position: absolute; top: -10px; left: 20px;
+            background: #000; padding: 0 10px;
+            font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #666;
         }
 
-        /* NODES */
-        .node {
-            width: 100%;
-            padding: 1rem;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-panel);
+        /* Diagram Nodes */
+        .d-node {
+            background: #111;
+            border: 1px solid #333;
+            padding: 12px 20px;
             border-radius: 4px;
             text-align: center;
-            font-family: 'JetBrains Mono';
-            font-size: 0.8rem;
+            font-family: 'JetBrains Mono'; font-size: 0.85rem;
+            color: #eee;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             position: relative;
             z-index: 2;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            transition: 0.3s;
         }
-        .node:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15); }
-
-        .n-user { border-color: var(--accent-blue); color: var(--accent-blue); }
-        .n-attacker { border-color: var(--status-red); color: var(--status-red); }
-        .n-tunnel { border-color: var(--text-dim); color: #fff; border-style: dotted; }
         
-        /* FIXED SENTRY - NO CLIP PATH TO PREVENT RENDERING GLITCH */
-        .n-sentry { 
-            border-color: var(--status-amber); color: var(--status-amber); 
+        .d-node.sentry { 
+            border-color: var(--status-amber); color: var(--status-amber);
             background: rgba(245, 158, 11, 0.05);
         }
+        .d-node.brain { border-color: var(--status-green); color: var(--status-green); }
+        .d-node.attacker { border-color: var(--status-red); color: var(--status-red); }
         
-        .n-brain { border-color: var(--status-green); color: var(--status-green); font-weight: bold; }
-        .n-vault { border-color: var(--accent-blue); color: #fff; border-bottom-width: 4px; }
-        .n-reject { border-color: var(--status-red); opacity: 0.6; font-size: 0.7rem; border-style: dashed; }
-
-        /* CONNECTORS (CSS Arrows) */
-        .connector {
-            width: 2px; height: 30px;
-            background: var(--border-panel);
-            margin: 0 auto;
+        /* Connections */
+        .d-line {
+            width: 1px; height: 30px; background: #333; margin: 0 auto;
             position: relative;
         }
-        .connector::after {
-            content: ''; position: absolute; bottom: 0; left: -3px;
-            border-left: 4px solid transparent; border-right: 4px solid transparent;
-            border-top: 5px solid var(--border-panel);
+        .d-dot {
+            width: 4px; height: 4px; background: var(--accent-blue); border-radius: 50%;
+            position: absolute; left: -1.5px;
+            animation: drop 2s infinite linear;
+            box-shadow: 0 0 8px var(--accent-blue);
+        }
+        .d-dot.red { background: var(--status-red); box-shadow: 0 0 8px var(--status-red); }
+
+        @keyframes drop { 0%{top:0; opacity:1;} 100%{top:100%; opacity:0;} }
+
+        /* Footer */
+        .footer-bar {
+            margin-top: 6rem;
+            text-align: center;
+            font-family: 'JetBrains Mono';
+            font-size: 0.7rem;
+            color: #444;
+            letter-spacing: 2px;
+            border-top: 1px solid var(--border-panel);
+            padding-top: 2rem;
         }
 
-        /* LIVE DATA DOTS */
-        .live-dot {
-            width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%;
-            position: absolute; left: -2px; top: 0;
-            box-shadow: 0 0 10px var(--accent-blue);
-            animation: flow 2s infinite linear;
-        }
-        .live-dot.bad { background: var(--status-red); box-shadow: 0 0 10px var(--status-red); animation-duration: 3s; }
-
-        @keyframes flow { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
-
-        footer { text-align: center; margin-top: 8rem; padding-bottom: 4rem; border-top: 1px solid var(--border-panel); padding-top: 3rem; }
-        .footer-links a { color: var(--text-dim); text-decoration: none; margin: 0 1rem; font-size: 0.8rem; }
-        
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
+        @media (max-width: 900px) {
             .grid { grid-template-columns: 1fr; }
-            .flow-wrapper { flex-direction: column; }
-            .zone { width: 100%; }
-            .nav { padding: 1rem; }
-            .schematic-container { padding: 1.5rem; }
+            .diagram-wrapper { flex-direction: column; }
         }
     </style>
 </head>
@@ -231,108 +228,134 @@
 <div id="particles-js"></div>
 
 <nav class="nav">
-    <div class="nav-brand">NEXUS_CORE v1.3.1</div>
+    <div class="nav-brand">NEXUS_CORE_v1.3.1</div>
     <a href="https://github.com/arhantbarmate/nexus-core" class="nav-link" target="_blank">// REPOSITORY</a>
 </nav>
 
 <div class="container">
-    <div class="hero">
-        <div class="logo-container">
-            <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/nexus-logo.png" alt="Nexus" class="logo-main">
-        </div>
-        
-        <h1>Sovereign Hub</h1>
-        <p class="subtitle">DePIN Machine Intelligence &middot; 60/30/10 Ledger</p>
-        
-        <div class="badge">
-            <div class="dot"></div>
-            SYSTEM STATUS: PHASE 1.3.1 HARDENING (SENTRY_ACTIVE)
-        </div>
+    
+    <div class="header">
+        <h1>Sovereign Gateway</h1>
+        <p class="subtitle">The Blueprint for Local-First Economic Execution</p>
     </div>
 
     <div class="grid">
-        <a href="portal/architecture.html" class="machine-card">
-            <div class="card-num">MOD_01</div>
-            <h3>Architecture</h3>
-            <p>High-integrity gateway specs and the Verify-then-Execute perimeter model.</p>
+        <a href="portal/architecture.html" class="tile">
+            <div>
+                <div class="category">FOUNDATIONS</div>
+                <h3>Architecture</h3>
+                <p>The Verify-then-Execute blueprint for the Brain-Body-Sentry model.</p>
+            </div>
         </a>
-        <a href="portal/install.html" class="machine-card">
-            <div class="card-num">MOD_02</div>
-            <h3>Node Setup</h3>
-            <p>Zero-trust deployment guide for local hardware and sovereign bridges.</p>
+        <a href="portal/economics.html" class="tile">
+            <div>
+                <div class="category">FOUNDATIONS</div>
+                <h3>Economics</h3>
+                <p>Deterministic 60/30/10 split invariants and local settlement logic.</p>
+            </div>
         </a>
-        <a href="portal/economics.html" class="machine-card">
-            <div class="card-num">MOD_03</div>
-            <h3>Economics</h3>
-            <p>The 60-30-10 deterministic state engine and redistribution algorithms.</p>
+        <a href="portal/novelty.html" class="tile">
+            <div>
+                <div class="category">FOUNDATIONS</div>
+                <h3>Novelty</h3>
+                <p>Comparative analysis of edge-execution vs custodial cloud fragility.</p>
+            </div>
         </a>
-        <a href="portal/faq.html" class="machine-card">
-            <div class="card-num">MOD_04</div>
-            <h3>Sovereignty FAQ</h3>
-            <p>In-depth reasoning behind local settlement and identity abstraction.</p>
+
+        <a href="portal/install.html" class="tile">
+            <div>
+                <div class="category">OPERATIONS</div>
+                <h3>Setup Guide</h3>
+                <p>Deployment requirements and node initialization for local hardware.</p>
+            </div>
+        </a>
+        <a href="portal/roadmap.html" class="tile">
+            <div>
+                <div class="category">OPERATIONS</div>
+                <h3>Roadmap</h3>
+                <p>The non-binding evolutionary trajectory from Epoch I to Epoch III.</p>
+            </div>
+        </a>
+        <a href="portal/faq.html" class="tile">
+            <div>
+                <div class="category">OPERATIONS</div>
+                <h3>Technical FAQ</h3>
+                <p>Architectural defense and infrastructure rationale.</p>
+            </div>
+        </a>
+
+        <a href="portal/security.html" class="tile">
+            <div>
+                <div class="category">GOVERNANCE</div>
+                <h3>Security</h3>
+                <p>The Fail-Closed model and responsible disclosure protocols.</p>
+            </div>
+        </a>
+        <a href="portal/privacy.html" class="tile">
+            <div>
+                <div class="category">GOVERNANCE</div>
+                <h3>Privacy Policy</h3>
+                <p>Non-custodial data policy and local-first persistence.</p>
+            </div>
+        </a>
+        <a href="portal/terms.html" class="tile">
+            <div>
+                <div class="category">GOVERNANCE</div>
+                <h3>Terms of Service</h3>
+                <p>Operational liability boundaries and node operator duties.</p>
+            </div>
         </a>
     </div>
 
-    <div class="schematic-container">
-        <div class="schematic-title">
-            <span>// THREAT_SURFACE_VISUALIZATION</span>
-            <span style="color:var(--status-green)">● SYSTEM_SECURE</span>
+    <div class="schematic-section">
+        <div class="schematic-header">
+            <span>// LIVE_THREAT_MODEL</span>
+            <span style="color: var(--status-green);">● SYSTEM_VERIFIED</span>
         </div>
 
-        <div class="flow-wrapper">
-            <div class="zone zone-untrusted">
-                <div class="zone-label">EXTERNAL (UNTRUSTED)</div>
+        <div class="diagram-wrapper">
+            <div class="d-zone">
+                <div class="d-zone-label">PUBLIC_UNTRUSTED</div>
                 
-                <div class="node n-user">User / Client</div>
-                <div class="connector"><div class="live-dot"></div></div>
-                
-                <div class="node n-tunnel">Ngrok Tunnel</div>
-                <div class="connector"><div class="live-dot"></div></div>
-                
-                <div class="node n-attacker">Attacker</div>
-                <div class="connector"><div class="live-dot bad"></div></div>
+                <div class="d-node">User Client</div>
+                <div class="d-line"><div class="d-dot"></div></div>
+                <div class="d-node" style="border-style:dotted;">Ngrok Tunnel</div>
+                <div class="d-line"><div class="d-dot red"></div></div>
+                <div class="d-node attacker">Attacker</div>
             </div>
 
-            <div style="align-self: center; color: var(--text-dim); font-size: 1.5rem;">→</div>
+            <div style="font-size: 2rem; color: #444;">→</div>
 
-            <div class="zone zone-sovereign">
-                <div class="zone-label">SOVEREIGN NODE (TRUST BOUNDARY)</div>
+            <div class="d-zone" style="border-color: rgba(99, 102, 241, 0.2);">
+                <div class="d-zone-label" style="color:var(--accent-blue);">SOVEREIGN_NODE</div>
                 
-                <div style="display:flex; width: 100%; gap: 1rem;">
-                    <div style="flex:1;">
-                        <div class="node n-sentry">Sentry Guard</div>
-                        <div style="font-size: 0.6rem; color:var(--text-dim); margin-top:5px;">FAIL_CLOSED_LOGIC</div>
+                <div class="d-node sentry">Sentry Guard</div>
+                
+                <div style="display:flex; gap:1rem; margin-top:1rem;">
+                    <div style="flex:1; text-align:center;">
+                        <div class="d-line" style="height:20px;"><div class="d-dot"></div></div>
+                        <div class="d-node brain">Brain (FastAPI)</div>
+                        <div class="d-line" style="height:15px;"></div>
+                        <div class="d-node">Vault (SQLite)</div>
                     </div>
-                </div>
-
-                <div style="display:flex; width: 100%; gap: 1rem; align-items: flex-start;">
-                    <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-                        <div class="connector" style="height: 40px;"><div class="live-dot"></div></div>
-                        <div class="node n-brain">BRAIN (FastAPI)</div>
-                        <div class="connector"></div>
-                        <div class="node n-vault">VAULT (SQLite)</div>
-                    </div>
-
-                    <div style="flex:0.5; display:flex; flex-direction:column; align-items:center;">
-                        <div class="connector" style="height: 40px; border-style:dashed;"></div>
-                        <div class="node n-reject">403 REJECT</div>
+                    
+                    <div style="flex:1; text-align:center;">
+                         <div class="d-line" style="height:20px; border-style:dashed;"></div>
+                         <div class="d-node attacker" style="opacity:0.7; font-size:0.7rem;">403 REJECT</div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div style="text-align:center; margin-top: 2rem;">
-            <a href="portal/threat_model.html" style="color:var(--text-dim); font-size:0.8rem; text-decoration:none; border-bottom:1px dotted var(--text-dim);">VIEW FULL THREAT REPORT ></a>
+        <div style="text-align:center; margin-top:3rem;">
+            <a href="portal/threat_model.html" style="color:#666; font-size:0.75rem; text-decoration:none; border-bottom:1px dotted #666;">[ VIEW FULL SPECIFICATION ]</a>
         </div>
     </div>
 
-    <footer>
-        <p style="color:var(--text-dim); font-size: 0.7rem; letter-spacing: 2px;">© 2026 NEXUS PROTOCOL SYSTEMS</p>
-        <div class="footer-links">
-            <a href="portal/terms.html">// TERMS</a>
-            <a href="portal/privacy.html">// PRIVACY</a>
-        </div>
-    </footer>
+    <div class="footer-bar">
+        // SYSTEM_LOCKED // NEXUS_PROTOCOL_2026 // SUMMARY
+    </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
