@@ -45,7 +45,6 @@ class TONAdapter(BaseAdapter):
         """
         try:
             # 1. GATED TEST BYPASS (Audit 5: CI/Testing Only)
-            # NOTE: Test-only bypass. Never enabled in dev or prod environments.
             if os.getenv("NEXUS_ENV") == "test" and payload == "valid_mock_signature":
                 return {"verified": True, "user_id": "12345", "adapter": self.ADAPTER_NAME}
 
@@ -57,7 +56,6 @@ class TONAdapter(BaseAdapter):
                 return {"verified": False, "user_id": None, "adapter": self.ADAPTER_NAME}
 
             # 3. REPLAY PROTECTION (Audit 3: 24h TTL Enforcement)
-            # Prevents stale initData reuse via Unix timestamp validation.
             auth_date = int(params.get("auth_date", 0))
             current_time = int(time.time())
             if current_time - auth_date > 86400: 
@@ -68,8 +66,6 @@ class TONAdapter(BaseAdapter):
             data_check_string = "\n".join([f"{k}={v}" for k, v in sorted(params.items())])
             
             # 5. CRYPTOGRAPHIC DERIVATION (Audit 2.1: Specification Compliant)
-            
-            
             # Step A: Derive secret key using Bot Token
             secret_key = hmac.new(
                 "WebAppData".encode(), 
@@ -87,18 +83,23 @@ class TONAdapter(BaseAdapter):
             # 6. CONSTANT-TIME VERIFICATION (Audit 2.3: Side-Channel Hardening)
             is_verified = hmac.compare_digest(received_hash, expected_hash)
             
+            # --- 🛡️ HARDENING LAYER: FAST-FAIL ON INVALID SIGNATURE ---
+            # Audit 2.4: Prevent JSON parsing or identity extraction unless cryptographic integrity is proven.
+            if not is_verified:
+                self._logger.error("🛡️ TON_ADAPTER: Cryptographic signature mismatch")
+                return {"verified": False, "user_id": None, "adapter": self.ADAPTER_NAME}
+
             # 7. IDENTITY EXTRACTION (Audit 4: Post-Verification Only)
             user_id = None
-            if is_verified:
-                try:
-                    user_data = json.loads(params.get("user", "{}"))
-                    user_id = str(user_data.get("id"))
-                except json.JSONDecodeError:
-                    self._logger.error("🛡️ TON_ADAPTER: Malformed user JSON")
-                    return {"verified": False, "user_id": None, "error": "MALFORMED_USER_DATA"}
+            try:
+                user_data = json.loads(params.get("user", "{}"))
+                user_id = str(user_data.get("id"))
+            except json.JSONDecodeError:
+                self._logger.error("🛡️ TON_ADAPTER: Malformed user JSON")
+                return {"verified": False, "user_id": None, "error": "MALFORMED_USER_DATA"}
 
             return {
-                "verified": is_verified, 
+                "verified": True, 
                 "user_id": user_id,
                 "adapter": self.ADAPTER_NAME
             }

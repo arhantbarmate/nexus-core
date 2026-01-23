@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
   
   # 🛰️ CORE BRIDGE: Verified for Telegram Bot API v7.x environment priming
-  telegram_web_app: ^0.1.6
+  telegram_web_app: 0.3.3
   
   # 🧠 PROTOCOL TRANSPORT: Hardened for Ngrok tunnel stability
   http: ^1.2.0
@@ -22,14 +22,15 @@ dependencies:
   provider: ^6.1.1
   
   # 🎨 UI HARDENING: Machine/Terminal aesthetics for DePIN surfaces
-  google_fonts: ^6.1.0
-  intl: ^0.19.0
+  google_fonts: ^7.1.0
+  intl: ^0.20.2
+  js: ^0.7.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   # Audit 2.4: Standard linting for solo-dev/student-team code quality
-  flutter_lints: ^3.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

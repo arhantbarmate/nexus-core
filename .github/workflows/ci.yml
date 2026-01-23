@@ -1,3 +1,7 @@
+# Copyright 2026 Nexus Protocol Authors
+# Continuous Integration - Phase 1.3.1
+# Goal: Force deterministic quality gates for both Brain and Body layers.
+
 name: Nexus Protocol Phase 1.3.1 CI
 
 on:
@@ -14,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -22,12 +26,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Core requirements for import validation
+          pip install fastapi uvicorn pydantic python-dotenv
 
-      - name: Brain Import Check
+      - name: Brain Static Analysis & Import Check
         run: |
-          if [ -d "backend" ]; then
-            python -c "import backend.main; print('🏛️ Brain Import Verified')"
-          fi
+          # Logic: Explicitly verifies that the Brain can boot and find its anchored paths
+          python - <<EOF
+          try:
+              import backend.main
+              print("🏛️ Brain Import & Path Anchoring Verified")
+          except Exception as e:
+              print(f"❌ Brain Critical Failure: {e}")
+              exit(1)
+          EOF
 
   body_integrity:
     name: Build Nexus Body (Flutter Web)
@@ -35,18 +47,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Setup Flutter (Synchronized 3.38.6)
         uses: subosito/flutter-action@v2
         with:
-          # FIXED: 3.27.1 is required to understand the Telegram SDK's new code
-          flutter-version: '3.27.1'
+          # SYNCHRONIZED: Matching 3.38.6 to prevent environment drift
+          flutter-version: '3.38.6'
           channel: 'stable'
+          cache: true
 
       - name: Install Body Dependencies
-        run: cd client && flutter pub get
+        run: |
+          cd client
+          flutter pub get
 
       - name: Static Analysis
-        run: cd client && flutter analyze
+        run: |
+          cd client
+          # Logic: Fails the build if "Red Line" bridge errors are detected
+          flutter analyze || exit 1
 
-      - name: Build Web Surface
-        run: cd client && flutter build web --release --dart-define=NEXUS_DEV=true
+      - name: Build Web Surface (Stress Test)
+        run: |
+          cd client
+          # --no-tree-shake-icons: Hardening for custom font rendering in Phase 1.3.1
+          flutter build web --release --dart-define=NEXUS_DEV=true --no-tree-shake-icons

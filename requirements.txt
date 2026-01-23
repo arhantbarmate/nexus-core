@@ -5,6 +5,9 @@ python-multipart
 python-dotenv
 httpx
 
+# Database (Async Ready)
+aiosqlite
+
 # Testing & Security Auditing
 pytest
 pytest-asyncio

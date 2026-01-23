@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#       http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,24 +14,29 @@
 
 import os
 import sqlite3
-import httpx
-import asyncio
 import re
-import json
+import hashlib
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Depends, Request, Response
+from typing import Optional, List
+from fastapi import FastAPI, HTTPException, Depends, Request, Response, Query
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-# --- 1. BOOTSTRAP & CONSTANTS ---
+# --- 1. BOOTSTRAP & ANCHORED CONSTANTS ---
 load_dotenv()
 NODE_ID = "nexus_sovereign_v1.3.1"
+
+# Absolute Path Anchoring: Prevents DB/Client files from spawning in repo root
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "nexus_vault.db")
+
+# CRITICAL FIX: Point to the actual Flutter 'Release' build output
+# This contains flutter_bootstrap.js, manifest.json, and assets
+CLIENT_BUILD_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "client", "build", "web"))
 
 PHASE_DEV = os.getenv("PHASE_DEV", "true").lower() == "true"
 DEV_NAMESPACE_ID = "999"
@@ -39,48 +44,73 @@ DEV_UI_ALIAS = "LOCAL_HOST"
 
 class SplitRequest(BaseModel):
     amount: float
-    nonce: int = None
+    nonce: Optional[int] = None
 
-# --- 2. LIFESPAN: Database Perimeter & WAL Management ---
+# --- 2. CRYPTOGRAPHIC UTILITIES (Merkle Anchoring) ---
+def compute_leaf_hash(row: dict) -> str:
+    """Deterministic row serialization for Merkle feasibility."""
+    payload = "|".join([
+        str(row["amount"]),
+        str(row["creator_share"]),
+        str(row["user_pool_share"]),
+        str(row["network_fee"]),
+        str(row["timestamp"]) 
+    ])
+    return hashlib.sha256(payload.encode()).hexdigest()
+
+def generate_merkle_root(hashes: List[str]) -> Optional[str]:
+    """Recursive binary tree reduction to a single page root anchor."""
+    if not hashes: return None
+    nodes = hashes[:]
+    while len(nodes) > 1:
+        if len(nodes) % 2 != 0: nodes.append(nodes[-1])
+        level = []
+        for i in range(0, len(nodes), 2):
+            combined = nodes[i] + nodes[i+1]
+            level.append(hashlib.sha256(combined.encode()).hexdigest())
+        nodes = level
+    return nodes[0]
+
+# --- 3. LIFESPAN: Database Perimeter & WAL Management ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initializes Vault with WAL mode for concurrent identity-namespace safety."""
+    """Initializes Vault with WAL mode and mandatory performance indexes."""
     conn = sqlite3.connect(DB_PATH)
     try:
-        # PRAGMA settings ensure deterministic persistence under tunnel instability
         conn.execute("PRAGMA journal_mode=WAL;")
         conn.execute("PRAGMA synchronous=NORMAL;")
         conn.execute("""
             CREATE TABLE IF NOT EXISTS transactions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                user_id TEXT, 
-                amount REAL, 
-                creator_share REAL, 
-                user_pool_share REAL, 
-                network_fee REAL, 
-                timestamp TEXT
+                user_id TEXT NOT NULL, 
+                amount REAL NOT NULL, 
+                creator_share REAL NOT NULL, 
+                user_pool_share REAL NOT NULL, 
+                network_fee REAL NOT NULL, 
+                timestamp TEXT NOT NULL
             )
         """)
+        # Composite Index for Cursor-based Pagination
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_tx_user_ts_id ON transactions (user_id, timestamp DESC, id DESC);")
         conn.commit()
     finally:
         conn.close()
     
     print(f"🏛️ [OK] Nexus Hardened Gateway Active: {NODE_ID}")
+    print(f"📂 [PATH] Database Anchored: {DB_PATH}")
+    print(f"🖥️ [PATH] Serving Client From: {CLIENT_BUILD_DIR}")
     yield
     
-    # Audit 2.1: FULL Checkpoint ensures all WAL data is merged to main DB on exit
+    # Graceful Shutdown: WAL Checkpoint
     try:
         c = sqlite3.connect(DB_PATH)
         c.execute("PRAGMA wal_checkpoint(FULL);")
         c.close()
-    except Exception:
-        pass
+    except Exception: pass
 
-# --- 3. INITIALIZE APP ---
+# --- 4. INITIALIZE APP ---
 app = FastAPI(title="Nexus Sovereign Brain", version="1.3.1", lifespan=lifespan)
 
-# --- 4. SECURITY: CORS Calibration ---
-# NOTE: Permissive CORS is intentional for sovereign local nodes & Ngrok tunneling (Audit 4.1)
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=r"https?://.*", 
@@ -91,57 +121,40 @@ app.add_middleware(
 
 # --- 5. UTILITIES ---
 def get_db_connection():
-    """Returns a thread-safe connection with 30s timeout for SQLite write-locks."""
     conn = sqlite3.connect(DB_PATH, timeout=30.0, check_same_thread=False)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.row_factory = sqlite3.Row
     return conn
 
 def resolve_sovereign_id(provided_id: str | None) -> str:
-    """Canonicalizes IDs: Handles LOCAL_HOST, UI placeholders, and nulls."""
     clean_id = str(provided_id).strip() if provided_id else ""
     if not clean_id or clean_id.lower() in [DEV_UI_ALIAS.lower(), "null", "undefined", "reading...", "none"]:
         return DEV_NAMESPACE_ID
     return clean_id if clean_id.isdigit() else DEV_NAMESPACE_ID
 
-# --- 6. MULTICHAIN GUARD (Authoritative Identity Resolution) ---
+# --- 6. MULTICHAIN GUARD ---
 async def multichain_guard(request: Request):
-    """
-    Resolves Actor Identity:
-    NOTE: 'verified' indicates identity resolution success, not cryptographic auth (Audit 3).
-    """
     if request.method == "OPTIONS": return {"user_id": DEV_NAMESPACE_ID}
-
     ton_data = request.headers.get("X-Nexus-TMA")
     backup_id = request.headers.get("X-Nexus-Backup-ID")
 
-    # Path 1: Regex-Hardened TMA Extraction (Resistant to URL encoding drift)
     if ton_data and ton_data != "valid_mock_signature":
-        match = (
-            re.search(r'%22id%22%3A(\d+)', ton_data) or
-            re.search(r'"id":(\d+)', ton_data) or
-            re.search(r'id=(\d+)', ton_data)
-        )
+        # Hardened Regex catching both URI-encoded and raw JSON formats
+        match = re.search(r'(?:%22id%22%3A|id=|\"id\":)(\d+)', ton_data)
         if match:
-            tg_id = match.group(1)
-            return {"verified": True, "user_id": str(tg_id), "adapter": "ton"}
+            return {"verified": True, "user_id": str(match.group(1)), "adapter": "ton"}
 
-    # Path 2: Backup Identity Bridge (Enables mobile demo continuity)
     if PHASE_DEV and backup_id and str(backup_id).isdigit():
         return {"verified": True, "user_id": str(backup_id), "adapter": "backup"}
 
-    # Path 3: Dev Namespace Fallback (Guaranteed system stability)
     return {"verified": True, "user_id": DEV_NAMESPACE_ID, "adapter": "dummy"}
 
 # --- 7. SECURE API ROUTES ---
 
 @app.get("/api/vault_summary")
-@app.get("/api/vault_summary/{user_id}") # ADDED: Support for path-parameter ID
+@app.get("/api/vault_summary/{user_id}")
 async def get_summary(user_id: str = None, auth: dict = Depends(multichain_guard)):
-    """Read Path: Calculates totals based on resolved identity."""
-    # Logic: If user_id is in path, use it. Otherwise, use the Sentry's resolved ID.
     target_id = resolve_sovereign_id(user_id or auth.get("user_id"))
-    
     conn = get_db_connection()
     try:
         row = conn.execute("""
@@ -149,80 +162,89 @@ async def get_summary(user_id: str = None, auth: dict = Depends(multichain_guard
                 COALESCE(SUM(creator_share), 0) as c, 
                 COALESCE(SUM(user_pool_share), 0) as p 
             FROM transactions 
-            WHERE CAST(user_id AS TEXT) = CAST(? AS TEXT)
+            WHERE user_id = ?
         """, (target_id,)).fetchone()
-        return {"creator_total": float(round(row['c'], 2)), "pool_total": float(round(row['p'], 2))}
+        return {"creator_total": round(row['c'], 2), "pool_total": round(row['p'], 2)}
     finally:
         conn.close()
 
 @app.post("/api/execute_split")
-async def execute_split(amount: float = None, payload: SplitRequest = None, auth: dict = Depends(multichain_guard)):
-    """
-    Write Path: Executes the 60/30/10 Split Protocol.
-    NOTE: Supports both REST testing and Flutter Body payloads (Audit 4.2).
-    """
-    final_amount = amount if amount is not None else (payload.amount if payload else 0.0)
-    if final_amount <= 0:
+async def execute_split(payload: SplitRequest, auth: dict = Depends(multichain_guard)):
+    if payload.amount <= 0:
         raise HTTPException(status_code=400, detail="INVALID_MAGNITUDE")
     
     uid = str(auth.get("user_id")).strip()
-    c, p, f = round(final_amount * 0.6, 2), round(final_amount * 0.3, 2), round(final_amount * 0.1, 2)
+    c, p, f = round(payload.amount * 0.6, 2), round(payload.amount * 0.3, 2), round(payload.amount * 0.1, 2)
     
     conn = get_db_connection()
     try:
         ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         conn.execute(
             "INSERT INTO transactions (user_id, amount, creator_share, user_pool_share, network_fee, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
-            (uid, final_amount, c, p, f, ts)
+            (uid, payload.amount, c, p, f, ts)
         )
         conn.commit()
-        # SUCCESS: Hydro-Response prevents UI null-crashes and enables real-time grow effect
         return {"status": "success", "resolved_id": uid, "split": {"creator": c, "pool": p, "fee": f}}
     finally:
         conn.close()
 
 @app.get("/api/transactions")
-async def get_transactions(auth: dict = Depends(multichain_guard)):
-    """History Path: Returns last 50 transactions for the authenticated operator."""
+async def get_transactions(
+    limit: int = Query(50, ge=1, le=100),
+    cursor_ts: str | None = None,
+    cursor_id: int | None = None,
+    auth: dict = Depends(multichain_guard)
+):
+    """Hardened History: Cursor-based pagination with Merkle Root reduction."""
     uid = auth.get("user_id")
+    params = [uid]
+    query = "SELECT * FROM transactions WHERE user_id = ?"
+    if cursor_ts and cursor_id:
+        query += " AND (timestamp < ? OR (timestamp = ? AND id < ?))"
+        params.extend([cursor_ts, cursor_ts, cursor_id])
+
+    query += " ORDER BY timestamp DESC, id DESC LIMIT ?"
+    params.append(limit + 1)
+
     conn = get_db_connection()
     try:
-        rows = conn.execute("SELECT * FROM transactions WHERE user_id = ? ORDER BY id DESC LIMIT 50", (uid,)).fetchall()
-        return [dict(row) for row in rows]
+        rows_raw = [dict(row) for row in conn.execute(query, params).fetchall()]
+        has_more = len(rows_raw) > limit
+        rows = rows_raw[:limit] 
+        
+        leaf_hashes = [compute_leaf_hash(r) for r in rows]
+        page_root = generate_merkle_root(leaf_hashes)
+        
+        next_cursor = None
+        if has_more:
+            next_cursor = {"ts": rows[-1]["timestamp"], "id": rows[-1]["id"]}
+
+        return {"items": rows, "next_cursor": next_cursor, "page_merkle_root": page_root}
     finally:
         conn.close()
 
-# --- 8. SOVEREIGN GATEWAY (Sentry Proxy & SPA Fallback) ---
-TEST_CLIENT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "test_client"))
+# --- 8. SOVEREIGN STATIC GATEWAY ---
+# Mounts assets only if the build directory exists
+if os.path.exists(CLIENT_BUILD_DIR):
+    app.mount("/static", StaticFiles(directory=CLIENT_BUILD_DIR), name="static")
 
 @app.api_route("/{path_name:path}", methods=["GET", "POST", "OPTIONS"])
 async def gateway_proxy(request: Request, path_name: str):
-    """Gateway Logic: Serves local files or forwards to Flutter Body."""
     if request.method == "OPTIONS": return Response(status_code=200)
     if path_name.startswith("api/"): raise HTTPException(status_code=404)
 
     safe_path = os.path.normpath(path_name).lstrip(os.sep)
-    local_file = os.path.join(TEST_CLIENT_DIR, safe_path)
+    local_file = os.path.join(CLIENT_BUILD_DIR, safe_path)
 
+    # 1. Primary: Serve Static Asset directly from disk (JS, CSS, JSON, PNG)
+    # This prevents the "Unexpected token <" error by ensuring real files are served
     if os.path.isfile(local_file):
         return FileResponse(local_file)
 
-    flutter_url = f"http://localhost:8080/{path_name}"
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            excluded = ["host", "content-length", "connection"]
-            h = {k: v for k, v in request.headers.items() if k.lower() not in excluded}
-            req = client.build_request(request.method, flutter_url, headers=h, content=await request.body())
-            resp = await client.send(req, stream=True)
-            rh = dict(resp.headers)
-            for k in ["content-encoding", "content-length", "transfer-encoding"]: rh.pop(k, None)
-            return StreamingResponse(resp.aiter_raw(), status_code=resp.status_code, headers=rh)
-    except Exception:
-        # Audit 4.3: SPA Fallback routes all non-file paths to index.html for Flutter routing
-        if "." not in path_name:
-            idx = os.path.join(TEST_CLIENT_DIR, "index.html")
-            if os.path.exists(idx): return FileResponse(idx)
-        return Response("NEXUS_OFFLINE", status_code=503)
-
-if os.path.exists(TEST_CLIENT_DIR):
-    app.mount("/static", StaticFiles(directory=TEST_CLIENT_DIR), name="static")
+    # 2. Secondary: Fallback to Flutter Index (SPA Support)
+    # Only serve HTML if the specific file requested (like main.dart.js) is NOT found
+    index_path = os.path.join(CLIENT_BUILD_DIR, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path, headers={"Cache-Control": "no-store"})
+    
+    return Response("NEXUS_OFFLINE: Client Build Not Found", status_code=503)

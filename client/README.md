@@ -1,21 +1,21 @@
 # 📱 Nexus Protocol — The Sovereign Body (v1.3.1)
 
-The Nexus Body is a cross-platform Flutter interface designed for the **Nexus Universal Gateway**. It serves as the primary interaction surface for the **60/30/10 Economic Protocol**, featuring a hardened identity bridge for Telegram Mini App (TMA) and Web environments.
+The Nexus Body is a cross-platform Flutter interface built on **Flutter 3.38.6 Stable**. It serves as the interaction surface for the **60/30/10 Economic Protocol**, providing a stateless UI for Telegram Mini App (TMA) and standard Web environments.
 
 ---
 
 ## 🏛️ UI/UX Architecture
 
-The Body is architected to be "Chain-Agnostic." It does not store private keys; instead, it signs context via the **Sentry Bridge** and delegates state persistence to the Sovereign Brain.
+The Body is architected as a "Stateless Surface." It extracts environmental context and delegates all cryptographic and economic logic to the Sovereign Brain.
 
 ```mermaid
 graph TD
-    A[Flutter UI Surface] -->|Event| B(Sentry Bridge)
-    B -->|HMAC/Signed Context| C[Sovereign Gateway]
-    C -->|JSON Response| B
-    B -->|Reactive State| A
+    A[Flutter UI Surface] -->|User Action| B(Sentry Bridge)
+    B -->|Environment Context| C[Sovereign Gateway]
+    C -->|JSON State| B
+    B -->|Reactive Update| A
     subgraph Identity Rails
-    D[TON Connect 2.0] -.-> B
+    D[Telegram WebApp initData] -.-> B
     E[Backup-ID Bridge] -.-> B
     end
 ```
@@ -23,41 +23,30 @@ graph TD
 ---
 
 ## 🛰️ The Sentry Bridge (v1.3.1)
-The Client-side Sentry (implemented in ```tg_bridge_web.dart```) acts as the security perimeter:
-* **Context Anchoring:** Automatically extracts and validates init data from the hosting container.
-* **Fail-Closed Logic:** If the bridge cannot verify the environment, the UI reverts to **Sovereign Simulation Mode** (Backup-ID).
-* **Base-Href Isolation:** Optimized for deployment at ```/nexus-core/app/``` to allow side-by-side documentation hosting.
+The Client-side Sentry (implemented in ```tg_bridge_web.dart```) acts as the environment sensor:
+* **Context Extraction:** Extracts and forwards Telegram WebApp ```initData``` for server-side verification.
+* **Fail-Closed Logic:** Reverts to **Sovereign Simulation Mode** (Backup-ID) if a secure container is not detected.
+* **Base-Href Isolation:** Optimized for deployment at ```/nexus-core/app/```.
 
 ---
 
-## 🎨 Phase 1.3.1 Surface Features
-* **Deterministic Ledger Dashboard:** Real-time visualization of 60/30/10 splits.
-* **Vault Explorer:** Deep-dive into local Sovereign Vault balances.
-* **Multichain Identity Switcher:** Toggle between live identity environments and local simulation for rapid development.
-* **Responsive Layout:** Hardened for Mobile (TMA), Tablet, and Desktop Chrome environments.
+## 🚀 Build & Deployment Specs
 
----
-
-## 🚀 Deployment & Build Logic
-
-### 1. Build for Sovereign Gateway
-To match the Nexus Protocol pathing logic, the body is compiled with a specific base-href:
+### 1. Production Build (Universal)
+To ensure correct pathing within the Nexus Gateway, use the following build command:
 ```bash
-flutter build web --release --base-href /nexus-core/app/
+flutter build web --release --base-href "/nexus-core/app/" --no-tree-shake-icons
 ```
 
-### 2. Environment Configuration
-The Body respects the following Dart defines:
-* ```NEXUS_DEV=true```: Enables the Backup-ID Bridge UI.
-* ```CHAIN_MODE=dummy|ton```: Forces the initial adapter state.
+### 2. Deployment Pathing
+The compiled assets must be mounted in the Sovereign Brain's ```test_client``` directory or served via the ```staging/app/``` path in GitHub Pages.
 
 ---
 
-## 📊 Performance Verified (Internal Audit)
-During the Phase 1.3.1 internal audit:
-* **Handshake Latency:** < 100ms from UI trigger to Sentry validation.
-* **State Sync:** Atomic updates to the local ledger visualization without frame drops.
-* **Compatibility:** Verified across Telegram Desktop, iOS, and Android webviews.
+## 📊 Performance Metrics (Verified)
+* **Handshake Overhead:** Negligible client-side overhead during Sentry environment validation.
+* **Compatibility:** Fully verified on Flutter 3.38.6 for Chrome (Desktop) and Telegram Webview (iOS/Android).
+* **Render Stability:** Stable rendering under rapid successive state updates during simulated ledger activity.
 
 ---
 

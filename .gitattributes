@@ -1,67 +1,78 @@
-# ==============================================================================
-# Nexus Protocol — Line Ending & Binary Policy (Hardened Phase 1.3.1)
-# ==============================================================================
+# --------------------------------------------------
+# 1. Global normalization
+# --------------------------------------------------
+* text=auto eol=lf
 
-# 1. Default: Global normalization to LF (Linux/Unix standard)
-* text=auto
-
+# --------------------------------------------------
 # 2. Python (The Brain)
+# --------------------------------------------------
 *.py text eol=lf
 requirements.txt text eol=lf
 *.ini text eol=lf
-# NEW: Micro-Refinement for environment templates
 *.env.example text eol=lf
 
+# --------------------------------------------------
 # 3. Dart / Flutter (The Body)
+# --------------------------------------------------
 *.dart text eol=lf
 *.yaml text eol=lf
 *.yml text eol=lf
 *.json text eol=lf
-*.lock text eol=lf
-# Protect WebAssembly binaries for Flutter Web
-*.wasm binary
 *.js text eol=lf
+*.lock -text
+*.wasm binary
 
+# --------------------------------------------------
 # 4. Shell & Automation
+# --------------------------------------------------
 *.sh text eol=lf
-# Mandatory CRLF for Windows Batch execution (Critical for your .bat files)
 *.bat text eol=crlf
 *.cmd text eol=crlf
 
+# --------------------------------------------------
 # 5. Markdown / Documentation
+# --------------------------------------------------
 *.md text eol=lf
 *.html text eol=lf
 LICENSE text eol=lf
 
-# 6. Database & Binary (CRITICAL)
-# Treat SQLite vaults as binary to prevent line-ending corruption of the ledger
-*.db binary
-*.db-wal binary
-*.db-shm binary
-*.sqlite binary
-*.sqlite3 binary
+# --------------------------------------------------
+# 6. Database & Binary (Merge-Protected)
+# --------------------------------------------------
+*.db binary -merge
+*.db-wal binary -merge
+*.db-shm binary -merge
+*.sqlite binary -merge
+*.sqlite3 binary -merge
 
+# --------------------------------------------------
 # 7. Images & Assets
+# --------------------------------------------------
 *.png binary
 *.jpg binary
 *.jpeg binary
 *.ico binary
 *.svg text eol=lf
 
-# 8. Executables (Safety Net)
+# --------------------------------------------------
+# 8. Executables
+# --------------------------------------------------
 *.exe binary
 *.dll binary
 *.so binary
 *.dylib binary
 
-# 9. C / C++ (Flutter desktop components)
+# --------------------------------------------------
+# 9. C / C++
+# --------------------------------------------------
 *.c text eol=lf
 *.cc text eol=lf
 *.cpp text eol=lf
 *.h text eol=lf
 *.cmake text eol=lf
 
+# --------------------------------------------------
 # 10. Generated Artifacts
-# Logic: Do not normalize generated files to save CPU during Git diffs
+# --------------------------------------------------
 client/**/generated_* -text
 pubspec.lock -text

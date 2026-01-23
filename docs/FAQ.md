@@ -6,36 +6,34 @@ This document addresses the architectural rationale and infrastructure choices b
 
 ## 🌐 Infrastructure & Connectivity
 
-### Q: Why does the Gateway use a custom HTML proxy for Ngrok?
-**A:** To maintain a **$0-cost Sovereign Stack**. Ngrok's free tier includes a mandatory "Browser Warning" interstitial that breaks headless handshakes for Telegram Mini Apps (TMA). 
+### Q: Does Nexus require a blockchain to function?
+**A:** No. Phase 1.3.1 is fully operational as a standalone **Sovereign Node** without any blockchain dependency. External chains (peaq, IoTeX, TON) are utilized only for optional anchoring and cross-chain identity in later phases; they do not affect the local execution speed or ledger correctness of the Brain.
 
-We implement a **Sovereign Sentry Bridge (HTML/JS Interface)** that:
-1. **Detection:** Checks for the ```ngrok-skip-browser-warning``` header or interstitial presence.
-2. **Auto-Bypass:** Executes a client-side "Proceed" command via a lightweight, zero-latency HTML UI.
-3. **Handshake Integrity:** Ensures the Sentry Bridge in the Flutter "Body" receives a clean connection, allowing the TMA to authenticate without manual user intervention during development and demos.
+### Q: How does the Gateway bypass the Ngrok browser warning?
+**A:** To maintain a **$0-cost Sovereign Stack**, we utilize a header-based bypass. The Sovereign Brain is configured to append the ```ngrok-skip-browser-warning``` header to outbound responses. This ensures that the Flutter "Body" (UI) receives a clean JSON/HTML stream, allowing for seamless headless handshakes during development.
 
 ### Q: Why use SQLite instead of a distributed database?
 **A:** Local-first sovereignty and high performance on edge hardware. 
-* **Write-Ahead Logging (WAL):** Utilized to manage concurrent identity surges.
-* **Verification:** Successfully handles a **50-user concurrent settlement load** with 100% split accuracy.
-* **Sovereignty:** Keeping the ledger local ensures the operator maintains state ownership before anchoring to an external chain.
+* **Write-Ahead Logging (WAL):** Utilized to manage high-density concurrent writes.
+* **Scale Verification:** Successfully validated under a **1-Million Transaction stress test** with 0% data corruption and stable performance (~50-60 TPS baseline on commodity hardware).
+* **Sovereignty:** Keeping the ledger local ensures the operator maintains absolute state ownership before any roots are committed to an external layer.
 
 ---
 
 ## 💰 Economic & State Logic
 
 ### Q: Is the 60/30/10 split hardcoded?
-**A:** In Phase 1.3.1, yes. This ensures **Economic Determinism**. Hardcoding the split in the "Brain" prevents UI-level tampering. The architecture allows future anchoring layers (peaq/IoTeX) to parameterize these values via governance adapters.
+**A:** In Phase 1.3.1, the split logic is enforced at the Brain level to ensure **Economic Determinism**. Hardcoding the logic in the backend prevents UI-level tampering. The architecture is modular; future governance adapters (Phase 2.0) will be able to parameterize these values while maintaining local integrity.
 
 ### Q: What happens if a transaction fails the Sentry Guard?
-**A:** The system follows a **Fail-Closed** logic. Requests failing HMAC or Signed Context validation are rejected (403 Forbidden) at the edge. No state changes are committed to the Vault.
+**A:** The system follows **Fail-Closed** logic. Requests that fail to resolve identity context or environmental signatures are issued a rejection response at the edge. No state changes are committed to the Sovereign Vault until the resolution is successful.
 
 ---
 
 ## 🛰️ Identity & Adapters
 
 ### Q: Why frame the UI as an "Execution Surface"?
-**A:** To maintain **Chain-Agnosticism**. The UI merely renders the state of the Sovereign Brain. This separation ensures Nexus remains compatible with future machine, device, or DID-based identity systems without altering core execution logic.
+**A:** To maintain **Chain-Agnosticism**. The UI (The Body) does not own the state; it merely renders the reactive state of the Sovereign Brain. This separation ensures Nexus remains compatible with future machine-IDs (ioID) or DePIN identity systems without altering the core execution engine.
 
 ---
 

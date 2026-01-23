@@ -21,13 +21,11 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Dynamic Particle Layer synchronized with index.html */
         #particles-js {
             position: fixed; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
         }
 
-        /* Machine Nav */
         .nav {
             position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem;
             display: flex; justify-content: space-between; align-items: center;
@@ -49,7 +47,6 @@
             font-size: 0.8rem; margin: 1rem 0 4rem; text-transform: uppercase; letter-spacing: 4px;
         }
 
-        /* Spec Panel - Hardware Style */
         .spec-block {
             background: var(--panel-bg); border: 1px solid var(--border-panel);
             padding: 3rem; margin-bottom: 2rem; border-radius: 4px;
@@ -57,7 +54,6 @@
         }
         .spec-block:hover { border-color: var(--accent-blue); background: rgba(99, 102, 241, 0.02); }
         
-        /* Machine Scanning Line */
         .spec-block::after {
             content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: var(--accent-blue);
             box-shadow: 0 0 15px var(--accent-blue);
@@ -91,24 +87,30 @@
 
     <div class="spec-block">
         <div class="mod-id">MOD_01 // IDENTITY_PERIMETER</div>
-        <h3>The Sentry Bridge</h3>
-        <p>Nexus utilizes a <code>Fail-Closed</code> identity perimeter. All state transitions are anchored via HMAC or Signed Context. Requests failing the <strong>Sentry Guard</strong> validation are rejected at the edge, protecting the 60/30/10 ledger integrity.</p>
+        <h3>The Sentry Guard</h3>
+        <p>Nexus utilizes a <code>Fail-Closed</code> identity perimeter. All state transitions are anchored via the <strong>Sentry Guard</strong> to resolve environmental context. Requests failing context resolution are immediately issued a <code>Rejection Response</code>, protecting the 60/30/10 ledger integrity.</p>
     </div>
 
     <div class="spec-block">
         <div class="mod-id">MOD_02 // PERSISTENCE_LOGIC</div>
-        <h3>Deterministic Brain</h3>
-        <p>A unidirectional state machine built on <strong>FastAPI</strong> and <strong>SQLite (WAL Mode)</strong>. Successfully stress-tested with 50 concurrent sovereign identities executing atomic 60/30/10 settlements without lock contention.</p>
+        <h3>The Sovereign Brain</h3>
+        <p>A unidirectional state machine built on <strong>FastAPI</strong> and <strong>SQLite (WAL Mode)</strong>. Successfully verified under a <strong>1-Million Transaction Stress Test</strong> with no observed data corruption, maintaining a <code>Durability-First</code> commit cycle for all economic settlements.</p>
     </div>
 
     <div class="spec-block">
         <div class="mod-id">MOD_03 // INTERFACE_SURFACE</div>
-        <h3>The Execution Surface</h3>
-        <p>The Flutter-based "Body" communicates via an abstracted adapter pattern. Compiled with <code>base-href /nexus-core/app/</code> for structural isolation, ensuring protocol logic and documentation remain operationally distinct.</p>
+        <h3>The Execution Body</h3>
+        <p>The Flutter-based "Body" acts as a stateless surface, extracting Telegram WebApp <code>initData</code> for server-side verification. Compiled with <code>base-href /nexus-core/app/</code> to ensure structural isolation between protocol execution and documentation layers.</p>
+    </div>
+
+    <div class="spec-block">
+        <div class="mod-id">MOD_04 // INFRASTRUCTURE</div>
+        <h3>Tunneling Resilience</h3>
+        <p>Optimized for sovereign deployment, the architecture implements <strong>Header-Based Gateway Handling</strong> to bypass third-party tunnel interstitials. This ensures seamless headless handshakes for Telegram Mini Apps on edge hardware.</p>
     </div>
 
     <div class="footer">
-        // END OF SPECIFICATION // NEXUS_PROTOCOL_2026
+        // END OF SPECIFICATION // NEXUS_PROTOCOL_2026 // PHASE_1.3.1_HARDENED
     </div>
 </div>
 

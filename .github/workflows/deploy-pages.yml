@@ -1,8 +1,13 @@
+# Copyright 2026 Nexus Protocol Authors
+# Hardened Deployment Workflow - Phase 1.3.1
+# Optimized for Flutter 3.38.6 Stable & GitHub Pages Staging
+
 name: Deploy Nexus Protocol to Pages
 
 on:
   push:
     branches: ["main"]
+  # Allows for manual re-calibration of the surface from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -21,49 +26,53 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Sovereign Source
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Setup Flutter (Synchronized 3.38.6)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.27.1'
+          flutter-version: '3.38.6'
           channel: 'stable'
           cache: true
+          # OPTIONAL: flutter pub cache repair (Use only if dependency corruption occurs)
 
-      - name: Build Flutter Body
+      - name: Build Flutter Body (Sovereign Surface)
         run: |
           cd client
           flutter pub get
-          # The base-href matches the URL sub-path where the app will live
-          flutter build web --release --base-href "/nexus-core/app/" --dart-define=NEXUS_DEV=false
+          # --no-tree-shake-icons: Prevents build failures with custom font icons in Phase 1.3.1
+          flutter build web --release --base-href "/nexus-core/app/" --dart-define=NEXUS_DEV=false --no-tree-shake-icons
 
       - name: Prepare Hardened Staging Area
         run: |
-          # 1. Create a clean staging directory (The Web Root)
+          # 1. Create a clean staging directory for GitHub Pages root
           mkdir staging
           
-          # 2. Sync Landing Page (Doraemon Door) from docs to staging root
-          # This ensures docs/index.html becomes the main entry point
-          cp -r docs/* staging/
+          # 2. Sync Landing Page / Static Assets (The 'Doraemon Door')
+          if [ -d "docs" ]; then
+            cp -r docs/* staging/
+          fi
           
-          # 3. Mount Flutter Build as a sub-surface under /app
+          # 3. Mount Flutter Build as the Sovereign sub-surface under /app
           mkdir -p staging/app
           cp -r client/build/web/* staging/app/
           
-          # Audit Log: Verify structure before upload
+          # 4. Cleanup: Remove sourcemaps to protect sovereign logic privacy
+          rm -f staging/app/main.dart.js.map
+          
           echo "🏛️ STAGING STRUCTURE AUDIT:"
           ls -R staging
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      - name: Setup Pages Configuration
+        uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Upload Sovereign Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          # Only upload the clean, merged staging area
+          # Only the clean, merged staging area is uploaded to the edge
           path: staging
 
-      - name: Deploy to GitHub Pages
+      - name: Finalize Deployment to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

@@ -1,8 +1,3 @@
-# ==============================================================================
-# NEXUS PROTOCOL - MASTER GITIGNORE (PHASE 1.3.1 HARDENED)
-# ==============================================================================
-
-# --- 🔐 SENSITIVE DATA (CRITICAL) ---
 .env
 .env.*
 *.properties
@@ -11,7 +6,6 @@ local.properties
 *.keystore
 secrets.json
 
-# --- 🛠️ TOOLS & BINARIES ---
 ngrok.exe
 ngrok
 *.exe
@@ -19,19 +13,18 @@ ngrok
 *.so
 *.dylib
 
-# --- 🛰️ NEXUS SOVEREIGN VAULT (HARDENED) ---
-# Primary Logic: Catch the master ledger
+adapters/.staged/
+adapters/*.json
+!adapters/base.py
+
 **/nexus_vault.db*
 **/*.db-journal
 **/*.db-wal
 **/*.db-shm
 
-# --- 🔒 LOCAL RUNTIME STATE (OPTIONAL REFINEMENT) ---
-# Secondary Logic: Catch accidental sqlite clones/temp files
 *.sqlite
 *.sqlite3
 
-# --- 🧠 PYTHON / FASTAPI (BRAIN) ---
 __pycache__/
 *.py[cod]
 *$py.class
@@ -43,51 +36,41 @@ htmlcov/
 venv/
 env/
 
-# Scoped ignores (Does not touch lib/ source code)
 backend/dist/
 backend/build/
 backend/*.egg-info/
 
-# --- 📱 FLUTTER / DART (BODY) ---
-# We keep client/lib/ tracked, but ignore the compiler's machinery
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
 
-# Recursive build outputs
 **/build/
 
-# Flutter Web & Chrome Artifacts (CI Stability)
 **/.dart_tool/chrome-device/
 **/web/index.html.tmp
 **/web/flutter_bootstrap.js
 
-# OS/Platform ephemeral artifacts
 **/linux/flutter/ephemeral/
 **/windows/flutter/ephemeral/
 **/ios/Flutter/.last_build_id
 **/ios/Flutter/App.framework
 
-# --- 📊 LOGS & TELEMETRY ---
 *.log
 logs/
 stress_results.json
 nexus_sentry.log
+benchmarks/*.csv
+benchmarks/*.parquet
+stress_test_report.html
 
-# --- 💻 IDE / SYSTEM ---
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 *.swp
 desktop.ini
-*.user
-*.suo
-*.sln
 
-# --- 🗑️ JUNK & GHOST ARTIFACTS ---
-mkdir
 *.tmp
 temp/

@@ -37,16 +37,22 @@
         <h1>Data Sovereignty</h1>
         <div class="badge">Absolute Ownership Principles</div>
         
-<div class="legal-block">
-    <h3>01. Local-First Persistence</h3>
-    <p>All ledger entries and identity hashes are stored in the <code>nexus_vault.db</code> on your local hardware. No sensitive data is transmitted to centralized cloud servers.</p>
-</div>
-<div class="legal-block">
-    <h3>02. Sentry Integrity</h3>
-    <p>The Sentry Bridge extracts only necessary context for authentication. We implement a Sovereign Sentry Page to bypass third-party interstitials while maintaining handshake security.</p>
-</div>
+        <div class="legal-block">
+            <h3>01. Zero-Leakage Persistence</h3>
+            <p>All ledger entries and identity context are stored locally in the <code>nexus_vault.db</code>. The Nexus Brain is non-custodial and operates on a zero-leakage model; no sensitive state is ever transmitted to centralized cloud servers.</p>
+        </div>
 
-        <div class="footer">// END_OF_LEGAL_SPEC // NEXUS_PROTOCOL_2026</div>
+        <div class="legal-block">
+            <h3>02. Infrastructure Sovereignty</h3>
+            <p>Nexus utilizes header-based bypass logic to maintain handshake integrity over Ngrok tunnels. This ensures that environmental context resolution occurs without exposing internal node structures to public indexing or third-party collection.</p>
+        </div>
+
+        <div class="legal-block">
+            <h3>03. Regulatory Responsibility</h3>
+            <p>Nexus is a neutral sovereign tool. Responsibility for compliance with local data regulations and the ethical management of the local vault rests solely with the Node Operator deploying the software.</p>
+        </div>
+
+        <div class="footer">// END_OF_LEGAL_SPEC // NEXUS_PROTOCOL_2026 // LOCAL_FIRST_VERIFIED</div>
     </div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>

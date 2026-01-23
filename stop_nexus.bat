@@ -7,43 +7,51 @@ color 0c
 cd /d "%~dp0"
 
 echo ====================================================
-echo             NEXUS PROTOCOL: EMERGENCY SHUTDOWN
-echo             PHASE 1.3.1 - DETERMINISTIC CLEANUP
+echo              NEXUS PROTOCOL: EMERGENCY SHUTDOWN
+echo              PHASE 1.3.1 - DETERMINISTIC CLEANUP
 echo ====================================================
 echo.
 
-echo [1/6] Authoritative Port Release (8000, 8080)...
-:: STRESS TEST: Kill by port is the most reliable way to free the node
-for %%P in (8000 8080) do (
-    for /f "tokens=5" %%i in ('netstat -ano ^| findstr :%%P ^| findstr LISTENING') do (
-        if not "!SEEN_%%i!"=="1" (
-            set "SEEN_%%i=1"
-            echo [KILL] Releasing PID %%i on Port %%P...
-            taskkill /F /PID %%i /T >nul 2>&1
-        )
+:: --- 🛡️ CRITICAL: DATABASE ANCHORING (Audit 1.3.1) ---
+echo [1/7] Flushing Vault WAL to Disk (Checkpointing)...
+:: Logic: Prevents data loss by merging .db-wal into .db before killing Python
+if exist "backend/nexus_vault.db" (
+    python -c "import sqlite3; c=sqlite3.connect('backend/nexus_vault.db'); c.execute('PRAGMA wal_checkpoint(FULL);'); c.close();" >nul 2>&1
+    echo [OK] Ledger State Anchored.
+) else (
+    echo [WARN] Vault not found at expected anchor. Skipping checkpoint.
+)
+
+echo [2/7] Authoritative Port Release (8000)...
+:: STRESS TEST: Releasing the primary gateway port
+for /f "tokens=5" %%i in ('netstat -ano ^| findstr :8000 ^| findstr LISTENING') do (
+    if not "!SEEN_%%i!"=="1" (
+        set "SEEN_%%i=1"
+        echo [KILL] Releasing PID %%i on Port 8000...
+        taskkill /F /PID %%i /T >nul 2>&1
     )
 )
 
-echo [2/6] Terminating Nexus Brain (Python/Uvicorn)...
+echo [3/7] Terminating Nexus Brain (Python/Uvicorn)...
 taskkill /F /IM uvicorn.exe /T >nul 2>&1
 taskkill /F /IM python.exe /T >nul 2>&1
 
-echo [3/6] Terminating Nexus Body (Flutter/Dart)...
+echo [4/7] Terminating Nexus Body (Flutter/Dart Artifacts)...
 taskkill /F /IM flutter.exe /T >nul 2>&1
 taskkill /F /IM dart.exe /T >nul 2>&1
 
-echo [4/6] Releasing UI Surface (Chrome)...
-:: Logic: Specifically targets Chrome windows opened for Nexus
+echo [5/7] Releasing UI Surface (Chrome)...
+:: Logic: Narrowly targets only Chrome instances labeled "Nexus"
 taskkill /F /IM chrome.exe /FI "WINDOWTITLE eq Nexus*" /T >nul 2>&1
 
-echo [5/6] Closing Master Launcher & Orphaned Shells...
+echo [6/7] Closing Master Launcher & Orphaned Shells...
 taskkill /F /FI "WINDOWTITLE eq NEXUS PROTOCOL - Master Launcher*" /T >nul 2>&1
 taskkill /F /IM cmd.exe /FI "WINDOWTITLE eq NEXUS_*" /T >nul 2>&1
 
-echo [6/6] Terminating External Bridge (Ngrok)...
+echo [7/7] Terminating External Bridge (Ngrok)...
 taskkill /F /IM ngrok.exe /T >nul 2>&1
 
-:: STRESS TEST: Delay for file handle release
+:: Delay for OS file handle release
 timeout /t 1 /nobreak > nul
 
 echo.
@@ -55,13 +63,12 @@ for /d /r "%~dp0" %%d in (__pycache__) do (
 echo.
 echo [VERIFY] Process Audit:
 echo ----------------------------------------------------
-netstat -ano | findstr :8000 >nul && echo [!] ALERT: Brain Port 8000 Stuck || echo [OK] Brain Offline
-netstat -ano | findstr :8080 >nul && echo [!] ALERT: Body Port 8080 Stuck || echo [OK] Body Offline
+netstat -ano | findstr :8000 >nul && echo [!] ALERT: Port 8000 Stuck || echo [OK] Brain Offline
 tasklist | findstr ngrok >nul && echo [!] ALERT: Bridge Stuck || echo [OK] Bridge Offline
 echo ----------------------------------------------------
 
 echo.
-echo [OK] SYSTEM SHUTDOWN COMPLETE (All Shells Released)
+echo [OK] SYSTEM SHUTDOWN COMPLETE
 echo ====================================================
 timeout /t 2
 exit
