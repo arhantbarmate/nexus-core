@@ -214,8 +214,15 @@
             position: absolute; left: -1.5px;
             animation: drop 2s infinite linear;
         }
-        .d-dot.red { background: var(--status-red); box-shadow: 0 0 8px var(--status-red); }
+        /* COSMETIC FIX: Red dot flows UP (Attacker -> Tunnel) */
+        .d-dot.red { 
+            background: var(--status-red); 
+            box-shadow: 0 0 8px var(--status-red); 
+            animation: rise 2s infinite linear;
+        }
+
         @keyframes drop { 0%{top:0; opacity:1;} 100%{top:100%; opacity:0;} }
+        @keyframes rise { 0%{top:100%; opacity:1;} 100%{top:0; opacity:0;} }
 
         .footer-bar {
             margin-top: 6rem;
