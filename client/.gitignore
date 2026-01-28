@@ -1,12 +1,49 @@
-# Standard Flutter/Dart Ignore
+# ====================================================
+# 🛠️ FLUTTER & DART CORE
+# ====================================================
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-.packages
+build/
 .pub-cache/
 .pub/
-build/
+flutter_export_environment.sh
 
-# Ignore sensitive local settings
+# Optional (Safe): Coverage artifacts from tests
+coverage/
+
+# ====================================================
+# 🛡️ SECURITY & SECRETS (Audit 1.0)
+# ====================================================
 .env
+.env.*
+*.pem
+*.key
+auth_keys.json
+
+# Optional (Safe): Local credentials or temp auth dumps
+*.secret
+*.credentials
+
+# ====================================================
+# 🧹 IDE & EDITORS (Audit 2.0: Repo-Agnostic)
+# ====================================================
+.idea/
+.vscode/
 *.iml
+*.ipr
+*.iws
+
+# ====================================================
+# 🗑️ OS CLUTTER (Audit 3.0: Junk Commit Prevention)
+# ====================================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ====================================================
+# 📦 LOGS & CRASHES
+# ====================================================
+*.log
+crashlytics.log

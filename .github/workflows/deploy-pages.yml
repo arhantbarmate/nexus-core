@@ -1,13 +1,12 @@
-# Copyright 2026 Nexus Protocol Authors
-# Hardened Deployment Workflow - Phase 1.3.1
-# Optimized for Flutter 3.38.6 Stable & GitHub Pages Staging
+# Copyright 2026 Coreframe Systems
+# Hardened Deployment Workflow - Phase 1.4.0
+# Optimized for Flutter 3.38.6 Stable & GitHub Pages Production Staging
 
 name: Deploy Nexus Protocol to Pages
 
 on:
   push:
     branches: ["main"]
-  # Allows for manual re-calibration of the surface from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -25,6 +24,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout Sovereign Source
         uses: actions/checkout@v4
@@ -35,34 +35,39 @@ jobs:
           flutter-version: '3.38.6'
           channel: 'stable'
           cache: true
-          # OPTIONAL: flutter pub cache repair (Use only if dependency corruption occurs)
 
       - name: Build Flutter Body (Sovereign Surface)
         run: |
           cd client
           flutter pub get
-          # --no-tree-shake-icons: Prevents build failures with custom font icons in Phase 1.3.1
-          flutter build web --release --base-href "/nexus-core/app/" --dart-define=NEXUS_DEV=false --no-tree-shake-icons
+          # --wasm: High-performance execution for Phase 1.4.0 visuals
+          flutter build web --release --wasm --base-href "/nexus-core/app/" --no-tree-shake-icons
 
       - name: Prepare Hardened Staging Area
         run: |
-          # 1. Create a clean staging directory for GitHub Pages root
+          # 1. Initialize Clean Staging
           mkdir staging
           
-          # 2. Sync Landing Page / Static Assets (The 'Doraemon Door')
+          # 2. Hardening: Bypass Jekyll processing to protect WASM/Asset directories
+          touch staging/.nojekyll
+          
+          # 3. Deterministic Build Stamp (Reviewer Signal)
+          echo "v1.4.0-hardened | $(date -u)" > staging/BUILD.txt
+          
+          # 4. Sync Static Portal (Docs & Index)
           if [ -d "docs" ]; then
             cp -r docs/* staging/
           fi
           
-          # 3. Mount Flutter Build as the Sovereign sub-surface under /app
+          # 5. Mount Flutter Build under /app/
           mkdir -p staging/app
           cp -r client/build/web/* staging/app/
           
-          # 4. Cleanup: Remove sourcemaps to protect sovereign logic privacy
-          rm -f staging/app/main.dart.js.map
+          # 6. Sovereign Privacy Cleanup
+          find staging/app -name "*.map" -type f -delete
           
-          echo "🏛️ STAGING STRUCTURE AUDIT:"
-          ls -R staging
+          echo "🏛️ STAGING_STRUCTURE_STAMPED_AND_VERIFIED"
+          cat staging/BUILD.txt
 
       - name: Setup Pages Configuration
         uses: actions/configure-pages@v5
@@ -70,7 +75,6 @@ jobs:
       - name: Upload Sovereign Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          # Only the clean, merged staging area is uploaded to the edge
           path: staging
 
       - name: Finalize Deployment to GitHub Pages

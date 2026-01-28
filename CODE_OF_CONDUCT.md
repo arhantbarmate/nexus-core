@@ -1,33 +1,42 @@
-# 🤝 Code of Conduct — Nexus Protocol (v1.3.1)
+# 🤝 Code of Conduct — Nexus Protocol
+**Coreframe Systems Lab | Version 1.4.0**
 
-Nexus is a professional DePIN ecosystem dedicated to architectural sovereignty and economic integrity. This Code of Conduct supplements GitHub’s Community Guidelines and applies specifically to Nexus Protocol development and operations.
+The Nexus Protocol is a professional infrastructure environment dedicated to architectural sovereignty and economic integrity. This Code of Conduct governs all interactions within the Coreframe Systems ecosystem.
 
 ---
 
 ## 🛡️ Sovereign Principles
 
-1. **Sovereignty First:** We uphold the user's right to local execution and data ownership. Software should prioritize the local "Brain" over centralized cloud dependency.
-2. **Integrity of the Invariant:** Respect the **60/30/10 Deterministic Split**. Any attempt to circumvent or obfuscate the protocol's economic distribution is considered incompatible with the core mission.
-3. **Resilience over Hype:** We value verified engineering, documented stress tests, and durability-first development over speculative claims or marketing-driven roadmaps.
+1. **Sovereignty First:** We uphold the user's right to local execution and absolute data ownership. Contributions must prioritize the local "Brain" and deterministic logic over centralized cloud dependencies.
+2. **Integrity of the Invariant:** Respect the **60/30/10 Deterministic Split**. This is a hard-coded economic axiom. Any attempt to circumvent or obfuscate this distribution is incompatible with the Coreframe mission.
+3. **Resilience over Hype:** We value verified engineering, documented stress tests, and durability-first development. Speculative claims or "vaporware" roadmaps are prohibited.
 
 ---
 
 ## 📜 Standards of Conduct
 
-* **Technical Integrity:** Claims regarding performance, security, or decentralization must be supported by reproducible logs or code.
-* **Professional Collaboration:** We maintain a focused, technical environment. Interactions should be constructive and aligned with the "Nexus Universal Hardening" objectives.
-* **Transparency:** Document environmental assumptions (e.g., hardware requirements, ngrok usage) clearly to ensure fellow operators can reproduce sovereign states.
+* **Technical Integrity:** Claims regarding performance, security, or decentralization must be supported by reproducible logs, code, or peer-reviewed benchmarks.
+* **Professional Collaboration:** We maintain a high-signal, technical environment. Interactions must be constructive, evidence-based, and aligned with the "Universal Hardening" objectives.
+* **Environmental Transparency:** Document all hardware assumptions and ingress requirements (e.g., Zero Trust Tunnels) clearly.
+
+---
+
+## 🤝 Professional Respect
+
+Coreframe Systems maintains a harassment-free environment for contributors regardless of background, identity, or affiliation. Harassment, personal attacks, or discriminatory behavior are not tolerated. Enforcement actions may include contribution rejection, access revocation, or permanent removal from project spaces. 
+
+**This policy exists to protect technical focus and professional collaboration.**
 
 ---
 
 ## 📧 Reporting & Governance
 
-Report violations of this code or security vulnerabilities directly to the maintainers:
+Violations of this code or security vulnerabilities should be reported directly to Coreframe Systems Engineering:
 
 * **Lead Maintainer:** Arhant Barmate
-* **Primary:** arhantbarmate@gmail.com
-* **Secondary:** arhant6armate@outlook.com
+* **Official Channel:** ```infrastructure@coreframe.systems```
+* **Secondary:** ```arhantbarmate@gmail.com```
 
 ---
-
-© 2026 Nexus Protocol · Community Specification v1.3.1
+© 2026 Coreframe Systems · Community Specification v1.4.0  
+*This document governs conduct and does not override project licensing.*

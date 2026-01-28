@@ -1,30 +1,45 @@
+# =================================================================
+# 1. THE VAULT (Zero Leakage Policy)
+# =================================================================
 .env
 .env.*
-*.properties
-local.properties
+secrets.json
 *.jks
 *.keystore
-secrets.json
+*.properties
+local.properties
 
-ngrok.exe
+# =================================================================
+# 2. SOVEREIGN STORAGE (Local-First Persistence)
+# =================================================================
+# Exclude all database files and transient SQLite states
+**/nexus_vault.db*
+**/*.db-journal
+**/*.db-wal
+**/*.db-shm
+*.sqlite
+*.sqlite3
+
+# =================================================================
+# 3. TRANSPORT & BINARIES (Ingress Isolation)
+# =================================================================
 ngrok
+ngrok.exe
 *.exe
 *.dll
 *.so
 *.dylib
 
+# =================================================================
+# 4. PROTOCOL ADAPTERS (Staged Logic)
+# =================================================================
 adapters/.staged/
 adapters/*.json
 !adapters/base.py
 
-**/nexus_vault.db*
-**/*.db-journal
-**/*.db-wal
-**/*.db-shm
-
-*.sqlite
-*.sqlite3
-
+# =================================================================
+# 5. BRAIN (Python Execution Environment)
+# =================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -35,28 +50,30 @@ htmlcov/
 .venv/
 venv/
 env/
-
 backend/dist/
 backend/build/
 backend/*.egg-info/
 
+# =================================================================
+# 6. BODY (Flutter Execution Surface)
+# =================================================================
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-
 **/build/
-
 **/.dart_tool/chrome-device/
 **/web/index.html.tmp
 **/web/flutter_bootstrap.js
-
 **/linux/flutter/ephemeral/
 **/windows/flutter/ephemeral/
 **/ios/Flutter/.last_build_id
 **/ios/Flutter/App.framework
 
+# =================================================================
+# 7. OBSERVABILITY & TELEMETRY (Local Logs Only)
+# =================================================================
 *.log
 logs/
 stress_results.json
@@ -65,12 +82,14 @@ benchmarks/*.csv
 benchmarks/*.parquet
 stress_test_report.html
 
+# =================================================================
+# 8. SYSTEM & IDE (Metadata Noise)
+# =================================================================
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 *.swp
 desktop.ini
-
 *.tmp
 temp/

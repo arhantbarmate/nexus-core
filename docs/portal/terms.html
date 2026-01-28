@@ -24,6 +24,8 @@
         .legal-block::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: var(--accent-blue); }
         h3 { font-family: 'JetBrains Mono', monospace; color: #fff; font-size: 1.2rem; margin: 0 0 1rem; }
         p { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; margin: 0; }
+        ul { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; margin: 1rem 0 0; padding-left: 1.2rem; }
+        li { margin-bottom: 0.5rem; }
         .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
     </style>
 </head>
@@ -31,35 +33,52 @@
     <div id="particles-js"></div>
     <nav class="nav">
         <a href="../index.html">// RETURN_TO_TERMINAL</a>
-        <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">PROTOCOL_v1.3.1</div>
+        <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">PROTOCOL_v1.4.0</div>
     </nav>
     <div class="container">
         <h1>Terms of Service</h1>
-        <div class="badge">Non-Custodial Protocol Agreement</div>
+        <div class="badge">Sovereign Infrastructure Agreement</div>
         
-<div class="legal-block">
-    <h3>01. Node Operator Sovereignty</h3>
-    <p>Nexus is a self-hosted execution engine. The Operator maintains absolute responsibility for hardware security and regulatory compliance. Nexus Protocol does not constitute a hosted service, financial product, or custodial system.</p>
-</div>
+        <div class="legal-block">
+            <h3>01. Node Operator Sovereignty</h3>
+            <p>Nexus is a sovereign infrastructure suite. The Node Operator is exclusively responsible for:</p>
+            <ul>
+                <li><strong>Hardware & Security:</strong> The physical and digital hardening of the hosting environment.</li>
+                <li><strong>Vault Integrity:</strong> The maintenance, encryption, and backup of the local persistence layer (<code>nexus_vault.db</code>).</li>
+                <li><strong>Regulatory Compliance:</strong> Adherence to all applicable local data, privacy (GDPR/CCPA), and financial regulations.</li>
+            </ul>
+            <p style="margin-top: 1rem;">Nexus Protocol is not a hosted service, a financial product, or a custodial system. It is a self-hosted execution engine operated entirely at the discretion and responsibility of the Node Operator.</p>
+        </div>
 
-<div class="legal-block">
-    <h3>02. Deterministic Economics</h3>
-    <p>Phase 1.3.1 utilizes a local-first ledger with "Soft Finality" for the hardcoded 60/30/10 split invariant. Future anchoring to external verification layers (peaq/IoTeX) will be subject to the independent governance of those networks.</p>
-</div>
+        <div class="legal-block">
+            <h3>02. Economic Axioms</h3>
+            <p>The <strong>60/30/10 split</strong> is a deterministic, integer-based accounting rule.</p>
+            <ul>
+                <li><strong>Local Ledger:</strong> All transactions are recorded on a local-first ledger of truth.</li>
+                <li><strong>Soft Finality:</strong> Phase 1.4.0 provides "Local Soft Finality". Future anchoring to external networks (e.g., peaq, IoTeX) is subject to separate terms and consensus rules.</li>
+            </ul>
+        </div>
 
+        <div class="legal-block">
+            <h3>03. "Fail-Closed" Operational Logic</h3>
+            <p>The protocol utilizes a <strong>Fail-Closed</strong> security model to preserve data integrity.</p>
+            <ul>
+                <li><strong>Execution Cease:</strong> In the event of identity resolution failure or Sentry Bridge interruption, the protocol will immediately cease execution to protect the Sovereign Vault.</li>
+                <li><strong>Routing Hygiene:</strong> Use of the protocol requires the operator to maintain ingress-specific routing configuration (including required headers) to ensure deterministic routing and tunnel stability.</li>
+            </ul>
+        </div>
 
+        <div class="legal-block" style="border-left-color: rgba(255,255,255,0.1); opacity: 0.8;">
+            <h3>04. No Liability & "As-Is" Warranty</h3>
+            <p style="font-size: 0.85rem;">Nexus Protocol is provided "as-is" without warranty of any kind. Coreframe Systems and its contributors are not liable for:</p>
+            <ul>
+                <li style="font-size: 0.85rem;">Any financial loss or accounting discrepancy resulting from ledger state.</li>
+                <li style="font-size: 0.85rem;">Data corruption arising from hardware failure, power loss, or improper node termination.</li>
+                <li style="font-size: 0.85rem;">Indirect or consequential damages resulting from the use of this infrastructure.</li>
+            </ul>
+        </div>
 
-<div class="legal-block">
-    <h3>03. Fail-Closed & Handshake Hygiene</h3>
-    <p>To protect the Sovereign Vault, the system employs a Fail-Closed model. Use of the protocol during development requires specific client-supplied headers to ensure routing stability over tunnel environments (e.g., Ngrok).</p>
-</div>
-
-<div class="legal-block" style="border-left-color: rgba(255,255,255,0.1); opacity: 0.8;">
-    <h3>04. No Liability Warranty</h3>
-    <p style="font-size: 0.85rem;">The protocol is provided "as-is." Developers are not liable for financial loss, data corruption from hardware failure, or any consequential damages resulting from this experimental software.</p>
-</div>
-
-        <div class="footer">// END_OF_LEGAL_SPEC // NEXUS_PROTOCOL_2026 // AUDIT_READY</div>
+        <div class="footer">// END_OF_LEGAL_SPEC // COREFRAME_SYSTEMS_2026 // TERMS_v1.4.0</div>
     </div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>

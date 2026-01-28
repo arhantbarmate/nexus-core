@@ -1,29 +1,29 @@
-# 🛡️ Data Sovereignty — Nexus Protocol (v1.3.1)
+# 🛡️ Data Sovereignty — Nexus Protocol
+**Coreframe Systems Lab | Version 1.4.0**
 
 Nexus is architected on the principle of **Absolute Data Sovereignty**. As a local-first gateway, the protocol ensures that data ownership remains strictly with the Node Operator. 
 
 ---
 
 ## 🔒 Local-First Persistence
-* **Sovereign Vault:** All ledger entries, identity hashes, and transaction logs are stored in a local SQLite database (```nexus_vault.db```).
-* **Zero Cloud Leakage:** The Nexus Brain does not transmit sensitive user data or economic state to centralized servers. All **60/30/10 splits** are computed and persisted locally on your hardware.
-* **Non-Custodial:** The protocol is an accounting engine, not a wallet. It does not custody private keys or external assets; it manages a local deterministic ledger.
+* **Sovereign Vault:** All ledger entries, identity hashes, and transaction logs are stored in a local, encrypted-at-rest (optional) SQLite database (```nexus_vault.db```).
+* **Zero Cloud Leakage:** The Nexus Brain does not transmit sensitive user data or economic state to centralized servers. All **60/30/10 splits** are computed and persisted locally on your own hardware.
+* **Non-Custodial Integrity:** The protocol is a deterministic accounting engine. It does not custody private keys or external assets; it manages a local, unassailable ledger of truth.
 
 ---
 
-## 🛰️ Identity & Tunneling
-
-* **Sentry Guard:** The perimeter extracts only the minimal environmental context (```initData``` or HMAC) required for identity resolution. 
-* **Tunneling Resilience:** While Ngrok facilitates connectivity, Nexus utilizes header-based bypass logic (```ngrok-skip-browser-warning```) to maintain handshake integrity without exposing the internal node structure to public indexing or third-party data collection.
+## 🛰️ Identity & Hardened Ingress
+* **Sentry Guard:** The perimeter extracts only the minimal environmental context required for identity resolution (e.g., cryptographic signatures or ```initData``` hashes). 
+* **Tunneling Resilience:** Nexus utilizes ingress-agnostic header injection to maintain handshake integrity. This ensures that the node can communicate across public networks without exposing its internal structure to indexing or third-party data harvesting.
 
 ---
 
 ## ⚖️ Operator & User Rights
 Users interacting with a Nexus Node are interacting directly with the Node Operator's sovereign hardware.
-* **No Backdoors:** Nexus Protocol (the software) does not have a master key, administrative backdoor, or telemetry reporting to the developers.
-* **Compliance Responsibility:** Responsibility for compliance with local data regulations rests with the Node Operator deploying the software.
-* **Auditability:** The local vault is accessible to the operator for manual audit via standard SQLite tools, ensuring total transparency of the **durability-first** ledger.
+* **Zero Telemetry:** Coreframe Systems (the developers) does not include master keys, administrative backdoors, or telemetry reporting. We cannot see your data, your splits, or your uptime.
+* **Auditability:** The local vault is 100% accessible to the operator via standard SQLite tools, ensuring total transparency of the **durability-first** ledger.
+* **Compliance Responsibility:** As a sovereign tool, responsibility for compliance with local data regulations (GDPR/CCPA) rests with the Node Operator deploying the hardware.
 
 ---
-
-© 2026 Nexus Protocol · Data Sovereignty Policy v1.3.1
+© 2026 Coreframe Systems · Data Sovereignty Specification v1.4.0  
+*Your Node. Your Data. Your Sovereignty.*

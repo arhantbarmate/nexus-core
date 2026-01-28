@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
 
 import 'package:flutter/foundation.dart';
 
-/// 🏛️ VAULT TRANSACTION MODEL (Phase 1.3.1)
+/// 🏛️ VAULT TRANSACTION MODEL (Phase 1.4.0)
 /// This class handles the serialization of ledger events from the Sovereign Brain.
 /// Hardened to absorb malformed JSON and maintain numeric precision.
 class VaultTransaction {
@@ -26,8 +26,9 @@ class VaultTransaction {
   final double networkFee;
   final String timestamp;
   final String type;
+  final String? hash; // Phase 2.0 Readiness (Merkle Proof)
 
-  VaultTransaction({
+  const VaultTransaction({
     required this.id,
     required this.userId,
     required this.amount,
@@ -36,6 +37,7 @@ class VaultTransaction {
     required this.networkFee,
     required this.timestamp,
     this.type = "split",
+    this.hash,
   });
 
   factory VaultTransaction.fromJson(final Map<String, dynamic> json) {
@@ -48,6 +50,7 @@ class VaultTransaction {
       userId: json['user_id']?.toString() ?? "999",
       
       // Numeric safety: Prevents 'int is not a subtype of double' crashes
+      // This is critical for 10M load stability.
       amount: (json['amount'] as num? ?? 0.0).toDouble(),
       creatorShare: (json['creator_share'] as num? ?? 0.0).toDouble(),
       
@@ -62,6 +65,9 @@ class VaultTransaction {
           
       // Audit 4: Forward-compatible type field
       type: json['type'] as String? ?? "split",
+
+      // Phase 2.0: Optional hash for future cryptographic verification
+      hash: json['hash'] as String?,
     );
   }
 
@@ -69,10 +75,16 @@ class VaultTransaction {
   /// Converts UTC ledger timestamp to local machine time for operator clarity.
   String get formattedTime {
     try {
+      // NOTE: For Phase 2.0 (if list rendering becomes heavy):
+      // Consider caching this as `late final DateTime _parsedTime` to avoid 
+      // re-parsing on every build. For Phase 1.x, Sliver virtualization 
+      // makes this optimization unnecessary (simple is safe).
+      
       final dt = DateTime.parse(timestamp).toLocal(); 
       return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
     } catch (e) {
-      debugPrint("🏛️ [Model] Timestamp_Parse_Error: $e");
+      // Fail silent in Prod to avoid UI flicker
+      if (kDebugMode) debugPrint("🏛️ [Model] Timestamp_Parse_Error: $e");
       return "00:00:00";
     }
   }

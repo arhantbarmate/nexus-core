@@ -1,5 +1,12 @@
+# ====================================================
+# NEXUS PROTOCOL: GLOBAL ATTRIBUTES (v1.4.0)
+# ====================================================
+# Phase 1.4.0: Sovereign Edge Node Standard
+# Goal: Ensure cross-platform logic consistency
+# ====================================================
+
 # --------------------------------------------------
-# 1. Global normalization
+# 1. Global Normalization
 # --------------------------------------------------
 * text=auto eol=lf
 
@@ -9,7 +16,9 @@
 *.py text eol=lf
 requirements.txt text eol=lf
 *.ini text eol=lf
-*.env.example text eol=lf
+
+# Option A: Protect Environment Blueprints from Merge Corruption
+*.env.example text eol=lf -merge
 
 # --------------------------------------------------
 # 3. Dart / Flutter (The Body)
@@ -23,11 +32,15 @@ requirements.txt text eol=lf
 *.wasm binary
 
 # --------------------------------------------------
-# 4. Shell & Automation
+# 4. Shell & Automation (OS Specific)
 # --------------------------------------------------
 *.sh text eol=lf
 *.bat text eol=crlf
 *.cmd text eol=crlf
+
+# Option B: Docker Invariant Protection (Container Readiness)
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
 
 # --------------------------------------------------
 # 5. Markdown / Documentation
@@ -39,6 +52,7 @@ LICENSE text eol=lf
 # --------------------------------------------------
 # 6. Database & Binary (Merge-Protected)
 # --------------------------------------------------
+# Protected Sovereign Vault - Git must never attempt to merge .db files
 *.db binary -merge
 *.db-wal binary -merge
 *.db-shm binary -merge
@@ -55,7 +69,7 @@ LICENSE text eol=lf
 *.svg text eol=lf
 
 # --------------------------------------------------
-# 8. Executables
+# 8. Executables & System Binaries
 # --------------------------------------------------
 *.exe binary
 *.dll binary
@@ -63,7 +77,7 @@ LICENSE text eol=lf
 *.dylib binary
 
 # --------------------------------------------------
-# 9. C / C++
+# 9. Hardware Adapters (C / C++)
 # --------------------------------------------------
 *.c text eol=lf
 *.cc text eol=lf

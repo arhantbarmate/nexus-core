@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus Architecture | Sovereign Specs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-black: #050505;
@@ -62,6 +62,7 @@
         .mod-id { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.7rem; margin-bottom: 1rem; }
         h3 { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; margin: 0 0 1rem; color: #fff; }
         p { color: var(--text-dim); line-height: 1.8; font-size: 1rem; margin: 0; }
+        ul { color: var(--text-dim); line-height: 1.8; font-size: 1rem; margin: 1rem 0 0; padding-left: 1.2rem; }
         code { font-family: 'JetBrains Mono', monospace; color: #fff; background: rgba(99, 102, 241, 0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
 
         .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
@@ -78,39 +79,45 @@
 
 <nav class="nav">
     <a href="../index.html">// RETURN_TO_TERMINAL</a>
-    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">SPEC_ID: ARCH_1.3.1</div>
+    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">SPEC_ID: ARCH_1.4.0</div>
 </nav>
 
 <div class="container">
-    <h1>Architecture</h1>
-    <div class="badge">Sovereign Gateway &middot; Verify-then-Execute</div>
+    <h1>System Architecture</h1>
+    <div class="badge">Sovereign Edge Gateway &middot; Verify-then-Execute</div>
 
     <div class="spec-block">
-        <div class="mod-id">MOD_01 // IDENTITY_PERIMETER</div>
-        <h3>The Sentry Guard</h3>
-        <p>Nexus utilizes a <code>Fail-Closed</code> identity perimeter. All state transitions are anchored via the <strong>Sentry Guard</strong> to resolve environmental context. Requests failing context resolution are immediately issued a <code>Rejection Response</code>, protecting the 60/30/10 ledger integrity.</p>
+        <div class="mod-id">MOD_01 // THE_SENTRY_BRIDGE</div>
+        <h3>Hardened Ingress</h3>
+        <p>The <strong>Sentry</strong> acts as a "Fail-Closed" perimeter. Every request is treated as untrusted until the environment context and <code>initData</code> are resolved. Validated requests are passed to the Brain, while identity conflicts trigger an immediate <code>403 Forbidden</code> response.</p>
     </div>
 
     <div class="spec-block">
-        <div class="mod-id">MOD_02 // PERSISTENCE_LOGIC</div>
-        <h3>The Sovereign Brain</h3>
-        <p>A unidirectional state machine built on <strong>FastAPI</strong> and <strong>SQLite (WAL Mode)</strong>. Successfully verified under a <strong>1-Million Transaction Stress Test</strong> with no observed data corruption, maintaining a <code>Durability-First</code> commit cycle for all economic settlements.</p>
+        <div class="mod-id">MOD_02 // THE_DETERMINISTIC_BRAIN</div>
+        <h3>Unidirectional Logic</h3>
+        <p>A high-performance state machine utilizing <strong>FastAPI</strong> and <strong>SQLite (WAL Mode)</strong>. Every transaction enforces a strict <strong>60/30/10 Allocation Protocol</strong>:</p>
+        <ul>
+            <li><strong>60% Settlement:</strong> Direct node/content provider allocation.</li>
+            <li><strong>30% Redistribution:</strong> User/Community yield pool.</li>
+            <li><strong>10% Protocol:</strong> Network maintenance & sustainability.</li>
+        </ul>
+        <p style="margin-top:1rem;">Verified via a <strong>1-Million Transaction stress test</strong> to ensure zero write-collisions on edge hardware.</p>
     </div>
 
     <div class="spec-block">
-        <div class="mod-id">MOD_03 // INTERFACE_SURFACE</div>
-        <h3>The Execution Body</h3>
-        <p>The Flutter-based "Body" acts as a stateless surface, extracting Telegram WebApp <code>initData</code> for server-side verification. Compiled with <code>base-href /nexus-core/app/</code> to ensure structural isolation between protocol execution and documentation layers.</p>
+        <div class="mod-id">MOD_03 // THE_EXECUTION_BODY</div>
+        <h3>Stateless Surface</h3>
+        <p>The Flutter-based "Body" communicates exclusively through the <strong>Sentry Bridge</strong>. It features native support for Telegram WebApp <code>initData</code> and sovereign backup bridges for local-first recovery. Path isolation prevents side-channel data leakage.</p>
     </div>
 
     <div class="spec-block">
         <div class="mod-id">MOD_04 // INFRASTRUCTURE</div>
         <h3>Tunneling Resilience</h3>
-        <p>Optimized for sovereign deployment, the architecture implements <strong>Header-Based Gateway Handling</strong> to bypass third-party tunnel interstitials. This ensures seamless headless handshakes for Telegram Mini Apps on edge hardware.</p>
+        <p>Optimized for Zero Trust tunnels (Reference Implementation: <strong>Cloudflare Tunnel</strong>). The architecture is engineered to eliminate interstitial handshakes and remain portable; the <code>.db</code> vault can be re-anchored to any compliant node without state loss.</p>
     </div>
 
     <div class="footer">
-        // END OF SPECIFICATION // NEXUS_PROTOCOL_2026 // PHASE_1.3.1_HARDENED
+        // END OF SPECIFICATION // COREFRAME_SYSTEMS_2026 // PHASE_1.4.0_HARDENED
     </div>
 </div>
 

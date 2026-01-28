@@ -1,8 +1,8 @@
-# Copyright 2026 Nexus Protocol Authors
-# Continuous Integration - Phase 1.3.1
-# Goal: Force deterministic quality gates for both Brain and Body layers.
+# Copyright 2026 Coreframe Systems
+# Continuous Integration - Phase 1.4.0 (Hardened Ingress)
+# Goal: Enforce deterministic quality gates for Sovereign Edge deployment.
 
-name: Nexus Protocol Phase 1.3.1 CI
+name: Nexus Protocol CI
 
 on:
   push:
@@ -14,6 +14,7 @@ jobs:
   brain_integrity:
     name: Audit Nexus Brain (Python)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -22,20 +23,40 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install Hardened Dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          # Core requirements for import validation
-          pip install fastapi uvicorn pydantic python-dotenv
 
-      - name: Brain Static Analysis & Import Check
+      - name: Static Analysis & WAL Capability Verification
         run: |
-          # Logic: Explicitly verifies that the Brain can boot and find its anchored paths
+          # Logic: Provably verifies WAL support via temporary filesystem anchor
           python - <<EOF
+          import sqlite3
+          import tempfile
+          import os
+
           try:
+              # Create a temporary file to test real-world WAL support
+              fd, path = tempfile.mkstemp()
+              os.close(fd)
+
+              db = sqlite3.connect(path)
+              cursor = db.execute("PRAGMA journal_mode=WAL")
+              mode = cursor.fetchone()[0]
+              
+              db.close()
+              os.remove(path)
+
+              if mode.lower() != "wal":
+                  raise ValueError(f"Sovereign Vault Integrity Failure: WAL not supported (got {mode})")
+              
+              print(f"🏛️ WAL Capability Verified: {mode.upper()}")
+              
+              # Safe Import Check (Assumes __name__ == "__main__" guards are present)
               import backend.main
-              print("🏛️ Brain Import & Path Anchoring Verified")
+              print("🧠 Brain Import Verified")
+              
           except Exception as e:
               print(f"❌ Brain Critical Failure: {e}")
               exit(1)
@@ -44,13 +65,13 @@ jobs:
   body_integrity:
     name: Build Nexus Body (Flutter Web)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Flutter (Synchronized 3.38.6)
         uses: subosito/flutter-action@v2
         with:
-          # SYNCHRONIZED: Matching 3.38.6 to prevent environment drift
           flutter-version: '3.38.6'
           channel: 'stable'
           cache: true
@@ -60,14 +81,14 @@ jobs:
           cd client
           flutter pub get
 
-      - name: Static Analysis
+      - name: Hardened Static Analysis
         run: |
           cd client
-          # Logic: Fails the build if "Red Line" bridge errors are detected
-          flutter analyze || exit 1
+          # FAIL-CLOSED: Info-level violations trigger build termination
+          flutter analyze --fatal-infos --fatal-warnings
 
-      - name: Build Web Surface (Stress Test)
+      - name: Build Web Surface (Production Stress Test)
         run: |
           cd client
-          # --no-tree-shake-icons: Hardening for custom font rendering in Phase 1.3.1
-          flutter build web --release --dart-define=NEXUS_DEV=true --no-tree-shake-icons
+          # --no-tree-shake-icons: Hardening for custom typography in Phase 1.4.0
+          flutter build web --release --no-tree-shake-icons

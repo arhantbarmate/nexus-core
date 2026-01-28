@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../services/nexus_api.dart';
 import '../models/vault_transaction.dart';
-// FIX 1: Using the universal gateway to prevent CI/Desktop build failure
 import '../services/tg_bridge.dart';
 
 class NexusDashboard extends StatefulWidget {
@@ -25,20 +24,21 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   final TextEditingController _amountController = TextEditingController(text: "100.00");
   final ScrollController _scrollController = ScrollController();
   
-  // FIX 2: Added Cursor and Pagination state
+  // DATA STATE
   List<VaultTransaction> _transactions = [];
   Map<String, dynamic>? _cursor;
   bool _hasMore = true;
   
+  // UI STATE
   double _creatorTotal = 0.0;
   double _poolTotal = 0.0;
   bool _isLoading = true;
   bool _isExecuting = false;
-  bool _retryScheduled = false;
   bool _isSyncing = false;
-  bool _isFetchingPage = false; // New flag for pagination
+  bool _isFetchingPage = false;
   String _statusMessage = "BOOTING_CORE";
 
+  // CYBER THEME CONSTANTS
   static const Color _bg = Color(0xFF020204);
   static const Color _surface = Color(0xFF0A0A0F);
   static const Color _primary = Color(0xFF6366F1);
@@ -50,8 +50,6 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
-    // ATTACH SCROLL LISTENER FOR PAGINATION
     _scrollController.addListener(_onScroll);
 
     if (widget.bootError.isNotEmpty) {
@@ -78,19 +76,18 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   }
 
   void _onScroll() {
-    // Trigger load when within 200 pixels of the bottom
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (!_hasMore || _isFetchingPage) return;
+    // Trigger load when 80% down the list
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent * 0.8) {
       _fetchNextPage();
     }
   }
 
-  // CORE: Fetches next page of transactions using the cursor
+  // 🔄 PAGINATION ENGINE
   Future<void> _fetchNextPage() async {
-    if (_isFetchingPage || !_hasMore || _isSyncing) return;
+    if (_isFetchingPage || _isSyncing) return;
 
-    setState(() {
-      _isFetchingPage = true;
-    });
+    setState(() => _isFetchingPage = true);
 
     try {
       final page = await NexusApi.fetchTransactions(cursor: _cursor);
@@ -107,13 +104,13 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
         _hasMore = page.nextCursor != null;
       });
     } catch (_) {
-      // Silent fail on pagination, user can try scrolling again
+      // Silent fail allows retry on next scroll
     } finally {
       if (mounted) setState(() => _isFetchingPage = false);
     }
   }
 
-  // FIX 3: Refactored to handle CursorPage return type & Full Refresh
+  // 🔄 STATE SYNCHRONIZATION
   Future<void> _syncSovereignState({bool refresh = false}) async {
     if (!mounted || _isSyncing) return;
     
@@ -124,11 +121,10 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
     });
 
     try {
-      // If refreshing, we reset the cursor to null to get the latest page
       final results = await Future.wait([
         NexusApi.fetchVaultSummary(),
-        NexusApi.fetchTransactions(cursor: null), 
-      ]).timeout(const Duration(seconds: 15));
+        NexusApi.fetchTransactions(cursor: null), // Reset cursor on refresh
+      ]);
 
       final summary = results[0] as Map<String, dynamic>;
       final page = results[1] as CursorPage;
@@ -136,7 +132,6 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
       if (!mounted) return;
 
       setState(() {
-        // Map page items correctly using the model
         final freshItems = page.items
             .map((e) => VaultTransaction.fromJson(e as Map<String, dynamic>))
             .toList();
@@ -147,26 +142,18 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
           _transactions.addAll(freshItems);
         }
         
-        // Save cursor state for future infinite scrolling
         _cursor = page.nextCursor;
         _hasMore = page.nextCursor != null;
 
         _creatorTotal = (summary['creator_total'] as num? ?? 0).toDouble();
         _poolTotal = (summary['pool_total'] as num? ?? 0).toDouble();
         
-        _statusMessage = "SYSTEM_STABLE";
-        _retryScheduled = false;
+        _statusMessage = summary['error'] == true 
+            ? "OFFLINE_MODE_CACHED" 
+            : "SYSTEM_STABLE";
       });
     } catch (_) {
-      if (mounted) setState(() => _statusMessage = "SYNC_FAILURE_RETRYING");
-      if (!_retryScheduled) {
-        _retryScheduled = true;
-        _retryScheduled = true;
-        Future.delayed(const Duration(seconds: 5), () {
-          _retryScheduled = false;
-          if (mounted) _syncSovereignState(refresh: true);
-        });
-      }
+      if (mounted) setState(() => _statusMessage = "SYNC_FAILURE");
     } finally {
       if (mounted) {
         setState(() {
@@ -177,6 +164,7 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
     }
   }
 
+  // 💸 TRANSACTION EXECUTION
   Future<void> _executeSequence() async {
     final amount = double.tryParse(_amountController.text);
     if (amount == null || amount <= 0) {
@@ -184,6 +172,10 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
       return;
     }
     if (_isExecuting) return;
+    
+    // Close keyboard
+    FocusScope.of(context).unfocus();
+
     setState(() {
       _isExecuting = true;
       _statusMessage = "VAULT_TRANSFER_IN_PROGRESS";
@@ -193,13 +185,19 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
       TelegramBridge.triggerHaptic();
       await NexusApi.executeSplit(amount);
       if (mounted) setState(() => _statusMessage = "BLOCK_COMMITTED");
-      await Future.delayed(const Duration(milliseconds: 1200));
-      await _syncSovereignState(refresh: true); // Refresh list to show new TX
-    } catch (_) {
-      if (mounted) setState(() => _statusMessage = "SENTRY_REJECTED");
+      
+      // Artificial delay for UX feel (Sovereign confirmation)
+      await Future.delayed(const Duration(milliseconds: 800));
+      await _syncSovereignState(refresh: true);
+    } catch (e) {
+      if (mounted) {
+        // Extract cleaner error message if possible
+        final err = e.toString().contains("BRAIN_REJECTED") ? "REJECTED_BY_POLICY" : "SENTRY_REJECTED";
+        setState(() => _statusMessage = err);
+      }
     } finally {
       if (mounted) {
-        Future.delayed(const Duration(seconds: 1), () => setState(() => _isExecuting = false));
+        setState(() => _isExecuting = false);
       }
     }
   }
@@ -208,50 +206,89 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false, // Prevents layout jank on keyboard
       body: Stack(
         children: [
+          // 1. CYBER GRID BACKGROUND
           Opacity(
             opacity: 0.05,
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 10),
-              itemBuilder: (context, index) => Container(decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 0.5))),
+              itemBuilder: (_, __) => Container(
+                decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 0.5))
+              ),
             ),
           ),
+          
+          // 2. MAIN SCROLLABLE CONTENT (SLIVER ARCHITECTURE)
           SafeArea(
             child: Column(
               children: [
                 Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController, // ATTACHED CONTROLLER
+                  child: CustomScrollView(
+                    controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                    child: Column(
-                      children: [
-                        _buildHeader(),
-                        const SizedBox(height: 30),
-                        _buildVaultCard(),
-                        const SizedBox(height: 24),
-                        _buildControlPanel(),
-                        const SizedBox(height: 30),
-                        _buildLedger(),
-                        const SizedBox(height: 20),
-                        if (_isFetchingPage) 
-                          const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: CircularProgressIndicator(color: _primary, strokeWidth: 2),
-                          ),
-                      ],
-                    ),
+                    slivers: [
+                      // Header Section
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate([
+                            _buildHeader(),
+                            const SizedBox(height: 30),
+                            _buildVaultCard(),
+                            const SizedBox(height: 24),
+                            _buildControlPanel(),
+                            const SizedBox(height: 30),
+                            const Text(
+                              "SOVEREIGN_LEDGER", 
+                              style: TextStyle(color: Colors.white24, fontSize: 10, fontWeight: FontWeight.bold)
+                            ),
+                            const SizedBox(height: 15),
+                          ]),
+                        ),
+                      ),
+
+                      // Transaction List (High Performance Lazy Loading)
+                      _transactions.isEmpty && !_isLoading
+                          ? SliverToBoxAdapter(child: _buildEmptyState())
+                          : SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) => _buildTxRow(_transactions[index]),
+                                childCount: _transactions.length,
+                              ),
+                            ),
+                      
+                      // Loading Indicator at bottom
+                      if (_isFetchingPage)
+                         const SliverToBoxAdapter(
+                           child: Padding(
+                             padding: EdgeInsets.all(20),
+                             child: Center(child: CircularProgressIndicator(color: _primary, strokeWidth: 2)),
+                           ),
+                         ),
+                         
+                      // Bottom Padding for Console
+                      const SliverToBoxAdapter(child: SizedBox(height: 60)),
+                    ],
                   ),
                 ),
+                
+                // 3. FIXED CONSOLE FOOTER
                 _buildConsole(),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      child: Text("NO_RECORDS_FOUND", style: TextStyle(color: Colors.white10, fontFamily: 'monospace')),
     );
   }
 
@@ -332,26 +369,9 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
     );
   }
 
-  Widget _buildLedger() {
-    if (_transactions.isEmpty && !_isLoading) {
-      return const Padding(
-        padding: EdgeInsets.all(20),
-        child: Text("NO_RECORDS_FOUND", style: TextStyle(color: Colors.white10, fontFamily: 'monospace')),
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("SOVEREIGN_LEDGER", style: TextStyle(color: Colors.white24, fontSize: 10, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 15),
-        ..._transactions.map(_buildTxRow),
-      ],
-    );
-  }
-
   Widget _buildTxRow(VaultTransaction tx) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8, left: 24, right: 24), // Margin moved here for Sliver
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(8), border: Border.all(color: _border)),
       child: Row(
@@ -375,7 +395,7 @@ class _NexusDashboardState extends State<NexusDashboard> with WidgetsBindingObse
       child: Row(
         children: [
           const Text("> ", style: TextStyle(color: _terminal, fontWeight: FontWeight.bold)),
-          Expanded(child: Text(_statusMessage, style: TextStyle(color: _statusMessage.contains("FAILURE") ? _error : _terminal.withOpacity(0.6), fontFamily: 'monospace', fontSize: 10), overflow: TextOverflow.ellipsis)),
+          Expanded(child: Text(_statusMessage, style: TextStyle(color: _statusMessage.contains("FAILURE") || _statusMessage.contains("REJECTED") ? _error : _terminal.withOpacity(0.6), fontFamily: 'monospace', fontSize: 10), overflow: TextOverflow.ellipsis)),
         ],
       ),
     );

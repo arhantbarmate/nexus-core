@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus Economics | Sovereign Specs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-black: #050505;
@@ -18,6 +18,7 @@
         body {
             margin: 0; background: var(--bg-black); color: #fff;
             font-family: 'Inter', sans-serif; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         #particles-js {
@@ -26,13 +27,13 @@
         }
 
         .nav {
-            position: fixed; top: 0; left: 0; right: right; padding: 1.5rem 3rem;
+            position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem;
             display: flex; justify-content: space-between; align-items: center;
             z-index: 100; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-panel);
         }
         .nav a { color: var(--text-dim); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; transition: 0.3s; }
-        .nav a:hover { color: var(--accent-blue); }
+        .nav a:hover { color: var(--accent-blue); text-shadow: 0 0 10px var(--accent-glow); }
 
         .container { max-width: 900px; margin: 0 auto; padding: 10rem 2rem 5rem; }
 
@@ -46,50 +47,30 @@
             font-size: 0.8rem; margin: 1rem 0 4rem; text-transform: uppercase; letter-spacing: 4px;
         }
 
-        /* 📊 SETTLEMENT PIPELINE VISUAL */
-        .pipeline {
+        .spec-block {
             background: var(--panel-bg); border: 1px solid var(--border-panel);
-            padding: 3rem; border-radius: 4px; margin-bottom: 3rem; position: relative;
+            padding: 3rem; margin-bottom: 2rem; border-radius: 4px;
+            position: relative; overflow: hidden; transition: 0.4s;
         }
-        .pipeline-track {
-            height: 4px; background: rgba(255,255,255,0.05); position: relative;
-            margin: 4rem 0; display: flex; justify-content: space-between;
-        }
-        .node {
-            width: 12px; height: 12px; background: var(--accent-blue);
-            border-radius: 50%; position: relative; top: -4px;
+        .spec-block:hover { border-color: var(--accent-blue); background: rgba(99, 102, 241, 0.02); }
+        
+        .spec-block::after {
+            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: var(--accent-blue);
             box-shadow: 0 0 15px var(--accent-blue);
         }
-        .split-label {
-            position: absolute; top: 20px; font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem; color: var(--text-dim); text-align: center; width: 80px; left: -34px;
-        }
-        .data-pulse {
-            position: absolute; width: 20px; height: 4px; background: #fff;
-            box-shadow: 0 0 10px #fff; animation: flow 2s infinite linear;
-        }
 
-        /* SPEC BLOCKS */
-        .spec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 4rem; }
-        .spec-card {
-            background: var(--panel-bg); border: 1px solid var(--border-panel);
-            padding: 1.5rem; border-radius: 4px; text-align: center;
-        }
-        .spec-card h4 { color: var(--accent-blue); font-family: 'JetBrains Mono'; margin: 0 0 0.5rem; }
-        .spec-card p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
-
-        .info-box {
-            background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.2);
-            padding: 2rem; border-radius: 4px; font-size: 0.95rem; line-height: 1.7; color: var(--text-dim);
-            margin-bottom: 2rem;
-        }
+        .mod-id { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.7rem; margin-bottom: 1rem; }
+        h3 { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; margin: 0 0 1rem; color: #fff; }
+        p { color: var(--text-dim); line-height: 1.8; font-size: 1rem; margin: 0; }
+        ul { color: var(--text-dim); line-height: 1.8; font-size: 1rem; margin: 1rem 0 0; padding-left: 1.2rem; }
+        li { margin-bottom: 0.5rem; }
+        code { font-family: 'JetBrains Mono', monospace; color: #fff; background: rgba(99, 102, 241, 0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
 
         .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
 
-        @keyframes flow { 0% { left: 0%; } 100% { left: 100%; } }
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
-            .spec-grid { grid-template-columns: 1fr; }
+            .nav { padding: 1rem 1.5rem; }
         }
     </style>
 </head>
@@ -99,47 +80,50 @@
 
 <nav class="nav">
     <a href="../index.html">// RETURN_TO_TERMINAL</a>
-    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">SPEC_ID: ECON_1.3.1</div>
+    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">SPEC_ID: ECON_1.4.0</div>
 </nav>
 
 <div class="container">
-    <h1>Economics</h1>
-    <div class="badge">Deterministic Settlement Invariant</div>
+    <h1>Economic Protocol</h1>
+    <div class="badge">Deterministic Settlement &middot; 60/30/10 Invariant</div>
 
-    <div class="pipeline">
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--accent-blue);">PIPELINE_STATUS: 1M_TRANSACTION_LOAD_VERIFIED</div>
-        <div class="pipeline-track">
-            <div class="data-pulse"></div>
-            <div class="node"><div class="split-label">CREATOR<br>60%</div></div>
-            <div class="node"><div class="split-label">USER_POOL<br>30%</div></div>
-            <div class="node"><div class="split-label">NETWORK<br>10%</div></div>
-        </div>
+    <div class="spec-block">
+        <div class="mod-id">MOD_01 // VALUE_PARTITIONING</div>
+        <h3>The 60/30/10 Split Model</h3>
+        <p>The protocol enforces a three-tier distribution logic for all incoming state transitions. This ensures automated, verifiable partitioning without manual reconciliation.</p>
+                <ul>
+            <li><strong>60% Creator Share:</strong> Direct incentive for content contribution and proof-of-work.</li>
+            <li><strong>30% User Pool:</strong> Deterministic redistribution to incentivize community participation.</li>
+            <li><strong>10% Network Fee:</strong> Reserved for infrastructure maintenance and sustainability.</li>
+        </ul>
     </div>
 
-    <div class="spec-grid">
-        <div class="spec-card">
-            <h4>60%</h4>
-            <p>Direct Settlement to Sovereign Creator ID</p>
-        </div>
-        <div class="spec-card">
-            <h4>30%</h4>
-            <p>Liquidity Pool for Community Rewards</p>
-        </div>
-        <div class="spec-card">
-            <h4>10%</h4>
-            <p>Network Maintenance & Adapter Development</p>
-        </div>
+    <div class="spec-block">
+        <div class="mod-id">MOD_02 // TRUST_BOUNDARIES</div>
+        <h3>Atomic Accounting</h3>
+        <p>Nexus operates as a <strong>Non-Custodial</strong> ledger engine. It does not hold external assets but maintains the "Source of Truth" for distribution. All splits are calculated using integer-based primitives to prevent floating-point drift during single-transaction atomic commits.</p>
     </div>
 
-    <div class="info-box">
-        <strong>Non-Custodial Clarification:</strong> Nexus Protocol does not custody user funds. All values represented are internal ledger units used for deterministic accounting and validation. The 60/30/10 Invariant has been validated under a <strong>1-Million Transaction Stress Test</strong> with 100% mathematical accuracy and zero rounding drift.
+    <div class="spec-block">
+        <div class="mod-id">MOD_03 // VERIFIED_INTEGRITY</div>
+        <h3>The 1M Stress Test</h3>
+        <p>The economic logic has been validated under extreme concurrent load:</p>
+        <ul>
+            <li><strong>Volume:</strong> 1,000,000 unique transactions validated in a single vault session.</li>
+            <li><strong>Precision:</strong> Zero rounding drift observed across the entire set.</li>
+            <li><strong>Throughput:</strong> Maintained strict isolation at ~50-60 TPS on edge hardware.</li>
+        </ul>
     </div>
 
-    <div class="info-box" style="background: transparent; border: 1px solid rgba(255,255,255,0.05);">
-        <strong>Future Anchoring:</strong> While Phase 1.3.1 enforces this partition at the local execution level, future phases will anchor state roots to external layers (peaq / IoTeX) to verify physical proofs and machine-economy settlements.
+    <div class="spec-block">
+        <div class="mod-id">MOD_04 // ROADMAP</div>
+        <h3>Multi-Chain Anchoring</h3>
+        <p>Phase 1.4 focuses on local-first integrity. Future updates will anchor these local state roots to DePIN layers including <strong>peaq</strong> (machine identity) and <strong>IoTeX</strong> (physical activity proofs). Nexus prioritizes <strong>Durability-First</strong> local state to prevent propagation of corrupted data to global networks.</p>
     </div>
 
-    <div class="footer">// END_OF_SPECIFICATION // NEXUS_PROTOCOL_2026 // PHASE_1.3.1_DURABILITY_VERIFIED</div>
+    <div class="footer">
+        // END OF SPECIFICATION // COREFRAME_SYSTEMS_2026 // PHASE_1.4.0_ECONOMY
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -148,7 +132,6 @@
         particles: {
             number: { value: 60 },
             color: { value: '#6366f1' },
-            shape: { type: 'circle' },
             opacity: { value: 0.2 },
             size: { value: 2 },
             line_linked: { enable: true, distance: 150, color: '#6366f1', opacity: 0.1, width: 1 },

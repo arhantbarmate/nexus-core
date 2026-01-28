@@ -1,87 +1,72 @@
-# 🛠️ Node Setup Guide — Nexus Protocol (v1.3.1)
+# 🛠️ Node Setup Guide — Nexus Protocol
+**Coreframe Systems Lab | Version 1.4.0**
 
 This guide provides the technical sequence required to deploy a **Sovereign Nexus Node** on local hardware. The architecture is optimized for low-latency, durability-first local execution.
 
 ---
 
-## 📋 Prerequisites
-* **Python 3.10+** (System Path enabled)
-* **Git**
-* **Ngrok Account** (For the $0-cost Sovereign Stack)
-* **Flutter SDK 3.38.6 Stable** (If compiling the Body from source)
+## 📋 Act I: Prerequisites
+Before ignition, ensure your machine meets the following baseline requirements:
+* **Docker Desktop:** (Recommended) For containerized isolation.
+* **Python 3.10+:** With System Path enabled.
+* **Git:** For protocol versioning.
+* **Tunnel Token:** A Cloudflare Zero Trust token (**Note:** Ngrok is deprecated and supported only for legacy development).
 
 ---
 
-## 🚀 1. Clone & Environment Setup
-Initialize the repository and isolate the Python environment.
+## 🚀 Act II: Deployment Sequence
 
+### 1. Secure the Perimeter
+Clone the repository and prepare your environment. **Never share your .env file.**
 ```bash
-# Clone the repository
+# Clone the Coreframe repository
 git clone https://github.com/arhantbarmate/nexus-core.git
 cd nexus-core
 
-# Setup Virtual Environment
-python -m venv venv
-
-# Activate Environment
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# Install Core & Protocol Dependencies
-pip install -r requirements.txt
+# Create your secret vault (Configuration)
+copy .env.example .env
 ```
+*Open ```.env``` and paste your Cloudflare Token. If you do not have a token, you can still run in **Simulation Mode** (Localhost).*
 
----
+### 2. Ignite the Node
+We provide a **Sovereign Master Controller** to manage the lifecycle of the Sentry, Brain, and Vault layers.
 
-## ⚡ 2. Automated Node Management
-We provide specialized scripts to manage the lifecycle of the **Sentry**, **Brain**, and **Tunnel** layers. In Phase 1.3.1, the Gateway serves the UI as static assets; no separate frontend server is required.
+> **Note:** ```start_nexus.bat``` is the Windows controller. Linux/macOS users should utilize ```./start_nexus.sh```.
 
-### Start the Sovereign Node
-This script initializes the FastAPI Brain, starts the Ngrok tunnel, and resolves the identity perimeter.
 ```bash
-# Follow the interactive prompts for Ngrok URL input
-./start_nexus.bat
+# Run the Master Controller
+start_nexus.bat
 ```
-
-### Stop the Sovereign Node
-To safely terminate background processes and flush the WAL journal:
-```bash
-./stop_nexus.bat
-```
-
----
-
-## 📱 3. Launching the Execution Surface (Client)
-The Flutter Body must be compiled with the correct ```base-href``` to align with the Gateway architecture.
+**Select Option 1** for Production (Tunnel) or **Option 3** for Dev Simulation (Localhost). The controller will automatically handle dependency resolution and vault initialization.
 
 
 
+### 3. Deploy the Surface (UI)
+If you are an engineer compiling the Body from source:
 ```bash
 cd client
-flutter build web --release --base-href "/nexus-core/app/" --no-tree-shake-icons
+flutter build web --release --base-href "/"
 ```
 
 ---
 
-## 🧪 4. Verification Checklist
-Once the node is active, perform a **Stability Audit**:
+## 🧪 Act III: Verification Protocol
+Once the node status is `NOMINAL`, perform an **Integrity Audit**:
 
-1. **The Brain:** Access ```http://localhost:8000/docs``` to verify the OpenAPI schema.
-2. **The Sentry:** Verify the Ngrok URL bypasses the interstitial via header injection.
-3. **The Ledger:** Run the 1-Million Transaction Stress Test to verify write-durability:
+1. **The Brain:** Navigate to ```http://localhost:8000/docs``` to verify the OpenAPI schema.
+2. **The Ingress:** Access your public URL (e.g., coreframe.systems) or localhost to verify the handshake.
+3. **The Vault:** Run the **1-Million Transaction Stress Test** to verify write-durability:
    ```bash
    python scripts/stress_test_1m.py
    ```
 
 ---
 
-## 🛡️ Troubleshooting & Hardening
-* **I/O Bottlenecks:** On Windows, exclude the project directory from **Real-Time Antivirus Protection** to maintain stable TPS during high-load writes.
-* **Database Contention:** Ensure the ```nexus_vault.db``` is not locked by external viewers; the system enforces **WAL mode** for concurrent access.
-* **Identity Resolution:** If the UI fails to sync, ensure the ```initData``` from the host container is being correctly forwarded to the Brain.
+## 🛡️ Hardening & Troubleshooting
+* **Antivirus Friction:** On Windows, exclude the ```nexus-core``` directory from **Real-Time Protection** to prevent I/O delays during high-frequency writes.
+* **Ghost Directories (Filesystem Collision):** If you encounter a "Mount Error," it is often due to a directory being created where a file was expected. Run **Option 1** in the controller to auto-heal the vault path.
+* **Identity Sync:** If the Execution Surface (UI) fails to load, verify that your ```TUNNEL_TOKEN``` in the ```.env``` is valid and active.
 
 ---
-
-© 2026 Nexus Protocol · Installation Specification v1.3.1
+© 2026 Coreframe Systems · Installation Specification v1.4.0  
+*Designed for sovereign operators. Built for durability.*

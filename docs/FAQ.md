@@ -1,40 +1,53 @@
-# ❓ Technical FAQ — Nexus Protocol (v1.3.1)
+# ❓ Technical FAQ — Nexus Protocol
+**Coreframe Systems Lab | Version 1.4.0**
 
-This document addresses the architectural rationale and infrastructure choices behind the Nexus Sovereign Gateway.
+This document addresses the architectural rationale, infrastructure constraints, and economic logic behind the Nexus Sovereign Gateway.
 
 ---
 
 ## 🌐 Infrastructure & Connectivity
 
 ### Q: Does Nexus require a blockchain to function?
-**A:** No. Phase 1.3.1 is fully operational as a standalone **Sovereign Node** without any blockchain dependency. External chains (peaq, IoTeX, TON) are utilized only for optional anchoring and cross-chain identity in later phases; they do not affect the local execution speed or ledger correctness of the Brain.
+**A:** No. Phase 1.4.0 is a standalone **Sovereign Node**. It operates with full autonomy without external blockchain dependencies. External layers (peaq, IoTeX) are treated as optional **Anchoring Adapters** for identity and global settlement; they do not dictate the local execution speed or ledger correctness of the Brain.
 
-### Q: How does the Gateway bypass the Ngrok browser warning?
-**A:** To maintain a **$0-cost Sovereign Stack**, we utilize a header-based bypass. The Sovereign Brain is configured to append the ```ngrok-skip-browser-warning``` header to outbound responses. This ensures that the Flutter "Body" (UI) receives a clean JSON/HTML stream, allowing for seamless headless handshakes during development.
+### Q: How does the Gateway handle "interstitial" or browser warnings?
+**A:** To maintain a **Zero-Cost Sovereign Stack**, Nexus utilizes header-based bypasses in development environments. The Brain is configured to append ingress-specific bypass headers (e.g., ```ngrok-skip-browser-warning```, Cloudflare, or Nginx equivalents) to outbound responses. This ensures a clean, headless JSON/HTML stream for automated handshakes and Telegram Mini App integration.
 
-### Q: Why use SQLite instead of a distributed database?
+### Q: Why SQLite instead of a distributed database?
 **A:** Local-first sovereignty and high performance on edge hardware. 
-* **Write-Ahead Logging (WAL):** Utilized to manage high-density concurrent writes.
-* **Scale Verification:** Successfully validated under a **1-Million Transaction stress test** with 0% data corruption and stable performance (~50-60 TPS baseline on commodity hardware).
-* **Sovereignty:** Keeping the ledger local ensures the operator maintains absolute state ownership before any roots are committed to an external layer.
+* **WAL Mode:** Write-Ahead Logging manages high-density concurrent writes without blocking.
+* **Integrity:** Validated under a **1-Million Transaction stress test** with 0.00% data corruption.
+* **Portability:** Keeping the ledger in a single-file sovereign vault ensures the operator maintains absolute state ownership.
 
 ---
 
 ## 💰 Economic & State Logic
 
 ### Q: Is the 60/30/10 split hardcoded?
-**A:** In Phase 1.3.1, the split logic is enforced at the Brain level to ensure **Economic Determinism**. Hardcoding the logic in the backend prevents UI-level tampering. The architecture is modular; future governance adapters (Phase 2.0) will be able to parameterize these values while maintaining local integrity.
+**A:** Yes. In the current release, the split logic is enforced as a **Deterministic Invariant** at the Brain level. This prevents UI-level tampering and ensures economic integrity. While future phases will allow parameterized governance, any future parameterization occurs at the governance layer and does not alter the Brain’s deterministic execution guarantees.
+
+
 
 ### Q: What happens if a transaction fails the Sentry Guard?
-**A:** The system follows **Fail-Closed** logic. Requests that fail to resolve identity context or environmental signatures are issued a rejection response at the edge. No state changes are committed to the Sovereign Vault until the resolution is successful.
+**A:** The system operates on a **Zero Trust** model. If a request fails to resolve identity context (e.g., invalid ```initData```) or environmental signatures, the Sentry rejects it at the perimeter. No logic is executed, and no state is committed to the Vault.
 
 ---
 
 ## 🛰️ Identity & Adapters
 
 ### Q: Why frame the UI as an "Execution Surface"?
-**A:** To maintain **Chain-Agnosticism**. The UI (The Body) does not own the state; it merely renders the reactive state of the Sovereign Brain. This separation ensures Nexus remains compatible with future machine-IDs (ioID) or DePIN identity systems without altering the core execution engine.
+**A:** To maintain **Chain-Agnosticism**. The UI (The Body) does not own the state; it merely renders the reactive state of the Sovereign Brain. This separation ensures that the Protocol remains compatible with any future identity system (ioID, Sr25519, etc.) without requiring a rebuild of the core execution engine.
 
 ---
 
-© 2026 Nexus Protocol · Technical FAQ v1.3.1
+## 📋 Comprehensive Question Summary
+1. **Blockchain Dependency:** Standalone sovereignty vs. optional anchoring.
+2. **Ingress Handling:** Bypassing interstitials via ingress-agnostic headers.
+3. **Storage Logic:** Performance and portability of SQLite/WAL.
+4. **Economic Split:** The deterministic 60/30/10 invariant.
+5. **Security Failure:** Zero Trust and Fail-Closed Sentry Guard logic.
+6. **Architectural Framing:** The "Body" as a reactive execution surface.
+
+---
+© 2026 Coreframe Systems · Technical FAQ v1.4.0  
+*This document addresses architectural rationale for Phase 1.4.0 nodes.*

@@ -20,10 +20,18 @@
         .container { max-width: 800px; margin: 0 auto; padding: 10rem 2rem 5rem; }
         h1 { font-size: 3rem; font-weight: 800; margin: 0; letter-spacing: -2px; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .badge { font-family: 'JetBrains Mono', monospace; color: var(--accent-blue); font-size: 0.8rem; margin: 1rem 0 4rem; text-transform: uppercase; letter-spacing: 4px; }
+        
         .legal-block { background: var(--panel-bg); border: 1px solid var(--border-panel); padding: 2.5rem; border-radius: 4px; margin-bottom: 1.5rem; position: relative; }
         .legal-block::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 2px; background: var(--accent-blue); }
-        h3 { font-family: 'JetBrains Mono', monospace; color: #fff; font-size: 1.2rem; margin: 0 0 1rem; }
-        p { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; margin: 0; }
+        
+        h3 { font-family: 'JetBrains Mono', monospace; color: #fff; font-size: 1.2rem; margin: 0 0 1.5rem; }
+        p { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; margin-bottom: 1rem; }
+        strong { color: #fff; }
+        
+        ul { color: var(--text-dim); line-height: 1.8; font-size: 0.95rem; margin: 1rem 0 0; padding-left: 1.2rem; }
+        li { margin-bottom: 0.8rem; }
+        code { font-family: 'JetBrains Mono', monospace; color: #fff; background: rgba(99, 102, 241, 0.2); padding: 0.2rem 0.4rem; border-radius: 4px; }
+
         .footer { text-align: center; margin-top: 6rem; color: var(--text-dim); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
     </style>
 </head>
@@ -31,28 +39,42 @@
     <div id="particles-js"></div>
     <nav class="nav">
         <a href="../index.html">// RETURN_TO_TERMINAL</a>
-        <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">PROTOCOL_v1.3.1</div>
+        <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">PROTOCOL_v1.4.0</div>
     </nav>
     <div class="container">
         <h1>Data Sovereignty</h1>
         <div class="badge">Absolute Ownership Principles</div>
         
         <div class="legal-block">
-            <h3>01. Zero-Leakage Persistence</h3>
-            <p>All ledger entries and identity context are stored locally in the <code>nexus_vault.db</code>. The Nexus Brain is non-custodial and operates on a zero-leakage model; no sensitive state is ever transmitted to centralized cloud servers.</p>
+            <h3>01. Local-First Persistence</h3>
+            <ul>
+                <li><strong>Sovereign Vault:</strong> All ledger entries, identity hashes, and transaction logs are stored in a local SQLite database (<code>nexus_vault.db</code>).</li>
+                <li><strong>Zero Cloud Leakage:</strong> The Nexus Brain does not transmit sensitive user data or economic state to centralized servers. All <strong>60/30/10 splits</strong> are computed and persisted locally on your own hardware.</li>
+                <li><strong>Non-Custodial Integrity:</strong> The protocol is a deterministic accounting engine. It does not custody private keys; it manages a local, unassailable ledger of truth.</li>
+            </ul>
+        </div>
+
+        
+
+        <div class="legal-block">
+            <h3>02. Identity & Hardened Ingress</h3>
+            <ul>
+                <li><strong>Sentry Guard:</strong> The perimeter extracts only the minimal environmental context required for identity resolution (e.g., cryptographic signatures or <code>initData</code> hashes).</li>
+                <li><strong>Tunneling Resilience:</strong> Nexus utilizes ingress-agnostic header injection to maintain handshake integrity, ensuring the node communicates across public networks without exposing internal structures to third-party data harvesting.</li>
+            </ul>
         </div>
 
         <div class="legal-block">
-            <h3>02. Infrastructure Sovereignty</h3>
-            <p>Nexus utilizes header-based bypass logic to maintain handshake integrity over Ngrok tunnels. This ensures that environmental context resolution occurs without exposing internal node structures to public indexing or third-party collection.</p>
+            <h3>03. Operator & User Rights</h3>
+            <p>Users interacting with a Nexus Node are interacting directly with the Node Operator's sovereign hardware.</p>
+            <ul>
+                <li><strong>Zero Telemetry:</strong> Coreframe Systems (the developers) does not include master keys, backdoors, or telemetry reporting. We cannot see your data, your splits, or your uptime.</li>
+                <li><strong>Auditability:</strong> The local vault is 100% accessible to the operator via standard SQLite tools, ensuring total transparency of the <strong>durability-first</strong> ledger.</li>
+                <li><strong>Compliance Responsibility:</strong> Responsibility for compliance with local data regulations (GDPR/CCPA) rests strictly with the Node Operator deploying the hardware.</li>
+            </ul>
         </div>
 
-        <div class="legal-block">
-            <h3>03. Regulatory Responsibility</h3>
-            <p>Nexus is a neutral sovereign tool. Responsibility for compliance with local data regulations and the ethical management of the local vault rests solely with the Node Operator deploying the software.</p>
-        </div>
-
-        <div class="footer">// END_OF_LEGAL_SPEC // NEXUS_PROTOCOL_2026 // LOCAL_FIRST_VERIFIED</div>
+        <div class="footer">// END_OF_LEGAL_SPEC // COREFRAME_SYSTEMS_2026 // LOCAL_FIRST_VERIFIED</div>
     </div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>

@@ -39,46 +39,44 @@
 <div id="particles-js"></div>
 <nav class="nav">
     <a href="../index.html">// RETURN_TO_TERMINAL</a>
-    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-red);">SEC_LEVEL_1.3.1</div>
+    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-red);">SEC_LEVEL_1.4.0</div>
 </nav>
 
 <div class="container">
-    <h1>Security Integrity</h1>
-    <div class="badge">Hardened Gateway &middot; Fail-Closed Logic</div>
+    <h1>Sovereign Resilience</h1>
+    <div class="badge">Hardened Ingress &middot; Fail-Closed Logic</div>
 
     <div class="sec-block">
         <div class="sec-title">Fail-Closed Identity Resolution</div>
-        <p class="sec-desc">Nexus operates on a <strong>Verify-then-Execute</strong> model. In Phase 1.3.1, the Sentry perimeter utilizes staged signature verification logic to validate environmental context. If resolution fails, the system defaults to a <code>403 Forbidden</code> state, terminating the handshake before it reaches the Sovereign Brain.</p>
+        <p class="sec-desc">Nexus utilizes a strict <strong>Fail-Closed</strong> logic gate. If the Sentry detects an invalid environmental context or unauthorized signature, the transaction is rejected at the edge with a <code>403 Forbidden</code> response. This ensures the <code>nexus_vault.db</code> remains uncontaminated by unverified state transitions.</p>
     </div>
 
-    
-
     <div class="sec-block">
-        <div class="sec-title">Header-Based Routing Integrity</div>
-        <p class="sec-desc">To maintain security over $0-cost tunnels, the protocol requires specific client-supplied headers (e.g., <code>ngrok-skip-browser-warning</code>). This ensures deterministic request routing and prevents tunnel interstitial disruption while maintaining the "Non-Public" status of the node.</p>
+        <div class="sec-title">Infrastructure & ACID Integrity</div>
+        <p class="sec-desc">Security is enforced at the database layer via <strong>Write-Ahead Logging (WAL)</strong> and atomic transactions. To maintain stability over public tunnels, the protocol utilizes deterministic routing headers to prevent tunnel interstitial interference. The Brain is designed with minimal external dependencies, significantly reducing the attack surface.</p>
     </div>
 
     <div class="sec-block" style="border-left: 2px solid rgba(255,255,255,0.1); opacity: 0.85;">
-        <div class="sec-title">Explicit Non-Goals (Phase 1.3.1)</div>
-        <p class="sec-desc" style="font-size: 0.85rem;">Nexus prioritizes durability and ledger integrity. Please note that this version does not provide end-user anonymity guarantees, custody private keys/assets, or enforce cryptographic identity beyond environment validation.</p>
+        <div class="sec-title">Explicit Non-Goals (Phase 1.4.0)</div>
+        <p class="sec-desc" style="font-size: 0.85rem;">Phase 1.4.0 focuses on ingress integrity and state correctness. Currently, the protocol does not provide end-user anonymity guarantees, custody external assets, or enforce multi-chain identity beyond environment validation.</p>
     </div>
 
     <div class="contact-card">
-        <h3>Responsible Disclosure</h3>
-        <p class="sec-desc" style="margin-bottom: 1rem;">We value adversarial research regarding the 60/30/10 Invariant. Please report vulnerabilities to:</p>
+        <h3>Vulnerability Disclosure</h3>
+        <p class="sec-desc" style="margin-bottom: 1rem;">We prioritize the integrity of the 60/30/10 Economic Invariant. Please report findings privately to Coreframe Systems Engineering:</p>
         <ul class="email-list">
-            <li>• arhantbarmate@gmail.com (Primary)</li>
-            <li>• arhant6armate@outlook.com (Secondary)</li>
+            <li>• infrastructure@coreframe.systems (Official)</li>
+            <li>• arhant6armate@gmail.com (Lead Maintainer)</li>
         </ul>
     </div>
 
-    <div class="footer">// END_OF_SECURITY_SPEC // NEXUS_PROTOCOL_2026 // FAIL_CLOSED_ACTIVE</div>
+    <div class="footer">// END_OF_SECURITY_SPEC // COREFRAME_SYSTEMS_2026 // FAIL_CLOSED_ACTIVE</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     particlesJS('particles-js', {
-        particles: { number: { value: 60 }, color: { value: '#ef4444' }, opacity: { value: 0.2 }, size: { value: 2 }, line_linked: { enable: true, distance: 150, color: '#ef4444', opacity: 0.1, width: 1 }, move: { enable: true, speed: 1 } }
+        particles: { number: { value: 60 }, color: '#ef4444', opacity: 0.2, size: 2, line_linked: { enable: true, distance: 150, color: '#ef4444', opacity: 0.1, width: 1 }, move: { enable: true, speed: 1 } }
     });
 </script>
 </body>

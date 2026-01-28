@@ -1,80 +1,145 @@
 @echo off
-:: Nexus Protocol Phase 1.3.1 - Sovereign Ignition
-:: This version uses the "Safe Input" pattern to prevent URL-injection crashes.
+setlocal enabledelayedexpansion
 
-title NEXUS PROTOCOL - Master Launcher
+:: ====================================================
+:: NEXUS PROTOCOL - SOVEREIGN NODE CONTROLLER (v1.4.7)
+:: ====================================================
+:: Namespace: NEXUS_*
+:: Integrity: Ghost-Folder Purge + Absolute Pathing
+
+:: Force the Master Title for the launcher itself
+title NEXUS_MASTER_CONTROLLER
 color 0b
 cd /d "%~dp0"
 
-:: 0. PORT CLEANSE
-taskkill /FI "WINDOWTITLE eq NEXUS_BRAIN*" /F >nul 2>&1
+:MAIN_MENU
+cls
+echo.
+echo  ====================================================
+echo    N E X U S   P R O T O C O L   C O N T R O L L E R
+echo  ====================================================
+echo    DATA STREAM: ACTIVE  --  PHASE: 1.4.7
+echo  ====================================================
+echo.
+echo  [1] IGNITE NODE (Docker Production)
+echo      - Hardened production environment (Brain + Sentry).
+echo.
+echo  [2] DEPLOY NEW FRONTEND (Build + Copy)
+echo      - Recompiles Flutter UI and injects into Brain.
+echo.
+echo  [3] DEV SIMULATION (Local Python)
+echo      - Fast backend debugging (No Docker).
+echo.
+echo  [4] SYSTEM SHUTDOWN
+echo      - Deterministic cleanup of all Nexus processes.
+echo.
+echo  ====================================================
+set /p choice="SELECT COMMAND [1-4]: "
 
-:: 1. VALIDATION (Updated for Phase 1.3.1)
-:: Checks for production Flutter build instead of test_client
-if not exist "%~dp0client\build\web\index.html" (
-    echo [ERROR] Production Client Build not found!
-    echo [FIX] Please run: cd client ^&^& flutter build web --release
+if "%choice%"=="1" goto DOCKER_START
+if "%choice%"=="2" goto FULL_DEPLOY
+if "%choice%"=="3" goto LOCAL_DEV
+if "%choice%"=="4" goto SHUTDOWN
+goto MAIN_MENU
+
+:: ====================================================
+:: [1] IGNITE NODE (DOCKER)
+:: ====================================================
+:DOCKER_START
+echo.
+echo [STEP 0] Ensuring Vault Integrity...
+
+:: 1. DETECT AND DESTROY GHOST DIRECTORIES
+:: If nexus_vault.db exists as a folder, this kills it to prevent mount errors.
+if exist "backend\nexus_vault.db\" (
+    echo [WARN] Found ghost directory at vault location. Purging...
+    rmdir /s /q "backend\nexus_vault.db"
+)
+
+:: 2. INITIALIZE SOVEREIGN LEDGER FILE
+if not exist "backend" mkdir "backend"
+if not exist "backend\nexus_vault.db" (
+    echo [INFO] No Vault found. Initializing Ledger File...
+    type nul > "backend\nexus_vault.db"
+)
+
+echo [INFO] Waking up Sovereign Node...
+:: Use -d to run in background so this window stays as a controller
+docker-compose up -d
+
+if %errorlevel% neq 0 (
+    echo.
+    echo [ERROR] Docker failed to ignite. Check Docker Desktop status.
     pause
-    exit /b 1
+    goto MAIN_MENU
 )
 
-:: 2. IDENTITY
-set /p mode="Select Execution Mode [1. Dummy / 2. Ton]: "
-set "CHAIN_ADAPTER=dummy"
-if "%mode%"=="2" if not "%TELEGRAM_BOT_TOKEN%"=="" set "CHAIN_ADAPTER=ton"
+echo [SUCCESS] System Online.
+echo ----------------------------------------------------
+echo [LOCAL]  http://localhost:8000
+echo [PUBLIC] https://nexucore.xyz
+echo ----------------------------------------------------
+set /p logs="View Live Stream? (y/n): "
+if /i "%logs%"=="y" start "NEXUS_LOGS" docker-compose logs -f
+goto MAIN_MENU
 
-:: 3. NGROK CALIBRATION (Safe Input Pattern)
-set "NGROK_URL=http://localhost:8000"
-set /p launch_ngrok="Launch Ngrok Tunnel for Mobile? (y/n): "
-if /i not "%launch_ngrok%"=="y" goto :BRAIN_START
+:: ====================================================
+:: [2] FULL DEPLOY
+:: ====================================================
+:FULL_DEPLOY
+echo.
+echo [STEP 1/2] Compiling Sovereign Body (Flutter)...
+if not exist "client" (
+    echo [ERROR] Client folder not found!
+    pause
+    goto MAIN_MENU
+)
+cd client
+call flutter build web --release --base-href "/"
+cd ..
 
-echo [INFO] Starting Bridge...
-start "NEXUS_BRIDGE" cmd /c "ngrok http 8000 --host-header=rewrite"
-echo [IMPORTANT] Find your Forwarding URL at http://127.0.0.1:4040
+echo.
+echo [STEP 2/2] Injecting into Brain...
+if not exist "backend\static" mkdir "backend\static"
+:: Clean old build and copy new one
+powershell -Command "Remove-Item -Recurse -Force backend\static\*"
+xcopy /E /I /Y "client\build\web" "backend\static"
 
-:URL_INPUT
-:: Disable Expansion during input to prevent parsing / or - as switches
-setlocal DisableDelayedExpansion
-set "RAW_URL="
-set /p "RAW_URL=Enter your Ngrok Public URL (Include https://): "
+echo.
+echo [DONE] Frontend updated. Restarting containers...
+docker-compose up -d --build
+pause
+goto MAIN_MENU
 
-:: Enable Expansion only for cleaning the string
-setlocal EnableDelayedExpansion
-set "NGROK_URL=!RAW_URL!"
+:: ====================================================
+:: [3] LOCAL DEV
+:: ====================================================
+:LOCAL_DEV
+cls
+echo [INFO] Entering Simulation Mode...
+:: Kill any existing local brain
+taskkill /F /FI "WINDOWTITLE eq NEXUS_BRAIN*" /T >nul 2>&1
 
-:: Strip any accidental quotes or spaces
-set "NGROK_URL=!NGROK_URL:"=!"
-set "NGROK_URL=!NGROK_URL: =!"
+if not exist "backend\nexus_vault.db" type nul > "backend\nexus_vault.db"
 
-:: Validation Check
-if "!NGROK_URL:~0,8!"=="https://" (
-    echo [OK] URL Calibrated: !NGROK_URL!
-    :: Export the variable out of the setlocal scope
-    endlocal & set "NGROK_URL=%NGROK_URL%"
-    goto :BRAIN_START
+echo.
+echo [INFO] Igniting Python Brain (Port 8000)...
+:: Launch in a new window to keep this controller active
+start "NEXUS_BRAIN" cmd /k "set PYTHONPATH=%~dp0&& set NEXUS_ENV=dev&& python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload"
+
+echo.
+echo [STATUS] Running Locally (Sovereign Lock).
+pause
+goto MAIN_MENU
+
+:: ====================================================
+:: [4] SHUTDOWN
+:: ====================================================
+:SHUTDOWN
+if exist "stop_nexus.bat" (
+    call stop_nexus.bat
 ) else (
-    echo [ERROR] Invalid URL: "!NGROK_URL!"
-    echo [RETRY] Must begin with https://
-    endlocal
-    goto :URL_INPUT
+    echo [WARN] stop_nexus.bat missing. Running basic shutdown...
+    docker-compose down
 )
-
-:BRAIN_START
-:: 4. BRAIN IGNITION
-echo.
-echo [Step 4] Igniting Nexus Brain (The Ledger)...
-if "%NEXUS_ENV%"=="" set "NEXUS_ENV=dev"
-set "UVICORN_FLAGS="
-if "%NEXUS_ENV%"=="dev" set "UVICORN_FLAGS=--reload"
-
-start "NEXUS_BRAIN" cmd /k "set PYTHONPATH=%~dp0&& set NEXUS_ENV=%NEXUS_ENV%&& python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 %UVICORN_FLAGS%"
-
-:shutdown_prompt
-echo.
-echo ====================================================
-echo [STATUS] ALL SYSTEMS OPERATIONAL (PHASE 1.3.1)
-echo [URL] %NGROK_URL%
-echo ====================================================
-echo Press any key to initiate Emergency Shutdown...
-pause > nul
-if exist "%~dp0stop_nexus.bat" call "%~dp0stop_nexus.bat"
+exit

@@ -65,6 +65,7 @@
         .answer {
             color: var(--text-dim); line-height: 1.8; font-size: 0.95rem;
         }
+        ul { margin: 0.5rem 0; padding-left: 1.2rem; }
         code {
             font-family: 'JetBrains Mono', monospace; color: #fff;
             background: rgba(99, 102, 241, 0.2); padding: 0.2rem 0.4rem; border-radius: 4px;
@@ -84,7 +85,7 @@
 
 <nav class="nav">
     <a href="../index.html">// RETURN_TO_TERMINAL</a>
-    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">DOC_ID: FAQ_1.3.1</div>
+    <div style="font-family: 'JetBrains Mono'; font-weight: bold; font-size: 0.8rem; color: var(--accent-blue);">DOC_ID: FAQ_1.4.0</div>
 </nav>
 
 <div class="container">
@@ -94,39 +95,51 @@
     <div class="qa-block">
         <div class="question">Does Nexus require a blockchain to function?</div>
         <div class="answer">
-            No. Phase 1.3.1 is operational as a standalone <strong>Local-First</strong> gateway. All economic accounting and identity resolution occur within the Sovereign Brain. Blockchains (TON, peaq, IoTeX) are utilized in Phase 2.0+ for optional anchoring and cross-chain proofs without affecting local execution.
+            No. Phase 1.4.0 is a standalone <strong>Sovereign Node</strong> operating with full autonomy without external blockchain dependencies. External layers like peaq or IoTeX are treated as optional anchoring adapters for identity and global settlement and do not dictate local execution speed or Brain correctness.
         </div>
     </div>
 
     <div class="qa-block">
-        <div class="question">How is the Ngrok browser warning bypassed?</div>
+        <div class="question">How does the Gateway handle "interstitial" or browser warnings?</div>
         <div class="answer">
-            To maintain a <strong>$0-cost Sovereign Stack</strong>, the Brain utilizes header-based bypass logic. By injecting the <code>ngrok-skip-browser-warning</code> header into the gateway stream, we allow the headless Flutter Body to establish a clean handshake without manual user intervention.
+            To maintain a <strong>Zero-Cost Sovereign Stack</strong>, the Brain utilizes header-based bypasses in development environments. It is configured to append ingress-specific bypass headers like <code>ngrok-skip-browser-warning</code>, Cloudflare, or Nginx equivalents to outbound responses to ensure clean JSON/HTML streams for automated handshakes.
         </div>
     </div>
 
     <div class="qa-block">
-        <div class="question">Can local hardware handle high-frequency writes?</div>
+        <div class="question">Why SQLite instead of a distributed database?</div>
         <div class="answer">
-            Yes. By utilizing <code>SQLite Write-Ahead Logging (WAL)</code> and <code>synchronous=NORMAL</code>, the Brain has been successfully validated under a <strong>1-Million Transaction Stress Test</strong>. It maintains stable performance (~50-60 TPS baseline) on commodity SSD hardware with zero write collisions.
+            For local-first sovereignty and high performance on edge hardware:
+            <ul>
+                <li><strong>WAL Mode:</strong> Write-Ahead Logging manages high-density concurrent writes without blocking.</li>
+                <li><strong>Integrity:</strong> Validated under a <strong>1-Million Transaction stress test</strong> with 0.00% data corruption.</li>
+                <li><strong>Portability:</strong> Single-file sovereign vaults ensure the operator maintains absolute state ownership.</li>
+            </ul>
         </div>
     </div>
 
     <div class="qa-block">
-        <div class="question">Why frame the UI as a "Stateless Surface"?</div>
+        <div class="question">Is the 60/30/10 split hardcoded?</div>
         <div class="answer">
-            To ensure <strong>Identity Agnosticism</strong>. The Body (UI) does not own state or keys; it extracts environmental context (initData) and renders the response from the Brain. This separation allows Nexus to integrate machine-IDs (ioID) or DePIN identities in later phases without altering core logic.
+            Yes. In the current release, the split logic is enforced as a <strong>Deterministic Invariant</strong> at the Brain level to prevent UI-level tampering and ensure economic integrity. Future parameterization will occur at the governance layer and will not alter the Brain’s deterministic execution guarantees.
         </div>
     </div>
 
     <div class="qa-block">
-        <div class="question">Does the protocol custody user funds?</div>
+        <div class="question">What happens if a transaction fails the Sentry Guard?</div>
         <div class="answer">
-            No. Nexus Protocol is <strong>Non-Custodial</strong>. The 60/30/10 split represents a deterministic accounting invariant on a local ledger. Any future integration with external settlement layers will remain opt-in, decentralized, and user-controlled.
+            The system operates on a <strong>Zero Trust</strong> model. If a request fails to resolve identity context (e.g., invalid <code>initData</code>) or environmental signatures, the Sentry rejects it at the perimeter. No logic is executed, and no state is committed to the Vault.
         </div>
     </div>
 
-    <div class="footer">// END_OF_INTEL // NEXUS_PROTOCOL_2026 // DURABILITY_VERIFIED</div>
+    <div class="qa-block">
+        <div class="question">Why frame the UI as an "Execution Surface"?</div>
+        <div class="answer">
+            To maintain <strong>Chain-Agnosticism</strong>. The UI (The Body) does not own state; it merely renders the reactive state of the Sovereign Brain. This ensures the protocol remains compatible with future identity systems like ioID or Sr25519 without requiring a rebuild of the core engine.
+        </div>
+    </div>
+
+    <div class="footer">// END_OF_INTEL // COREFRAME_SYSTEMS_2026 // PHASE_1.4.0_NODES</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>

@@ -1,40 +1,40 @@
-# 🛡️ Security Policy — Nexus Protocol (v1.3.1)
+# 🛡️ Security Policy — Nexus Protocol
+**Coreframe Systems Lab | Version 1.4.0**
 
 The Nexus Protocol is architected for **Sovereign Resilience**. We prioritize the integrity of the local ledger and the "Fail-Closed" security of the identity perimeter.
 
 ---
 
 ## 🔒 The Fail-Closed Model
-* **Identity Resolution:** Nexus utilizes a "Fail-Closed" logic gate. If the Sentry detects an invalid environmental context or unauthorized signature, the transaction is rejected at the edge (403 Forbidden).
-* **State Protection:** No writes are committed to the ```nexus_vault.db``` until the identity perimeter is cleared.
-* **Staged Enforcement:** Phase 1.3.1 implements staged signature verification logic, preparing the architecture for mandatory HMAC enforcement and Multi-Chain identity (peaq/IoTeX) in Phase 2.0.
+* **Identity Resolution:** Nexus utilizes a "Fail-Closed" logic gate. If the Sentry detects an invalid environmental context or unauthorized signature, the transaction is rejected at the edge (```403 Forbidden```).
+* **State Protection:** No writes are committed to the ```nexus_vault.db``` until the identity perimeter is cleared. This ensures that the sovereign vault remains uncontaminated by unverified state transitions.
+* **Threat Model Disclaimer:** Phase 1.4.0 focuses on ingress integrity and state correctness, not adversarial network anonymity.
 
-> Future phases will transition from environmental validation to cryptographic identity enforcement without altering the execution invariant.
+
 
 ---
 
 ## 🛰️ Infrastructure Security
-* **Header-Based Integrity:** To maintain security over $0-cost tunnels, the protocol requires specific client-supplied headers (e.g., ```ngrok-skip-browser-warning```) to ensure deterministic request routing and prevent tunnel interstitial disruption.
-* **Local-First Isolation:** The Brain is designed to operate without external network dependencies, reducing the attack surface to the local host and authenticated tunnel.
-
-
+* **Deterministic Ingress:** To maintain stability over public tunnels, the protocol utilizes specific routing headers to ensure deterministic ingress behavior and prevent tunnel interstitial interference.
+* **ACID Integrity:** Security is enforced at the database layer via **Write-Ahead Logging (WAL)** and atomic transactions. An economic split is only "secure" if it is mathematically impossible to commit a partial state.
+* **Local-First Isolation:** The Brain is designed to operate with minimal external network dependencies, reducing the attack surface to the local host and the authenticated zero-trust tunnel.
 
 ---
 
-## 🚫 Explicit Non-Goals (Phase 1.3.1)
+## 🚫 Explicit Non-Goals (Phase 1.4.0)
 To maintain architectural honesty during the hardening phase, note that:
-* Nexus does not provide end-user anonymity guarantees.
+* Nexus does not currently provide end-user anonymity guarantees.
 * Nexus does not custody private keys or external assets.
-* Nexus does not enforce cryptographic identity beyond environment validation in this phase.
+* Nexus does not enforce cryptographic multi-chain identity beyond environment validation in this release.
 
 ---
 
 ## ⚖️ Reporting a Vulnerability
-We encourage responsible disclosure of vulnerabilities that could compromise the Sovereign Vault or the 60/30/10 Economic Invariant.
+We encourage responsible disclosure of vulnerabilities that could compromise the Sovereign Vault or the 60/30/10 Economic Invariant. Please report vulnerabilities privately to Coreframe Systems Engineering:
 
-* **Primary Contact:** arhantbarmate@gmail.com
-* **Secondary Contact:** arhant6armate@outlook.com
+* **Official Channel:** ```infrastructure@coreframe.systems```
+* **Lead Maintainer:** Arhant Barmate (```arhant6armate@gmail.com```)
 
 ---
-
-© 2026 Nexus Protocol · Security Specification v1.3.1
+© 2026 Coreframe Systems · Security Specification v1.4.0  
+*Hardened Ingress. Deterministic Execution. Sovereign Resilience.*

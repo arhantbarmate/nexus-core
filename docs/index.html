@@ -12,7 +12,6 @@
             --panel-bg: rgba(15, 15, 20, 0.85);
             --border-panel: rgba(255, 255, 255, 0.05);
             --text-dim: #94a3b8;
-            /* Added for Threat Model */
             --status-red: #fb7185;
             --status-amber: #f59e0b;
             --status-green: #10b981;
@@ -26,7 +25,6 @@
         h1 { font-size: 4rem; font-weight: 800; margin: 0; letter-spacing: -3px; background: linear-gradient(180deg, #fff 0%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .tagline { color: var(--text-dim); font-size: 1.1rem; margin: 1.5rem 0 4rem; font-family: 'JetBrains Mono'; letter-spacing: 1px; }
 
-        /* 🔳 SYSTEMATIC GRID */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; text-align: left; margin-bottom: 4rem; }
         .module { background: var(--panel-bg); border: 1px solid var(--border-panel); padding: 2rem; border-radius: 4px; text-decoration: none; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; justify-content: space-between; }
         .module:hover { border-color: var(--accent-blue); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1); }
@@ -34,19 +32,13 @@
         .mod-title { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
         .mod-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
 
-        /* ---------------------------------------------------------
-           📐 HIGH-FIDELITY THREAT DIAGRAM (Transparent & Integrated)
-           --------------------------------------------------------- */
         .schematic-section {
             margin-top: 2rem;
             padding: 3rem;
             border-radius: 4px;
             border: 1px solid var(--border-panel);
-            
-            /* SEE-THROUGH GLASS EFFECT */
             background: rgba(255, 255, 255, 0.02); 
             backdrop-filter: blur(5px);
-            
             text-align: left;
         }
 
@@ -70,7 +62,6 @@
             flex-wrap: wrap;
         }
 
-        /* Diagram Containers */
         .d-zone {
             padding: 2.5rem;
             border: 1px dashed rgba(255, 255, 255, 0.1);
@@ -84,7 +75,6 @@
             font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #666;
         }
 
-        /* Diagram Nodes */
         .d-node {
             background: #111;
             border: 1px solid #333;
@@ -106,7 +96,6 @@
         .d-node.brain { border-color: var(--status-green); color: var(--status-green); }
         .d-node.attacker { border-color: var(--status-red); color: var(--status-red); }
         
-        /* Connections */
         .d-line {
             width: 1px; height: 30px; background: #333; margin: 0 auto;
             position: relative;
@@ -128,7 +117,7 @@
 </head>
 <body>
     <div id="particles-js"></div>
-    <nav class="nav"><div class="nav-brand">NEXUS_CORE_v1.3.1</div></nav>
+    <nav class="nav"><div class="nav-brand">NEXUS_CORE_v1.4.0</div></nav>
     <div class="container">
         <h1>Sovereign Gateway</h1>
         <div class="tagline">The Blueprint for Local-First Economic Execution</div>
@@ -186,7 +175,7 @@
                     
                     <div class="d-node">User Client</div>
                     <div class="d-line"><div class="d-dot"></div></div>
-                    <div class="d-node" style="border-style:dotted;">Ngrok Tunnel</div>
+                    <div class="d-node" style="border-style:dotted;">Cloudflare Tunnel</div>
                     <div class="d-line"><div class="d-dot red"></div></div>
                     <div class="d-node attacker">Attacker</div>
                 </div>
@@ -219,7 +208,7 @@
             </div>
         </div>
 
-        <div class="footer">// SYSTEM_LOCKED // NEXUS_PROTOCOL_2026 // <a href="portal/summary.html" style="color:inherit">SUMMARY</a></div>
+        <div class="footer">// SYSTEM_LOCKED // COREFRAME_SYSTEMS_2026 // <a href="portal/summary.html" style="color:inherit">SUMMARY</a></div>
     </div>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>

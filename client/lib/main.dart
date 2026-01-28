@@ -1,4 +1,4 @@
-// Copyright 2026 Nexus Protocol Authors
+// Copyright 2026 Coreframe Systems (Nexus Protocol)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,86 +13,37 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-// FIX 1: Removed direct telegram_web_app import.
-// FIX 2: Imported the hardened bridge gateway for cross-platform safety.
+import 'dart:async';
 import 'services/tg_bridge.dart';
 import 'screens/dashboard.dart';
 
-void main() async {
-  // 1. BOUNDARY INITIALIZATION
+// 1. NON-BLOCKING ENTRY (Stress Test Optimization)
+// We avoid 'await' in main() to ensure the Splash Screen paints immediately.
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  bool isTelegramReady = false;
-  bool isDevMode = false;
-  String bootError = "";
-
-  // 2. DEV-MODE SHORT CIRCUIT (Audit 2.1)
-  const String nexusDev = String.fromEnvironment('NEXUS_DEV', defaultValue: 'false');
-  isDevMode = nexusDev.trim().toLowerCase() == 'true';
-
-  // 3. SOVEREIGN HANDSHAKE (The Identity Gate)
-  // Replaced direct handshake with bridge-based probing.
-  if (!isDevMode) {
-    try {
-      // STRESS TEST (Audit 2.2): Timeout ensures survival fallback triggers if JS doesn't respond.
-      await Future.any([
-        _probeSovereignIdentity(),
-        Future.delayed(const Duration(seconds: 3), () => throw 'IDENTITY_SERVICE_TIMEOUT'),
-      ]);
-
-      // Using the bridge to check for identity presence (Phase 1.3.1 compliant)
-      final uid = TelegramBridge.userId;
-
-      // Audit 2.3: Verification of Identity Object Integrity via fallback check.
-      if (uid != "999") {
-        isTelegramReady = true;
-        // The ready() and expand() signals are now handled internally within the web bridge implementation.
-      } else {
-        bootError = "IDENTITY_NOT_FOUND";
-      }
-    } catch (e) {
-      debugPrint("🛡️ Nexus Handshake Error: $e");
-      bootError = e.toString();
-    }
-  }
-
-  runApp(NexusApp(
-    telegramReady: isTelegramReady,
-    devMode: isDevMode,
-    bootError: bootError,
-  ));
-}
-
-/// 4. SOVEREIGN PROBE (Audit 2.5)
-/// Triggers haptic or ready signals via the bridge to ensure the JS environment is hot.
-Future<void> _probeSovereignIdentity() async {
-  // Simply calling triggerHaptic or referencing initData ensures the 
-  // underlying JS context (if on web) is initialized.
-  TelegramBridge.triggerHaptic();
+  runApp(const NexusApp());
 }
 
 class NexusApp extends StatefulWidget {
-  final bool telegramReady;
-  final bool devMode;
-  final String bootError;
-
-  const NexusApp({
-    super.key,
-    required this.telegramReady,
-    required this.devMode,
-    required this.bootError,
-  });
+  const NexusApp({super.key});
 
   @override
   State<NexusApp> createState() => _NexusAppState();
 }
 
-// 5. THE LIFE-CYCLE OBSERVER (Audit 3)
+// 2. REACTIVE BOOTSTRAPPER (Phase 1.4.0)
+// Manages the transition from "Cold Boot" to "Sovereign Session".
 class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
+  bool _isTelegramReady = false;
+  bool _isDevMode = false;
+  String _bootError = "";
+  bool _isLoading = true; // Tracks the handshake status
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _bootstrapSovereignNode();
   }
 
   @override
@@ -101,9 +52,65 @@ class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  // 3. THE HANDSHAKE PROTOCOL (Async execution)
+  Future<void> _bootstrapSovereignNode() async {
+    // NOTE: Frontend identity is advisory only in Phase 1.x.
+    // Backend remains authoritative for all execution and policy decisions.
+    // The client strictly acts as a "View" for the Sovereign Brain.
+
+    // A. Env Extraction
+    const String nexusDev = String.fromEnvironment('NEXUS_DEV', defaultValue: 'false');
+    final bool devMode = nexusDev.trim().toLowerCase() == 'true';
+
+    bool telegramReady = false;
+    String error = "";
+
+    if (!devMode) {
+      try {
+        // B. Identity Probe (With 3s Timeout Fail-Safe)
+        // Ensures the app doesn't hang if the JS Bridge is unresponsive.
+        await Future.any([
+          _probeIdentityBridge(),
+          Future.delayed(const Duration(seconds: 3), () => throw 'IDENTITY_TIMEOUT'),
+        ]);
+
+        final uid = TelegramBridge.userId;
+        
+        // C. Sovereign Validation (Audit 2.3)
+        // In Prod, User 999 (Dummy) is explicitly marked as "Unverified Guest".
+        if (uid != null && uid != "999" && uid.isNotEmpty) {
+          telegramReady = true;
+        } else {
+          error = "SOVEREIGN_ID_MISMATCH";
+        }
+      } catch (e) {
+        debugPrint("🛡️ Handshake Failed: $e");
+        // Simple error normalization for the UI
+        error = e.toString().replaceAll("Exception:", "").trim();
+      }
+    } else {
+      debugPrint("🛡️ Dev Mode Active: Bypassing Handshake");
+    }
+
+    // D. Safe State Update
+    if (mounted) {
+      setState(() {
+        _isDevMode = devMode;
+        _isTelegramReady = telegramReady;
+        _bootError = error;
+        _isLoading = false; // Release the Splash Screen
+      });
+    }
+  }
+
+  Future<void> _probeIdentityBridge() async {
+    // Triggers haptics to ensure JS Bridge is alive and listening
+    TelegramBridge.triggerHaptic();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && widget.telegramReady) {
+    if (state == AppLifecycleState.resumed && _isTelegramReady) {
       debugPrint("🏛️ Nexus: Resuming Sovereign Session...");
     }
   }
@@ -113,31 +120,37 @@ class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
     return MaterialApp(
       title: 'Nexus Protocol',
       debugShowCheckedModeBanner: false,
-      // 6. HARDENED THEME (Cyber-Sentry Aesthetics)
+      
+      // 4. HARDENED THEME (Cyber-Sentry Aesthetics)
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF050508),
-        canvasColor: const Color(0xFF050508),
+        canvasColor: const Color(0xFF050508), // Fixes Drawer/Sheet colors
         colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF4f46e5), 
-          secondary: Color(0xFF10b981), 
+          primary: Color(0xFF4f46e5), // Indigo
+          secondary: Color(0xFF10b981), // Emerald
           surface: Color(0xFF0d0d12),
+          error: Color(0xFFef4444),
         ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontFamily: 'Courier', color: Color(0xFFe2e8f0)),
         ),
       ),
-      // 7. ROUTING LOGIC (Audit 4)
-      home: widget.telegramReady || widget.bootError.isNotEmpty || widget.devMode
-          ? NexusDashboard(
-              telegramReady: widget.telegramReady,
-              devMode: widget.devMode,
-              bootError: widget.bootError,
-            )
-          : _buildSplashLoader(),
+
+      // 5. ROUTING SWITCHBOARD
+      // If Loading: Show Splash
+      // If Ready/Error/Dev: Show Dashboard (Dashboard handles error display)
+      home: _isLoading
+          ? _buildSplashLoader()
+          : NexusDashboard(
+              telegramReady: _isTelegramReady,
+              devMode: _isDevMode,
+              bootError: _bootError,
+            ),
     );
   }
 
   /// THE SPLASH PROTOCOL (Audit 5)
+  /// Optimized for minimal paint cost during startup (Frame 1).
   Widget _buildSplashLoader() {
     return Scaffold(
       backgroundColor: const Color(0xFF050508),
@@ -145,6 +158,7 @@ class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // ErrorBuilder ensures no crash if asset is missing during dev
             Image.asset(
               'assets/nexus-logo.png',
               width: 160,
