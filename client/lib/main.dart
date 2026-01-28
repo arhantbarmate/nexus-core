@@ -76,21 +76,22 @@ class _NexusAppState extends State<NexusApp> with WidgetsBindingObserver {
 
         final uid = TelegramBridge.userId;
         
-        // C. Sovereign Validation (Audit 2.3)
-        // In Prod, User 999 (Dummy) is explicitly marked as "Unverified Guest".
-        if (uid != null && uid != "999" && uid.isNotEmpty) {
-          telegramReady = true;
-        } else {
-          error = "SOVEREIGN_ID_MISMATCH";
-        }
-      } catch (e) {
-        debugPrint("🛡️ Handshake Failed: $e");
-        // Simple error normalization for the UI
-        error = e.toString().replaceAll("Exception:", "").trim();
+        // C. Sovereign Validation (Audit 2.4 - Hardened)
+      // Logic: Ensure identity is anchored. User 999 is blocked in Production.
+      if (uid.isNotEmpty && uid != "999") {
+        telegramReady = true;
+      } else {
+        error = "SOVEREIGN_ID_MISMATCH";
+        debugPrint("🛡️ Access Denied: Unverified or Reserved UID detected.");
       }
-    } else {
-      debugPrint("🛡️ Dev Mode Active: Bypassing Handshake");
+    } catch (e) {
+      debugPrint("🛡️ Handshake Failed: $e");
+      error = e.toString().replaceAll("Exception:", "").trim();
     }
+  } else {
+    debugPrint("🛡️ Dev Mode Active: Bypassing Handshake");
+    telegramReady = true; // Ensure UI proceeds in dev mode
+  }
 
     // D. Safe State Update
     if (mounted) {
