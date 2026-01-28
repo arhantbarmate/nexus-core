@@ -1,12 +1,15 @@
 # Copyright 2026 Coreframe Systems
 # Hardened Deployment Workflow - Phase 1.4.0
-# Optimized for Flutter 3.38.6 Stable & GitHub Pages Production Staging
+# Strategy: Tag-Driven Production Releases
 
 name: Deploy Nexus Protocol to Pages
 
 on:
   push:
-    branches: ["main"]
+    # Only trigger on version tags (e.g., v1.4.0)
+    tags:
+      - 'v*'
+  # Allows manual override for emergency recalibration
   workflow_dispatch:
 
 permissions:
@@ -51,8 +54,9 @@ jobs:
           # 2. Hardening: Bypass Jekyll processing to protect WASM/Asset directories
           touch staging/.nojekyll
           
-          # 3. Deterministic Build Stamp (Reviewer Signal)
-          echo "v1.4.0-hardened | $(date -u)" > staging/BUILD.txt
+          # 3. Dynamic Build Stamp
+          # Uses the actual tag name (e.g., v1.4.0) for the audit trail
+          echo "Build: ${{ github.ref_name }} | $(date -u)" > staging/BUILD.txt
           
           # 4. Sync Static Portal (Docs & Index)
           if [ -d "docs" ]; then
@@ -66,7 +70,7 @@ jobs:
           # 6. Sovereign Privacy Cleanup
           find staging/app -name "*.map" -type f -delete
           
-          echo "🏛️ STAGING_STRUCTURE_STAMPED_AND_VERIFIED"
+          echo "🏛️ RELEASE_STAGING_VERIFIED: ${{ github.ref_name }}"
           cat staging/BUILD.txt
 
       - name: Setup Pages Configuration
