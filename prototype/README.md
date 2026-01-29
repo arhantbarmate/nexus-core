@@ -1,6 +1,6 @@
 ![Coreframe Systems Banner](https://github.com/arhantbarmate/nexus-core/blob/main/client/assets/coreframesystems-banner.png?raw=true)
 
-# Nexus Gatekeeper: Edge Verification Prototype (v1.4.1)
+# Nexus Gatekeeper: Edge Verification Prototype (v1.0)
 
 > **Status:** Edge Runtime Simulation (Daemon-Level)
 > **Target Hardware:** ARM Cortex-A53 (Hivemapper Bee)  
