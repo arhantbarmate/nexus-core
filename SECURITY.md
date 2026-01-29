@@ -6,11 +6,9 @@ The Nexus Protocol is architected for **Sovereign Resilience**. We prioritize th
 ---
 
 ## 🔒 The Fail-Closed Model
-* **Identity Resolution:** Nexus utilizes a "Fail-Closed" logic gate. If the Sentry detects an invalid environmental context or unauthorized signature, the transaction is rejected at the edge (```403 Forbidden```).
-* **State Protection:** No writes are committed to the ```nexus_vault.db``` until the identity perimeter is cleared. This ensures that the sovereign vault remains uncontaminated by unverified state transitions.
+* **Identity Resolution:** Nexus utilizes a "Fail-Closed" logic gate. If the Sentry detects an invalid environmental context or unauthorized signature, the transaction is rejected at the edge (`403 Forbidden`).
+* **State Protection:** No writes are committed to the `nexus_vault.db` until the identity perimeter is cleared. This ensures that the sovereign vault remains uncontaminated by unverified state transitions.
 * **Threat Model Disclaimer:** Phase 1.4.0 focuses on ingress integrity and state correctness, not adversarial network anonymity.
-
-
 
 ---
 
@@ -32,8 +30,8 @@ To maintain architectural honesty during the hardening phase, note that:
 ## ⚖️ Reporting a Vulnerability
 We encourage responsible disclosure of vulnerabilities that could compromise the Sovereign Vault or the 60/30/10 Economic Invariant. Please report vulnerabilities privately to Coreframe Systems Engineering:
 
-* **Official Channel:** ```infrastructure@coreframe.systems```
-* **Lead Maintainer:** Arhant Barmate (```arhant6armate@gmail.com```)
+* **Official Channel:** `infrastructure@coreframe.systems`
+* **Lead Maintainer:** Arhant Barmate (`arhant6armate@gmail.com`)
 
 ---
 © 2026 Coreframe Systems · Security Specification v1.4.0  
