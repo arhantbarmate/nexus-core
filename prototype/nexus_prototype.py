@@ -3,7 +3,7 @@ import random
 import hashlib
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 # --- CONFIGURATION (TUNED FOR REALITY) ---
 # Lowered to 0.12G to account for EVs on smooth roads.
@@ -20,16 +20,17 @@ class NexusGatekeeper:
         self.session_key = hashlib.sha256(b"simulated-hardware-key").hexdigest()[:16]
 
     def _generate_telemetry(self, scenario):
-        timestamp = datetime.utcnow().isoformat() + "Z"
+        # FIX: Switched to timezone-aware UTC to remove DeprecationWarning
+        timestamp = datetime.now(timezone.utc).isoformat()
         
         if scenario == "REAL_DRIVE":
-            # Added "noise" to speed to simulate real throttle fluctuation
+            # Real World: Speed varies, Vibration is chaotic/high
             speed = random.uniform(15.0, 55.0) 
             # Vibration scales slightly with speed in real physics
             vibration = random.uniform(0.15, 1.8) + (speed * 0.005)
             
         elif scenario == "SPOOF_ATTACK":
-            # Simulator: Perfectly constant speed is a dead giveaway
+            # Simulator: Speed is smooth, Vibration is non-existent
             speed = random.uniform(29.5, 30.5) 
             vibration = random.uniform(0.00, 0.02) # Dead silent
             
@@ -47,12 +48,16 @@ class NexusGatekeeper:
         }
 
     def sign_packet(self, data):
+        """
+        Simulates the 'Fail-Closed' signing.
+        We only generate this hash if the logic passes.
+        """
         payload = json.dumps(data, sort_keys=True).encode()
         signature = hashlib.sha256(payload + self.session_key.encode()).hexdigest()
         return signature
 
     def run_cycle(self):
-        print(f"\n🚀 NEXUS RUNTIME v1.4.1 (PATCHED) | Device: {self.device_id}")
+        print(f"\n🚀 NEXUS RUNTIME v1.4.2 (GOLD MASTER) | Device: {self.device_id}")
         print("Listening for sensor streams... (Press Ctrl+C to stop)\n")
 
         # Randomized State Machine for Simulation
