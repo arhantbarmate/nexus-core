@@ -57,7 +57,7 @@ class NexusGatekeeper:
         return signature
 
     def run_cycle(self):
-        print(f"\n🚀 NEXUS RUNTIME v1.4.2 (GOLD MASTER) | Device: {self.device_id}")
+        print(f"\n🚀 NEXUS RUNTIME v1.0 | Device: {self.device_id}")
         print("Listening for sensor streams... (Press Ctrl+C to stop)\n")
 
         # Randomized State Machine for Simulation
