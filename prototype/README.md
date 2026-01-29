@@ -16,7 +16,7 @@ This prototype demonstrates the **"Verify-then-Execute"** logic used by the Nexu
 
 **Failure Mode:** If Nexus is unavailable or crashes, the upload pipeline halts (fail-closed), preventing unsigned data from entering the network.
 
-![Terminal Log Evidence](./log_demo.png)
+![Terminal Log Evidence](./log-demo.png)
 *Above: v1.4.2 Logic distinguishing between valid driving (Green) and zero-vibration spoofing (Red).*
 
 ---
