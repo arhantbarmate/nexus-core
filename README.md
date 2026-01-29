@@ -1,4 +1,4 @@
-![Coreframe Systems Banner](https://coreframe.systems/banner.png)
+![Coreframe Systems Banner](https://github.com/arhantbarmate/nexus-core/blob/main/client/assets/coreframesystems-banner.png?raw=true)
 
 # Nexus Protocol (Core)
 > **v1.4.0 [OPERATIONAL]** | *Sovereign Infrastructure Execution Layer*
