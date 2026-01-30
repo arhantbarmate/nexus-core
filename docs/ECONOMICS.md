@@ -66,7 +66,7 @@ While Phase 1.4 handles settlement at the **Sovereign Node** level (local-first)
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
 © 2026 Coreframe Systems™ · All Rights Reserved
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
