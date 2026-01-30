@@ -27,13 +27,13 @@ graph TD
         
         %% Ingress Layer
         subgraph "Ingress Controller"
-            Tunnel[Nexus Sentry (Cloudflare Tunnel)]
+            Tunnel["Nexus Sentry (Cloudflare Tunnel)"]
         end
 
         %% Isolated Network
         subgraph "Private Network (nexus_net)"
-            Brain{Nexus Brain}
-            Vault[(Sovereign Vault - SQLite)]
+            Brain{{Nexus Brain}}
+            Vault[("Sovereign Vault - SQLite")]
         end
     end
 
@@ -46,7 +46,7 @@ graph TD
     %% Implicit Frontend Serving
     Brain -.->|Serve Flutter UI| User
 
-    %% Removed Component Visual
+    %% Styling
     style Tunnel fill:#00d7bd,stroke:#333,stroke-width:2px
     style Brain fill:#7289da,stroke:#333,stroke-width:2px
 ```
@@ -124,9 +124,6 @@ docker logs -f nexus-brain
 | `/api/transactions` | GET | Multichain Guard | Cursor-based history with Merkle pagination. |
 
 ---
----
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
----
-© 2026 Coreframe Systems™ · All Rights Reserved
+© 2026 Coreframe Systems™ · All Rights Reserved  
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
