@@ -29,9 +29,6 @@ Users interacting with a Nexus Node are interacting directly with the Node Opera
 *Your Node. Your Data. Your Sovereignty.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
----
-
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
 © 2026 Coreframe Systems™ · All Rights Reserved
