@@ -58,7 +58,6 @@ The interface is a Flutter-based **Execution Surface** that exists entirely behi
 * **Deterministic Recovery:** The Vault is portable. In a "Total Hardware Failure" scenario, the ```.db``` file can be re-anchored to any Coreframe-compliant node without state loss.
 
 ---
----
 
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
