@@ -18,9 +18,9 @@ The Brain now operates inside a fully isolated Docker network. It exposes **zero
 
 ```mermaid
 graph TD
-    %% External World
-    User((Public User/TMA))
-    CF[Cloudflare Edge Network]
+    %% External World - QUOTED LABELS FOR SAFETY
+    User(("Public User/TMA"))
+    CF["Cloudflare Edge Network"]
     
     %% The Host Machine
     subgraph "Sovereign Node (Docker Host)"
@@ -32,19 +32,19 @@ graph TD
 
         %% Isolated Network
         subgraph "Private Network (nexus_net)"
-            Brain{{Nexus Brain}}
+            Brain{{"Nexus Brain"}}
             Vault[("Sovereign Vault - SQLite")]
         end
     end
 
-    %% Data Flow
-    User -->|HTTPS (TLS 1.3)| CF
-    CF -->|Secure Tunnel Protocol| Tunnel
-    Tunnel -->|Verified Request| Brain
-    Brain -->|60/30/10 Write| Vault
+    %% Data Flow - QUOTED CONNECTIONS
+    User -->|"HTTPS (TLS 1.3)"| CF
+    CF -->|"Secure Tunnel Protocol"| Tunnel
+    Tunnel -->|"Verified Request"| Brain
+    Brain -->|"60/30/10 Write"| Vault
     
     %% Implicit Frontend Serving
-    Brain -.->|Serve Flutter UI| User
+    Brain -.->|"Serve Flutter UI"| User
 
     %% Styling
     style Tunnel fill:#00d7bd,stroke:#333,stroke-width:2px
