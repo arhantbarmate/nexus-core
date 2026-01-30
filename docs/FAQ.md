@@ -1,5 +1,5 @@
-# ❓ Technical FAQ — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# ❓ Technical FAQ — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 This document addresses the architectural rationale, infrastructure constraints, and economic logic behind the Nexus Sovereign Gateway.
 
@@ -53,7 +53,8 @@ This document addresses the architectural rationale, infrastructure constraints,
 *This document addresses architectural rationale for Phase 1.4.0 nodes.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

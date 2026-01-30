@@ -1,5 +1,5 @@
-# 🛠️ Node Setup Guide — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🛠️ Node Setup Guide — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 This guide provides the technical sequence required to deploy a **Sovereign Nexus Node** on local hardware. The architecture is optimized for low-latency, durability-first local execution.
 
@@ -19,7 +19,7 @@ Before ignition, ensure your machine meets the following baseline requirements:
 ### 1. Secure the Perimeter
 Clone the repository and prepare your environment. **Never share your .env file.**
 ```bash
-# Clone the Coreframe repository
+# Clone the Orthonode repository
 git clone https://github.com/arhantbarmate/nexus-core.git
 cd nexus-core
 
@@ -54,7 +54,7 @@ flutter build web --release --base-href "/"
 Once the node status is `NOMINAL`, perform an **Integrity Audit**:
 
 1. **The Brain:** Navigate to ```http://localhost:8000/docs``` to verify the OpenAPI schema.
-2. **The Ingress:** Access your public URL (e.g., coreframe.systems) or localhost to verify the handshake.
+2. **The Ingress:** Access your public URL (e.g., Orthonode.systems) or localhost to verify the handshake.
 3. **The Vault:** Run the **1-Million Transaction Stress Test** to verify write-durability:
    ```bash
    python scripts/stress_test_1m.py
@@ -72,7 +72,8 @@ Once the node status is `NOMINAL`, perform an **Integrity Audit**:
 *Designed for sovereign operators. Built for durability.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

@@ -1,5 +1,5 @@
-# 🔌 Adapter Registry & Integration Guide — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🔌 Adapter Registry & Integration Guide — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 This document defines the Adapter System: the mechanism for integrating external ecosystems while preserving local-first determinism.
 
@@ -31,7 +31,8 @@ Adapters expand reach, not authority. No adapter—regardless of chain—can ove
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

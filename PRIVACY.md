@@ -1,5 +1,5 @@
-# 🛡️ Data Sovereignty — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🛡️ Data Sovereignty — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 Nexus is architected on the principle of **Absolute Data Sovereignty**. As a local-first gateway, the protocol ensures that data ownership remains strictly with the Node Operator. 
 
@@ -20,7 +20,7 @@ Nexus is architected on the principle of **Absolute Data Sovereignty**. As a loc
 
 ## ⚖️ Operator & User Rights
 Users interacting with a Nexus Node are interacting directly with the Node Operator's sovereign hardware.
-* **Zero Telemetry:** Coreframe Systems™ (the developers) does not include master keys, administrative backdoors, or status signaling reporting. We cannot see your data, your splits, or your uptime.
+* **Zero Telemetry:** Orthonode Infrastructure Labs™ (the developers) does not include master keys, administrative backdoors, or status signaling reporting. We cannot see your data, your splits, or your uptime.
 * **Auditability:** The local vault is 100% accessible to the operator via standard SQLite tools, ensuring total transparency of the **durability-first** ledger.
 * **Compliance Responsibility:** As a sovereign tool, responsibility for compliance with local data regulations (GDPR/CCPA) rests with the Node Operator deploying the hardware.
 
@@ -29,7 +29,8 @@ Users interacting with a Nexus Node are interacting directly with the Node Opera
 *Your Node. Your Data. Your Sovereignty.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

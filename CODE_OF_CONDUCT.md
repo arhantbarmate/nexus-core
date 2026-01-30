@@ -1,14 +1,14 @@
-# 🤝 Code of Conduct — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🤝 Code of Conduct — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
-The Nexus Protocol is a professional infrastructure environment dedicated to architectural sovereignty and economic integrity. This Code of Conduct governs all interactions within the Coreframe Systems™ ecosystem.
+The Nexus Protocol (Prototype) is a professional infrastructure environment dedicated to architectural sovereignty and economic integrity. This Code of Conduct governs all interactions within the Orthonode Infrastructure Labs™ ecosystem.
 
 ---
 
 ## 🛡️ Sovereign Principles
 
 1. **Sovereignty First:** We uphold the user's right to local execution and absolute data ownership. Contributions must prioritize the local "Brain" and deterministic logic over centralized cloud dependencies.
-2. **Integrity of the Invariant:** Respect the **60/30/10 Deterministic Split**. This is a hard-coded economic axiom. Any attempt to circumvent or obfuscate this distribution is incompatible with the Coreframe mission.
+2. **Integrity of the Invariant:** Respect the **60/30/10 Deterministic Split**. This is a hard-coded economic axiom. Any attempt to circumvent or obfuscate this distribution is incompatible with the Orthonode mission.
 3. **Resilience over Hype:** We value verified engineering, documented stress tests, and durability-first development. Speculative claims or "vaporware" roadmaps are prohibited.
 
 ---
@@ -23,7 +23,7 @@ The Nexus Protocol is a professional infrastructure environment dedicated to arc
 
 ## 🤝 Professional Respect
 
-Coreframe Systems™ maintains a harassment-free environment for contributors regardless of background, identity, or affiliation. Harassment, personal attacks, or discriminatory behavior are not tolerated. Enforcement actions may include contribution rejection, access revocation, or permanent removal from project spaces. 
+Orthonode Infrastructure Labs™ maintains a harassment-free environment for contributors regardless of background, identity, or affiliation. Harassment, personal attacks, or discriminatory behavior are not tolerated. Enforcement actions may include contribution rejection, access revocation, or permanent removal from project spaces. 
 
 **This policy exists to protect technical focus and professional collaboration.**
 
@@ -31,10 +31,10 @@ Coreframe Systems™ maintains a harassment-free environment for contributors re
 
 ## 📧 Reporting & Governance
 
-Violations of this code or security vulnerabilities should be reported directly to Coreframe Systems™ Engineering:
+Violations of this code or security vulnerabilities should be reported directly to Orthonode Infrastructure Labs™ Engineering:
 
 * **Lead Maintainer:** Arhant Barmate
-* **Official Channel:** ```infrastructure@coreframe.systems```
+* **Official Channel:** ```infrastructure@Orthonode.systems```
 * **Secondary:** ```arhantbarmate@gmail.com```
 
 ---
@@ -42,7 +42,8 @@ Violations of this code or security vulnerabilities should be reported directly 
 *This document governs conduct and does not override project licensing.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

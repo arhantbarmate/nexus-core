@@ -1,5 +1,5 @@
-# 🛠️ Contributing to Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🛠️ Contributing to Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 Nexus is an open-source **Sovereign Gateway** architected for the DePIN ecosystem. We welcome contributions that maintain our core technical invariants and uphold our durability-first engineering discipline.
 
@@ -36,22 +36,23 @@ python scripts/stress_test_1m.py
 ---
 
 ## 🛡️ Security & Disclosure
-If you discover a security vulnerability, please do **not** open a public issue. To protect sovereign users, report vulnerabilities privately to Coreframe Systems™ Engineering:
+If you discover a security vulnerability, please do **not** open a public issue. To protect sovereign users, report vulnerabilities privately to Orthonode Infrastructure Labs™ Engineering:
 
-* **Primary:** ```infrastructure@coreframe.systems```
+* **Primary:** ```infrastructure@Orthonode.systems```
 * **Lead Maintainer:** Arhant Barmate (```arhantbarmate@gmail.com```)
 
 ---
 
 ## ⚖️ License
-By contributing to Nexus Protocol, you agree that your contributions will be licensed under the **Apache License 2.0**.
+By contributing to Nexus Protocol (Prototype), you agree that your contributions will be licensed under the **Apache License 2.0**.
 
 ---
 
 *This document governs the engineering contribution lifecycle.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

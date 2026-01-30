@@ -1,7 +1,7 @@
-# 🏛️ System Architecture — Nexus Protocol
-**Coreframe Systems™ Lab | Phase 1.4.0**
+﻿# 🏛️ System Architecture — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Phase 1.4.0**
 
-The Nexus Protocol is a **Sovereign Edge Gateway** architected for the DePIN ecosystem. It operates on a **Verify-then-Execute** model, ensuring that economic state transitions are only committed after environmental and identity resolution.
+The Nexus Protocol (Prototype) is a **Sovereign Edge Gateway** architected for the DePIN ecosystem. It operates on a **Verify-then-Execute** model, ensuring that economic state transitions are only committed after environmental and identity resolution.
 
 ---
 
@@ -55,11 +55,12 @@ The interface is a Flutter-based **Execution Surface** that exists entirely behi
 ## 🛡️ Infrastructure Sovereignty
 * **Tunneling Resilience:** Optimized for Zero Trust Tunnels (Reference Implementation: Cloudflare Tunnel). Designed to be replaceable by self-hosted reverse proxies (e.g., Nginx/Traefik) in future sovereign deployments.
 * **Legacy Bypass:** Engineered to eliminate "interstitial" handshakes common in free-tier tunneling services, ensuring seamless headless communication for Telegram Mini Apps.
-* **Deterministic Recovery:** The Vault is portable. In a "Total Hardware Failure" scenario, the ```.db``` file can be re-anchored to any Coreframe-compliant node without state loss.
+* **Deterministic Recovery:** The Vault is portable. In a "Total Hardware Failure" scenario, the ```.db``` file can be re-anchored to any Orthonode-compliant node without state loss.
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

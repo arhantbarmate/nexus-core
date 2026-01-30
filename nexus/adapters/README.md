@@ -1,4 +1,4 @@
-# 🔌 Universal Adapters
+﻿# 🔌 Universal Adapters
 
 This directory contains the chain-specific integration logic.
 
@@ -13,5 +13,5 @@ To add a new chain (e.g., Solana), create a new class inheriting from `BaseAdapt
 1. `verify_identity()`
 2. `anchor_state()`
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

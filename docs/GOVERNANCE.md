@@ -1,5 +1,5 @@
-# 🏛️ Governance Framework — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🏛️ Governance Framework — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 This document defines the decision-making framework of a Nexus Sovereign Node. In Phase 1.4.0, governance is explicitly operator-centric but rule-bound.
 
@@ -33,7 +33,8 @@ Within the bounds of the Invariant, the operator has absolute autonomy over:
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

@@ -1,7 +1,7 @@
-# 💡 Protocol Novelty — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 💡 Protocol Novelty — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
-The Nexus Protocol represents an architectural shift from **Siloed Data Custody** to **Sovereign Edge Execution**. This document outlines the technical novelty of Nexus by contrasting it with traditional custodial and distributed infrastructures.
+The Nexus Protocol (Prototype) represents an architectural shift from **Siloed Data Custody** to **Sovereign Edge Execution**. This document outlines the technical novelty of Nexus by contrasting it with traditional custodial and distributed infrastructures.
 
 ---
 
@@ -41,7 +41,8 @@ Nexus does not aim to compete with L1 blockchains; it aims to **displace the mid
 *Defining the new standard for Sovereign Edge Infrastructure.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

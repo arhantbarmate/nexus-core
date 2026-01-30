@@ -1,4 +1,4 @@
-# 🛡️ Operational Failure Modes & Effects Analysis (FMEA)
+﻿# 🛡️ Operational Failure Modes & Effects Analysis (FMEA)
 
 Nexus is architected with a **Fail-Closed** security posture.
 
@@ -23,7 +23,8 @@ The upload service monitors a **local unix domain socket (no network dependency)
 ---
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

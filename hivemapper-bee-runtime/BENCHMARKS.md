@@ -1,4 +1,4 @@
-# 📊 Vibration Entropy Benchmarks
+﻿# 📊 Vibration Entropy Benchmarks
 
 This document tracks the vibration floors used to validate motion truth across different road classes and vehicle types.
 
@@ -15,7 +15,8 @@ Thresholds are derived from G-RMS integration over a rolling 500ms window. To mi
 ---
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

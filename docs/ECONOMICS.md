@@ -1,15 +1,15 @@
-# 💰 Economic Protocol — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 💰 Economic Protocol — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
-The Nexus Protocol operates on a **Deterministic Settlement Invariant**. Every unit of value entering a Sovereign Node is **atomically partitioned** at the point of execution. This ensures transparent, verifiable, and automated distribution without the need for manual reconciliation.
+The Nexus Protocol (Prototype) operates on a **Deterministic Settlement Invariant**. Every unit of value entering a Sovereign Node is **atomically partitioned** at the point of execution. This ensures transparent, verifiable, and automated distribution without the need for manual reconciliation.
 
 ---
 
 ## 📊 The 60/30/10 Split Model
-The protocol enforces a three-tier distribution logic for all incoming state transitions. This is the core economic axiom of the Coreframe ecosystem.
+The protocol enforces a three-tier distribution logic for all incoming state transitions. This is the core economic axiom of the Orthonode ecosystem.
 
 ```mermaid
-pie title Nexus Protocol Value Distribution
+pie title Nexus Protocol (Prototype) Value Distribution
     "Creator Share (Direct Settlement)" : 60
     "User Pool (Liquidity/Rewards)" : 30
     "Network Fee (Maintenance/Infrastructure)" : 10
@@ -18,7 +18,7 @@ pie title Nexus Protocol Value Distribution
 ---
 
 ## 🔐 Accounting & Trust Boundaries
-Nexus Protocol acts as a **Deterministic Ledger Engine**. 
+Nexus Protocol (Prototype) acts as a **Deterministic Ledger Engine**. 
 * **Internal Units:** All values represented are internal ledger units used for accounting and validation.
 * **Non-Custodial:** The protocol does not custody external assets. It maintains the "Source of Truth" for how those assets should be distributed upon final settlement.
 * **Atomic Execution:** Splits are calculated and written in a single database transaction to prevent partial state updates.
@@ -66,7 +66,8 @@ While Phase 1.4 handles settlement at the **Sovereign Node** level (local-first)
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

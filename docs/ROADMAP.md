@@ -1,5 +1,5 @@
-# 🛣️ Engineering Roadmap — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🛣️ Engineering Roadmap — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 This document tracks the evolution of the **Nexus Universal Gateway**. The roadmap is strictly phased to ensure architectural correctness and "durability-first" stability before feature expansion.
 
@@ -15,10 +15,10 @@ This document tracks the evolution of the **Nexus Universal Gateway**. The roadm
 
 ```mermaid
 timeline
-    title Nexus Protocol Engineering Phases
+    title Nexus Protocol (Prototype) Engineering Phases
     Phase 1.1 : Foundation : FastAPI Brain : SQLite Vault : 60-30-10 Economics
     Phase 1.2 : Gateway : Reverse Proxy : Tunneling (ngrok) : Unidirectional Pipeline
-    Phase 1.4.0 (ACTIVE) : Infra Hardening : Coreframe Controller : Zero Trust Sentry : 1M Stress Test Validated
+    Phase 1.4.0 (ACTIVE) : Infra Hardening : Orthonode Controller : Zero Trust Sentry : 1M Stress Test Validated
     Phase 2.0 (NEXT) : Identity & Anchoring : peaq ID Integration : IoTeX ioID : Multi-Chain Merkle Roots
     Phase 3.0 : Mesh & Settlement : W3bstream Proofs : Peer Discovery : Optional On-Chain Settlement
 ```
@@ -66,7 +66,8 @@ timeline
 ---
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

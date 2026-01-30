@@ -1,5 +1,5 @@
-# 🚨 Fail-Closed Behavior & System Failure Modes
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🚨 Fail-Closed Behavior & System Failure Modes
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
 Failure transparency is a first-class security feature. If correctness cannot be guaranteed, execution stops.
 
@@ -26,7 +26,8 @@ Failure transparency is a first-class security feature. If correctness cannot be
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

@@ -1,4 +1,4 @@
-![Coreframe Systems™ Banner](https://github.com/arhantbarmate/nexus-core/blob/main/client/assets/coreframesystems-banner.png?raw=true)
+﻿![Orthonode Infrastructure Labs™ Banner](https://github.com/arhantbarmate/nexus-core/blob/main/client/assets/Orthonodesystems-orthonode-orthonode-banner.png?raw=true)
 
 # Nexus Gatekeeper: Edge Verification Runtime (Simulation)
 
@@ -61,7 +61,9 @@ python3 nexus_prototype.py
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+
+

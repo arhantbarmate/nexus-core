@@ -1,7 +1,7 @@
-# 🛡️ Threat Model — Nexus Protocol
-**Coreframe Systems™ Lab | Version 1.4.0**
+﻿# 🛡️ Threat Model — Nexus Protocol (Prototype)
+**Orthonode Infrastructure Labs™ Lab | Version 1.4.0**
 
-This document defines the **explicit threat surface** and **security assumptions** of the Nexus Protocol. It tracks our evolution from "Project Discovery" to "Sovereign Infrastructure."
+This document defines the **explicit threat surface** and **security assumptions** of the Nexus Protocol (Prototype). It tracks our evolution from "Project Discovery" to "Sovereign Infrastructure."
 
 ---
 
@@ -95,7 +95,8 @@ Nexus is moving through three distinct "Ingress Epochs." Each shift resolves a p
 *Hardening the edge, one epoch at a time.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

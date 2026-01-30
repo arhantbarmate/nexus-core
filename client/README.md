@@ -1,4 +1,4 @@
-# 📱 Nexus Protocol — The Sovereign Body (v1.4.0)
+﻿# 📱 Nexus Protocol (Prototype) — The Sovereign Body (v1.4.0)
 
 > **Status:** Phase 1.4.0 (Golden Artifact)
 > **Engine:** Flutter 3.x (Web Only)
@@ -111,7 +111,8 @@ The Nexus Body will remain stateless but will gain enhanced visualization capabi
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+

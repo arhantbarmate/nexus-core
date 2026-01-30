@@ -1,4 +1,4 @@
-# 🧪 Research Adapters (Non-Production)
+﻿# 🧪 Research Adapters (Non-Production)
 
 This directory serves as the cryptographic incubator for **Phase 2.0: Identity & Anchoring**. 
 
@@ -15,5 +15,5 @@ Adapters will only be promoted to the root `adapters/` directory after:
 
 ---
 ---
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

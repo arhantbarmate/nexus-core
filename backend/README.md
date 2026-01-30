@@ -1,9 +1,9 @@
-# 🧠 Nexus Protocol — The Sovereign Brain (v1.4.0)
+﻿# 🧠 Nexus Protocol (Prototype) — The Sovereign Brain (v1.4.0)
 
 **Status:** Phase 1.4.0 (Secure Ingress Hardening)
 **Architecture:** Sovereign Monolith (FastAPI + SQLite + Cloudflare)
 
-The Nexus Brain is the deterministic policy engine of the Nexus Protocol. It executes the **60/30/10 Economic Split** and manages the **Sovereign Vault** with validated concurrency.
+The Nexus Brain is the deterministic policy engine of the Nexus Protocol (Prototype). It executes the **60/30/10 Economic Split** and manages the **Sovereign Vault** with validated concurrency.
 
 In **v1.4.0**, the architecture was hardened by removing ephemeral tunneling (Ngrok) in favor of a strict, policy-gated **Cloudflare Zero Trust** ingress.
 
@@ -57,7 +57,7 @@ Legacy tunneling (Ngrok) was deprecated in v1.3.1. The v1.4.0 architecture uses 
 2.  **Persistent Identity:** The node is anchored to a stable DNS (`nexucore.xyz`) rather than a rotating random URL.
 3.  **Self-Healing:** The Tunnel container is health-gated; it waits for the Brain to report "Healthy" before establishing a connection.
 
-> **Future Roadmap (Phase 2.0):** > Cloudflare currently serves as a **bootstrap ingress layer**. In Phase 2.0, Nexus Protocol evolves toward **provider-independent, reversible ingress**, where:
+> **Future Roadmap (Phase 2.0):** > Cloudflare currently serves as a **bootstrap ingress layer**. In Phase 2.0, Nexus Protocol (Prototype) evolves toward **provider-independent, reversible ingress**, where:
 > - no single routing provider is required,
 > - frontend attachment is optional and detachable,
 > - execution and storage remain fully local-first,
@@ -125,5 +125,5 @@ docker logs -f nexus-brain
 
 ---
 
-© 2026 Coreframe Systems™ · All Rights Reserved
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+© 2026 Orthonode Infrastructure Labs™ · All Rights Reserved
+Orthonode Infrastructure Labs™ is a technical brand and research initiative of **Orthonode Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
