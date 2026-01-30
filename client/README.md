@@ -110,7 +110,6 @@ The Nexus Body will remain stateless but will gain enhanced visualization capabi
 > **Note:** Phase 2.0 does NOT introduce wallets, signing, or execution logic on the client. The Brain remains authoritative.
 
 ---
----
 
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
