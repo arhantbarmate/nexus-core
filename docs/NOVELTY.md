@@ -41,10 +41,7 @@ Nexus does not aim to compete with L1 blockchains; it aims to **displace the mid
 *Defining the new standard for Sovereign Edge Infrastructure.*
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
----
-
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
 © 2026 Coreframe Systems™ · All Rights Reserved
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
