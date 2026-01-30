@@ -1,6 +1,6 @@
 # 🧠 Nexus Protocol — The Sovereign Brain (v1.4.0)
 
-**Status:** Phase 1.4.0 (Secure Ingress Hardening)  
+**Status:** Phase 1.4.0 (Secure Ingress Hardening)
 **Architecture:** Sovereign Monolith (FastAPI + SQLite + Cloudflare)
 
 The Nexus Brain is the deterministic policy engine of the Nexus Protocol. It executes the **60/30/10 Economic Split** and manages the **Sovereign Vault** with validated concurrency.
@@ -125,5 +125,5 @@ docker logs -f nexus-brain
 
 ---
 
-© 2026 Coreframe Systems™ · All Rights Reserved  
+© 2026 Coreframe Systems™ · All Rights Reserved
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
