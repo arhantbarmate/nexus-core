@@ -25,10 +25,6 @@ Failure transparency is a first-class security feature. If correctness cannot be
 | Economic Invariant | Critical | Abort & Log |
 
 ---
----
-
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
----
 
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
