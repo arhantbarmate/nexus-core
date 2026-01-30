@@ -124,5 +124,9 @@ docker logs -f nexus-brain
 | `/api/transactions` | GET | Multichain Guard | Cursor-based history with Merkle pagination. |
 
 ---
+---
 
-© 2026 Coreframe Systems · Phase 1.4.0 Specification · Licensed under Apache 2.0
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

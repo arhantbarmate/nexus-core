@@ -1,5 +1,5 @@
 # 🛡️ Threat Model — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 This document defines the **explicit threat surface** and **security assumptions** of the Nexus Protocol. It tracks our evolution from "Project Discovery" to "Sovereign Infrastructure."
 
@@ -91,5 +91,8 @@ Nexus is moving through three distinct "Ingress Epochs." Each shift resolves a p
 | **Crypto-Identity** | 🚧 **In Progress** | Deferred to Phase 2.0 (peaq/IoTeX) |
 
 ---
-© 2026 Coreframe Systems · Threat Model v1.4.0  
+
 *Hardening the edge, one epoch at a time.*
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

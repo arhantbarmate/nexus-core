@@ -1,5 +1,5 @@
 # 🛠️ Contributing to Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 Nexus is an open-source **Sovereign Gateway** architected for the DePIN ecosystem. We welcome contributions that maintain our core technical invariants and uphold our durability-first engineering discipline.
 
@@ -36,7 +36,7 @@ python scripts/stress_test_1m.py
 ---
 
 ## 🛡️ Security & Disclosure
-If you discover a security vulnerability, please do **not** open a public issue. To protect sovereign users, report vulnerabilities privately to Coreframe Systems Engineering:
+If you discover a security vulnerability, please do **not** open a public issue. To protect sovereign users, report vulnerabilities privately to Coreframe Systems™ Engineering:
 
 * **Primary:** ```infrastructure@coreframe.systems```
 * **Lead Maintainer:** Arhant Barmate (```arhantbarmate@gmail.com```)
@@ -47,5 +47,14 @@ If you discover a security vulnerability, please do **not** open a public issue.
 By contributing to Nexus Protocol, you agree that your contributions will be licensed under the **Apache License 2.0**.
 
 ---
-© 2026 Coreframe Systems · Contribution Specification v1.4.0  
+
 *This document governs the engineering contribution lifecycle.*
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

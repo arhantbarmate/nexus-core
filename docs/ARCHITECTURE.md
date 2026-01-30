@@ -1,5 +1,5 @@
 # 🏛️ System Architecture — Nexus Protocol
-**Coreframe Systems Lab | Phase 1.4.0**
+**Coreframe Systems™ Lab | Phase 1.4.0**
 
 The Nexus Protocol is a **Sovereign Edge Gateway** architected for the DePIN ecosystem. It operates on a **Verify-then-Execute** model, ensuring that economic state transitions are only committed after environmental and identity resolution.
 
@@ -58,4 +58,12 @@ The interface is a Flutter-based **Execution Surface** that exists entirely behi
 * **Deterministic Recovery:** The Vault is portable. In a "Total Hardware Failure" scenario, the ```.db``` file can be re-anchored to any Coreframe-compliant node without state loss.
 
 ---
-© 2026 Coreframe Systems · All Rights Reserved
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

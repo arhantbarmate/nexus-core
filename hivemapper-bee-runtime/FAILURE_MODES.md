@@ -21,4 +21,9 @@ Nexus treats unverified data as high-risk, choosing to sever the ingest path rat
 The upload service monitors a **local unix domain socket (no network dependency)** for a "Verified" heartbeat from the Nexus Sentry. If this heartbeat is missing for >1000ms, the network interface is programmatically firewalled for mapping traffic.
 
 ---
-© 2026 Coreframe Systems
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

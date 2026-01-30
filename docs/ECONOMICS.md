@@ -1,5 +1,5 @@
 # 💰 Economic Protocol — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 The Nexus Protocol operates on a **Deterministic Settlement Invariant**. Every unit of value entering a Sovereign Node is **atomically partitioned** at the point of execution. This ensures transparent, verifiable, and automated distribution without the need for manual reconciliation.
 
@@ -65,5 +65,12 @@ While Phase 1.4 handles settlement at the **Sovereign Node** level (local-first)
 > **Durability-First:** Nexus ensures the local ledger is unassailable before state roots are committed to external chains. We prioritize local state integrity to prevent the propagation of corrupted economic data to global networks.
 
 ---
-© 2026 Coreframe Systems · Economic Specification v1.4.0  
-*This document defines the deterministic economic axioms of the protocol.*
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

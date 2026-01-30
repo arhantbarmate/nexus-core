@@ -1,5 +1,5 @@
 # 🛠️ Node Setup Guide — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 This guide provides the technical sequence required to deploy a **Sovereign Nexus Node** on local hardware. The architecture is optimized for low-latency, durability-first local execution.
 
@@ -68,5 +68,14 @@ Once the node status is `NOMINAL`, perform an **Integrity Audit**:
 * **Identity Sync:** If the Execution Surface (UI) fails to load, verify that your ```TUNNEL_TOKEN``` in the ```.env``` is valid and active.
 
 ---
-© 2026 Coreframe Systems · Installation Specification v1.4.0  
+
 *Designed for sovereign operators. Built for durability.*
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

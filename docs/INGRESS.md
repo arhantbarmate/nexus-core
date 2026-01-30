@@ -1,5 +1,5 @@
 # 🛡️ Ingress & Sentry Perimeter — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 This document defines the Sentry Perimeter, the hardened ingress layer that governs how all external requests enter a Nexus Sovereign Node. No request reaches the Brain without passing deterministic validation at this boundary.
 
@@ -39,4 +39,12 @@ All ingress traffic (REST, WebSockets) is normalized into a Canonical Format:
 ```
 
 ---
-© 2026 Coreframe Systems · Ingress Specification v1.4.0
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

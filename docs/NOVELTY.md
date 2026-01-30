@@ -1,5 +1,5 @@
 # 💡 Protocol Novelty — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 The Nexus Protocol represents an architectural shift from **Siloed Data Custody** to **Sovereign Edge Execution**. This document outlines the technical novelty of Nexus by contrasting it with traditional custodial and distributed infrastructures.
 
@@ -37,5 +37,14 @@ Nexus novelty is grounded in **Verified Execution** rather than theoretical whit
 Nexus does not aim to compete with L1 blockchains; it aims to **displace the middleware**. By moving the "Logic of Split" from the cloud to the edge node, Nexus reduces the trust surface of any platform that integrates it.
 
 ---
-© 2026 Coreframe Systems · Novelty Specification v1.4.0  
+
 *Defining the new standard for Sovereign Edge Infrastructure.*
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

@@ -1,5 +1,5 @@
 # 🛡️ Security Policy — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 The Nexus Protocol is architected for **Sovereign Resilience**. We prioritize the integrity of the local ledger and the "Fail-Closed" security of the identity perimeter.
 
@@ -28,11 +28,20 @@ To maintain architectural honesty during the hardening phase, note that:
 ---
 
 ## ⚖️ Reporting a Vulnerability
-We encourage responsible disclosure of vulnerabilities that could compromise the Sovereign Vault or the 60/30/10 Economic Invariant. Please report vulnerabilities privately to Coreframe Systems Engineering:
+We encourage responsible disclosure of vulnerabilities that could compromise the Sovereign Vault or the 60/30/10 Economic Invariant. Please report vulnerabilities privately to Coreframe Systems™ Engineering:
 
 * **Official Channel:** `infrastructure@coreframe.systems`
 * **Lead Maintainer:** Arhant Barmate (`arhant6armate@gmail.com`)
 
 ---
-© 2026 Coreframe Systems · Security Specification v1.4.0  
+
 *Hardened Ingress. Deterministic Execution. Sovereign Resilience.*
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

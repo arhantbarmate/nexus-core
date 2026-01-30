@@ -14,4 +14,6 @@ Adapters will only be promoted to the root `adapters/` directory after:
 3. **Threat Model Update:** Accounting for machine-identity spoofing vectors.
 
 ---
-© 2026 Coreframe Systems · Research Protocol v1.4.0
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

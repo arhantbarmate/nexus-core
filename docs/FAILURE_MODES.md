@@ -1,5 +1,5 @@
 # 🚨 Fail-Closed Behavior & System Failure Modes
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 Failure transparency is a first-class security feature. If correctness cannot be guaranteed, execution stops.
 
@@ -25,4 +25,12 @@ Failure transparency is a first-class security feature. If correctness cannot be
 | Economic Invariant | Critical | Abort & Log |
 
 ---
-© 2026 Coreframe Systems · Failure Modes Specification v1.4.0
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

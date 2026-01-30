@@ -13,4 +13,9 @@ Thresholds are derived from G-RMS integration over a rolling 500ms window. To mi
 | **Spoof / Static** | Desktop Simulator | **<0.01 G** | Zero-entropy state |
 
 ---
-© 2026 Coreframe Systems
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

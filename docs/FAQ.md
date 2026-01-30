@@ -1,5 +1,5 @@
 # ❓ Technical FAQ — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 This document addresses the architectural rationale, infrastructure constraints, and economic logic behind the Nexus Sovereign Gateway.
 
@@ -49,5 +49,14 @@ This document addresses the architectural rationale, infrastructure constraints,
 6. **Architectural Framing:** The "Body" as a reactive execution surface.
 
 ---
-© 2026 Coreframe Systems · Technical FAQ v1.4.0  
+
 *This document addresses architectural rationale for Phase 1.4.0 nodes.*
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

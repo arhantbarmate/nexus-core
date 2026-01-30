@@ -1,5 +1,5 @@
 # 📑 Documentation Summary — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 This is the central index for the Nexus Protocol technical specifications. These documents define the **"Verify-then-Execute"** model and the **"Sovereign Edge"** architecture.
 
@@ -34,5 +34,14 @@ For the high-fidelity graphical interface of these specs, access the local refer
 
 
 ---
-© 2026 Coreframe Systems · Protocol Specification Suite v1.4.0  
+
 *Infrastructure for a sovereign future.*
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

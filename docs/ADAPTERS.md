@@ -1,5 +1,5 @@
 # 🔌 Adapter Registry & Integration Guide — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 This document defines the Adapter System: the mechanism for integrating external ecosystems while preserving local-first determinism.
 
@@ -30,4 +30,12 @@ These reside in the ```research/``` namespace and are excluded from production b
 Adapters expand reach, not authority. No adapter—regardless of chain—can override the Brain.
 
 ---
-© 2026 Coreframe Systems · Adapter Registry v1.4.0
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

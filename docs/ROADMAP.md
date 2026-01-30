@@ -1,5 +1,5 @@
 # 🛣️ Engineering Roadmap — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
 This document tracks the evolution of the **Nexus Universal Gateway**. The roadmap is strictly phased to ensure architectural correctness and "durability-first" stability before feature expansion.
 
@@ -33,7 +33,7 @@ timeline
 * [x] **Durability Benchmark:** 1-Million Transaction stress test validated (0% corruption, 50-60 TPS baseline).
 * [x] **Master Controller:** Deployment of the ```start_nexus.bat``` management suite.
 * [x] **Fail-Closed Perimeter:** Deterministic identity resolution and unauthorized request rejection.
-* [ ] **Observability:** Finalizing local structured telemetry for Sentry rejection events.
+* [ ] **Observability:** Finalizing local structured status signaling for Sentry rejection events.
 * [ ] **Adapter Finalization:** Interface specs finalized for **peaq** and **IoTeX** (Phase 2 readiness).
 
 ---
@@ -64,4 +64,12 @@ timeline
 | **2.0** | **Identity** | **Who owns the data?** | 🔮 **Grant Target** |
 
 ---
-© 2026 Coreframe Systems · Licensed under **Apache License 2.0**
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

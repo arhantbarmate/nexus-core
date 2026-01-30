@@ -1,7 +1,7 @@
 # 🤝 Code of Conduct — Nexus Protocol
-**Coreframe Systems Lab | Version 1.4.0**
+**Coreframe Systems™ Lab | Version 1.4.0**
 
-The Nexus Protocol is a professional infrastructure environment dedicated to architectural sovereignty and economic integrity. This Code of Conduct governs all interactions within the Coreframe Systems ecosystem.
+The Nexus Protocol is a professional infrastructure environment dedicated to architectural sovereignty and economic integrity. This Code of Conduct governs all interactions within the Coreframe Systems™ ecosystem.
 
 ---
 
@@ -23,7 +23,7 @@ The Nexus Protocol is a professional infrastructure environment dedicated to arc
 
 ## 🤝 Professional Respect
 
-Coreframe Systems maintains a harassment-free environment for contributors regardless of background, identity, or affiliation. Harassment, personal attacks, or discriminatory behavior are not tolerated. Enforcement actions may include contribution rejection, access revocation, or permanent removal from project spaces. 
+Coreframe Systems™ maintains a harassment-free environment for contributors regardless of background, identity, or affiliation. Harassment, personal attacks, or discriminatory behavior are not tolerated. Enforcement actions may include contribution rejection, access revocation, or permanent removal from project spaces. 
 
 **This policy exists to protect technical focus and professional collaboration.**
 
@@ -31,12 +31,15 @@ Coreframe Systems maintains a harassment-free environment for contributors regar
 
 ## 📧 Reporting & Governance
 
-Violations of this code or security vulnerabilities should be reported directly to Coreframe Systems Engineering:
+Violations of this code or security vulnerabilities should be reported directly to Coreframe Systems™ Engineering:
 
 * **Lead Maintainer:** Arhant Barmate
 * **Official Channel:** ```infrastructure@coreframe.systems```
 * **Secondary:** ```arhantbarmate@gmail.com```
 
 ---
-© 2026 Coreframe Systems · Community Specification v1.4.0  
+
 *This document governs conduct and does not override project licensing.*
+---
+© 2026 Coreframe Systems™ · All Rights Reserved
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
