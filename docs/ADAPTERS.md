@@ -30,7 +30,6 @@ These reside in the ```research/``` namespace and are excluded from production b
 Adapters expand reach, not authority. No adapter—regardless of chain—can override the Brain.
 
 ---
----
 
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
