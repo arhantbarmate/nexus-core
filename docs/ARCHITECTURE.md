@@ -59,9 +59,6 @@ The interface is a Flutter-based **Execution Surface** that exists entirely behi
 
 ---
 
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
----
-
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
 © 2026 Coreframe Systems™ · All Rights Reserved
