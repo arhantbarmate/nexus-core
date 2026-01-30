@@ -30,7 +30,7 @@ To maintain architectural honesty during the hardening phase, note that:
 ## ⚖️ Reporting a Vulnerability
 We encourage responsible disclosure of vulnerabilities that could compromise the Sovereign Vault or the 60/30/10 Economic Invariant. Please report vulnerabilities privately to Orthonode Infrastructure Labs™ Engineering:
 
-* **Official Channel:** `infrastructure@Orthonode.systems`
+* **Official Channel:** `infrastructure@orthonode.xyz`
 * **Lead Maintainer:** Arhant Barmate (`arhant6armate@gmail.com`)
 
 ---

@@ -38,8 +38,8 @@ python scripts/stress_test_1m.py
 ## 🛡️ Security & Disclosure
 If you discover a security vulnerability, please do **not** open a public issue. To protect sovereign users, report vulnerabilities privately to Orthonode Infrastructure Labs™ Engineering:
 
-* **Primary:** ```infrastructure@Orthonode.systems```
-* **Lead Maintainer:** Arhant Barmate (```arhantbarmate@gmail.com```)
+* **Primary:** ```infrastructure@orthonode.xyz```
+* **Lead Maintainer:** Arhant Barmate (```arhant6armate@gmail.com```)
 
 ---
 

@@ -64,13 +64,12 @@ Orthonode Infrastructure Labs™ operates as a technical initiative of **Orthono
 
 ## 🛡️ Security & Disclosure
 Nexus treats **data loss as preferable to reward leakage**. 
-Report protocol-level vulnerabilities to: `infrastructure@Orthonode.systems`
+Report protocol-level vulnerabilities to: `infrastructure@orthonode.xyz`
 
 ---
 
 <div align="center">
-  <sub>Engineered by <a href="https://Orthonode.systems">Orthonode Infrastructure Labs Private Limited</a>. Powering the Zero-Trust Edge.</sub>
-</div>
+  <sub>Engineered by <a href="https://orthonode.xyz">Orthonode Infrastructure Labs Private Limited</a>. Powering the Zero-Trust Edge.</sub>
 
 ---
 © 2026 Orthonode Infrastructure Labs™ · All Rights Reserved  
