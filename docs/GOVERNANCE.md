@@ -32,10 +32,6 @@ Within the bounds of the Invariant, the operator has absolute autonomy over:
 * **Phase 3.0:** Cross-Chain Governance (Envisioned). Anchoring local state roots to external chains like **peaq** and **IoTeX**.
 
 ---
----
-
-Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
----
 
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited Private Limited**, Madhya Pradesh, India (NIC 72900).
 ---
