@@ -37,5 +37,8 @@ We encourage responsible disclosure of vulnerabilities that could compromise the
 
 *Hardened Ingress. Deterministic Execution. Sovereign Resilience.*
 ---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
 © 2026 Coreframe Systems™ · All Rights Reserved
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

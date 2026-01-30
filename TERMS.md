@@ -35,5 +35,8 @@ Nexus Protocol is provided "as-is" without warranty of any kind. Coreframe Syste
 
 *Sovereign tools for a deterministic world.*
 ---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
 © 2026 Coreframe Systems™ · All Rights Reserved
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

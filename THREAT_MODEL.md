@@ -94,5 +94,8 @@ Nexus is moving through three distinct "Ingress Epochs." Each shift resolves a p
 
 *Hardening the edge, one epoch at a time.*
 ---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
 © 2026 Coreframe Systems™ · All Rights Reserved
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).

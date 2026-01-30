@@ -50,5 +50,8 @@ By contributing to Nexus Protocol, you agree that your contributions will be lic
 
 *This document governs the engineering contribution lifecycle.*
 ---
+
+Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
+---
 © 2026 Coreframe Systems™ · All Rights Reserved
 Coreframe Systems™ is a technical brand and research initiative of **Coreframe Infrastructure Labs Private Limited**, Madhya Pradesh, India (NIC 72900).
