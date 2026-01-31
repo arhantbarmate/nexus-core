@@ -1,4 +1,4 @@
-﻿![Orthonode Infrastructure Labs™ Banner](https://github.com/arhantbarmate/nexus-core/blob/main/client/assets/Orthonodesystems-orthonode-orthonode-banner.png?raw=true)
+﻿![Orthonode Infrastructure Labs™ Banner](https://github.com/arhantbarmate/nexus-core/blob/main/client/assets/Orthonodesystems-orthonode-banner.png?raw=true)
 
 # Nexus Gatekeeper: Edge Verification Runtime (Simulation)
 
