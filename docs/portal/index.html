@@ -7,10 +7,10 @@
     <title>Nexus Protocol Documentation | Sovereign DePIN Gateway</title>
     
     <meta name="description" content="Nexus Protocol is a sovereign, verify-then-execute gateway for DePIN hardware that enforces deterministic economic logic at the physical edge.">
-    <meta name="keywords" content="Nexus Protocol, DePIN, Sovereign Gateway, Edge Computing, IoTeX, peaq, Deterministic Hardware, Coreframe Systems">
-    <meta name="author" content="Coreframe Systems">
+    <meta name="keywords" content="Nexus Protocol, DePIN, Sovereign Gateway, Edge Computing, IoTeX, peaq, Deterministic Hardware, Orthonode Systems">
+    <meta name="author" content="Orthonode Infrastructure Labs">
     
-    <link rel="canonical" href="https://coreframe.systems/nexus-protocol">
+    <link rel="canonical" href="https://orthonode.xyz/nexus-protocol">
 
     <script type="application/ld+json">
     {
@@ -20,10 +20,10 @@
       "description": "Nexus Protocol is a sovereign, verify-then-execute gateway for DePIN hardware that enforces deterministic economic logic at the physical edge.",
       "author": {
         "@type": "Organization",
-        "name": "Coreframe Systems",
-        "url": "https://coreframe.systems"
+        "name": "Orthonode Infrastructure Labs",
+        "url": "https://orthonode.xyz"
       },
-      "image": "https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/coreframesystems-banner.png",
+      "image": "https://orthonode.xyz/orthonode-banner.png",
       "softwareVersion": "1.4.0"
     }
     </script>
@@ -32,20 +32,20 @@
     <meta property="og:url" content="https://arhantbarmate.github.io/nexus-core/">
     <meta property="og:title" content="Nexus Protocol | Sovereign DePIN Gateway">
     <meta property="og:description" content="Nexus Protocol is a sovereign, verify-then-execute gateway for DePIN hardware that enforces deterministic economic logic at the physical edge.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/coreframesystems-banner.png">
+    <meta property="og:image" content="https://orthonode.xyz/orthonode-banner.png">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@CoreframeSys">
+    <meta name="twitter:site" content="@OrthonodeSys">
     <meta name="twitter:title" content="Nexus Protocol Documentation">
     <meta name="twitter:description" content="Enforcing deterministic economic logic at the physical edge. v1.4.0 Operational.">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/coreframesystems-banner.png">
+    <meta name="twitter:image" content="https://orthonode.xyz/orthonode-banner.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-black: #050505;
-            --accent-blue: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.4);
+            --accent-blue: #3b82f6; /* Orthonode Blue */
+            --accent-glow: rgba(59, 130, 246, 0.4);
             --panel-bg: rgba(15, 15, 20, 0.6);
             --border-panel: rgba(255, 255, 255, 0.08);
             --text-dim: #94a3b8;
@@ -64,13 +64,11 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 🌌 BACKGROUND */
         #particles-js {
             position: fixed; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
         }
 
-        /* 🛠️ NAV */
         .nav {
             position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem;
             display: flex; justify-content: space-between; align-items: center;
@@ -89,7 +87,6 @@
 
         .container { max-width: 1200px; margin: 0 auto; padding: 8rem 2rem 5rem; }
 
-        /* ⚡ HEADER */
         .header { text-align: left; margin-bottom: 4rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border-panel); display: flex; justify-content: space-between; align-items: flex-end; }
         
         .brand-badge {
@@ -114,7 +111,6 @@
             line-height: 1.6;
         }
 
-        /* 📟 3x3 GRID LAYOUT */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -139,7 +135,7 @@
 
         .tile:hover {
             border-color: var(--accent-blue);
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(59, 130, 246, 0.05);
             transform: translateY(-2px);
         }
 
@@ -166,7 +162,6 @@
             line-height: 1.5;
         }
 
-        /* 🔳 MAINPAGE BUTTON */
         .mainpage-btn {
             background: transparent;
             border: 1px solid var(--accent-blue);
@@ -188,9 +183,6 @@
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        /* ---------------------------------------------------------
-            📐 COMPATIBLE THREAT DIAGRAM (v1.4.0)
-           --------------------------------------------------------- */
         .schematic-section {
             margin-top: 4rem;
             padding: 3rem;
@@ -261,7 +253,6 @@
             position: absolute; left: -1.5px;
             animation: drop 2s infinite linear;
         }
-        /* COSMETIC FIX: Red dot flows UP (Attacker -> Tunnel) */
         .d-dot.red { 
             background: var(--status-red); 
             box-shadow: 0 0 8px var(--status-red); 
@@ -308,8 +299,8 @@
     <div class="header">
         <div>
             <div class="brand-badge">
-                <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/core-logo.png.png" alt="Coreframe Systems" style="height: 28px; width: auto; opacity: 0.9;">
-                <span style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 1px;">ENGINEERED BY COREFRAME</span>
+                <img src="https://orthonode.xyz/logo.png" alt="Orthonode" style="height: 28px; width: auto; opacity: 0.9;">
+                <span style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 1px;">ENGINEERED BY ORTHONODE INFRASTRUCTURE LABS</span>
             </div>
             
             <h1>Sovereign DePIN Gateway</h1>
@@ -318,7 +309,7 @@
                 Nexus Protocol is a sovereign, <strong>verify-then-execute</strong> gateway for <strong>DePIN hardware</strong> that enforces deterministic economic logic at the physical edge.
             </p>
         </div>
-        <a href="https://coreframe.systems" class="mainpage-btn">Explore Coreframe.systems</a>
+        <a href="https://orthonode.xyz" class="mainpage-btn">Return to Orthonode.xyz</a>
     </div>
 
     <div class="grid">
@@ -407,7 +398,7 @@
 
             <div class="flow-indicator" style="font-size: 2rem; color: #444;">→</div>
 
-            <div class="d-zone" style="border-color: rgba(99, 102, 241, 0.2);">
+            <div class="d-zone" style="border-color: rgba(59, 130, 246, 0.2);">
                 <div class="d-zone-label" style="color:var(--accent-blue);">SOVEREIGN_NODE (TRUST_BOUNDARY)</div>
                 <div class="d-node sentry">Sentry Perimeter</div>
                 
@@ -434,8 +425,8 @@
     </div>
 
     <div class="footer-bar">
-        <img src="https://raw.githubusercontent.com/arhantbarmate/nexus-core/main/client/assets/core-logo.png.png" alt="Coreframe" style="height: 16px; opacity: 0.5;">
-        <span>// INFRASTRUCTURE_FOR_A_SOVEREIGN_FUTURE // COREFRAME_SYSTEMS_2026 // v1.4.0</span>
+        <img src="https://orthonode.xyz/logo.png" alt="Orthonode" style="height: 16px; opacity: 0.5;">
+        <span>// INFRASTRUCTURE_FOR_A_SOVEREIGN_FUTURE // ORTHONODE_SYSTEMS_2026 // v1.4.0</span>
     </div>
 
 </div>
@@ -445,11 +436,11 @@
     particlesJS('particles-js', {
         particles: {
             number: { value: 60 },
-            color: { value: '#6366f1' },
+            color: { value: '#3b82f6' },
             shape: { type: 'circle' },
             opacity: { value: 0.2 },
             size: { value: 2 },
-            line_linked: { enable: true, distance: 150, color: '#6366f1', opacity: 0.1, width: 1 },
+            line_linked: { enable: true, distance: 150, color: '#3b82f6', opacity: 0.1, width: 1 },
             move: { enable: true, speed: 1 }
         }
     });
