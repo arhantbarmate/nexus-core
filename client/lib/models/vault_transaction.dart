@@ -1,4 +1,4 @@
-// Copyright 2026 Nexus Protocol Authors
+// Copyright 2026 Orthonode Infrastructure Labs (Nexus Protocol Research Division)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
