@@ -1,19 +1,26 @@
 cff-version: 1.2.0
 message: "If you use this protocol, please cite it as below."
 authors:
-- family-names: "Barmate"
-  given-names: "Arhant"
-  affiliation: "Coreframe Systems"
+  - family-names: "Barmate"
+    given-names: "Arhant"
+    affiliation: "Orthonode Infrastructure Labs"
 title: "Nexus Protocol: A Deterministic Execution Layer for DePIN"
 version: 1.4.0
 date-released: 2026-01-29
-url: "https://coreframe.systems"
-repository-code: "https://github.com/arhantbarmate/nexus-core"
+url: "https://orthonode.xyz"
+repository-code: "https://github.com/arhantbarmate/nexus-protocol"
+keywords:
+  - depin
+  - kinematic-attestation
+  - zero-trust-hardware
+  - deterministic-execution
 preferred-citation:
   type: software
   title: "Nexus Protocol: A Deterministic Execution Layer for DePIN"
   authors:
-  - family-names: "Barmate"
-    given-names: "Arhant"
+    - family-names: "Barmate"
+      given-names: "Arhant"
   year: 2026
-  url: "https://coreframe.systems"
+  url: "https://orthonode.xyz"
+  institution:
+    name: "Orthonode Infrastructure Labs"
