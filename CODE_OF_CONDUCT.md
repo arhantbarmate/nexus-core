@@ -34,8 +34,8 @@ Orthonode Infrastructure Labs™ maintains a harassment-free environment for con
 Violations of this code or security vulnerabilities should be reported directly to Orthonode Infrastructure Labs™ Engineering:
 
 * **Lead Maintainer:** Arhant Barmate
-* **Official Channel:** ```infrastructure@Orthonode.systems```
-* **Secondary:** ```arhantbarmate@gmail.com```
+* **Official Channel:** ```infrastructure@Orthonode.xyz```
+* **Secondary:** ```arhant6armate@gmail.com```
 
 ---
 
